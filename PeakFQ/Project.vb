@@ -39,7 +39,7 @@ Friend Class pfqProject
 	
 	Public Property PFQExeFileName() As String
 		Get
-			PFQExeFileName = pPFQExeFileName
+            Return pPFQExeFileName
 		End Get
 		Set(ByVal Value As String)
 			pPFQExeFileName = Value
@@ -48,7 +48,7 @@ Friend Class pfqProject
 	
 	Public Property SpecFileName() As String
 		Get
-			SpecFileName = pSpecFileName
+            Return pSpecFileName
 		End Get
 		Set(ByVal Value As String)
             Dim s As String
@@ -75,7 +75,7 @@ Friend Class pfqProject
 	
 	Public Property DataFileName() As String
 		Get
-			DataFileName = pDataFileName
+            Return pDataFileName
 		End Get
 		Set(ByVal Value As String)
 			pDataFileName = Value
@@ -84,7 +84,7 @@ Friend Class pfqProject
 	
 	Public Property DataType() As Integer
 		Get
-			DataType = pDataType
+            Return pDataType
 		End Get
 		Set(ByVal Value As Integer)
 			pDataType = Value
@@ -94,7 +94,7 @@ Friend Class pfqProject
     Public Property Stations() As Generic.List(Of pfqStation)
         Get
             If pStations Is Nothing Then pStations = New Generic.List(Of pfqStation)
-            Stations = pStations
+            Return pStations
         End Get
         Set(ByVal Value As Generic.List(Of pfqStation))
             pStations = Value
@@ -103,7 +103,7 @@ Friend Class pfqProject
 	
 	Public Property OutFile() As String
 		Get
-			OutFile = pOutFile
+            Return pOutFile
 		End Get
 		Set(ByVal Value As String)
 			pOutFile = Value
@@ -112,7 +112,7 @@ Friend Class pfqProject
 	
 	Public Property AdditionalOutput() As Integer
 		Get
-			AdditionalOutput = pAdditionalOutput
+            Return pAdditionalOutput
 		End Get
 		Set(ByVal Value As Integer)
 			pAdditionalOutput = Value
@@ -121,7 +121,7 @@ Friend Class pfqProject
 	
 	Public Property AddOutFileName() As String
 		Get
-			AddOutFileName = pAddOutFileName
+            Return pAddOutFileName
 		End Get
 		Set(ByVal Value As String)
 			pAddOutFileName = Value
@@ -130,7 +130,7 @@ Friend Class pfqProject
 	
 	Public Property IntermediateResults() As Boolean
 		Get
-			IntermediateResults = pIntermediateResults
+            Return pIntermediateResults
 		End Get
 		Set(ByVal Value As Boolean)
 			pIntermediateResults = Value
@@ -139,7 +139,7 @@ Friend Class pfqProject
 	
 	Public Property ConfidenceLimits() As Single
 		Get
-			ConfidenceLimits = pConfidenceLimits
+            Return pConfidenceLimits
 		End Get
 		Set(ByVal Value As Single)
 			pConfidenceLimits = Value
@@ -148,7 +148,7 @@ Friend Class pfqProject
 	
 	Public Property LinePrinter() As Boolean
 		Get
-			LinePrinter = pLinePrinter
+            Return pLinePrinter
 		End Get
 		Set(ByVal Value As Boolean)
 			pLinePrinter = Value
@@ -157,7 +157,7 @@ Friend Class pfqProject
 	
 	Public Property Graphic() As Boolean
 		Get
-			Graphic = pGraphic
+            Return pGraphic
 		End Get
 		Set(ByVal Value As Boolean)
 			pGraphic = Value
@@ -166,7 +166,7 @@ Friend Class pfqProject
 	
 	Public Property GraphFormat() As String
 		Get
-			GraphFormat = pGraphFormat
+            Return pGraphFormat
 		End Get
 		Set(ByVal Value As String)
 			pGraphFormat = Value
@@ -175,7 +175,7 @@ Friend Class pfqProject
 	
 	Public Property PlotPos() As Single
 		Get
-			PlotPos = pPlotPos
+            Return pPlotPos
 		End Get
 		Set(ByVal Value As Single)
 			pPlotPos = Value
@@ -184,7 +184,7 @@ Friend Class pfqProject
 	
 	Public Property PrintPlotPos() As Boolean
 		Get
-			PrintPlotPos = pPrintPlotPos
+            Return pPrintPlotPos
 		End Get
 		Set(ByVal Value As Boolean)
 			pPrintPlotPos = Value
@@ -193,7 +193,7 @@ Friend Class pfqProject
 	
 	Public Property InputDir() As String
 		Get
-			InputDir = pInputDir
+            Return pInputDir
 		End Get
 		Set(ByVal Value As String)
 			pInputDir = Value
@@ -202,7 +202,7 @@ Friend Class pfqProject
 	
 	Public Property OutputDir() As String
 		Get
-			OutputDir = pOutputDir
+            Return pOutputDir
 		End Get
 		Set(ByVal Value As String)
 			pOutputDir = Value
@@ -211,7 +211,7 @@ Friend Class pfqProject
 	
 	Public Property EMA() As Boolean
 		Get
-			EMA = pEMA
+            Return pEMA
 		End Get
 		Set(ByVal Value As Boolean)
 			pEMA = Value
@@ -220,7 +220,7 @@ Friend Class pfqProject
 	
 	Public Property CDataFile() As String
 		Get
-			CDataFile = pCDataFile
+            Return pCDataFile
 		End Get
 		Set(ByVal Value As String)
 			pCDataFile = Value
@@ -229,7 +229,7 @@ Friend Class pfqProject
 	
 	Public Property COutFile() As String
 		Get
-			COutFile = pCOutFile
+            Return pCOutFile
 		End Get
 		Set(ByVal Value As String)
 			pCOutFile = Value
@@ -238,7 +238,7 @@ Friend Class pfqProject
 	
 	Public Property CPlotStyle() As String
 		Get
-			CPlotStyle = pCPlotStyle
+            Return pCPlotStyle
 		End Get
 		Set(ByVal Value As String)
 			pCPlotStyle = Value
@@ -247,7 +247,7 @@ Friend Class pfqProject
 	
 	Public Property CPlotFormat() As String
 		Get
-			CPlotFormat = pCPlotFormat
+            Return pCPlotFormat
 		End Get
 		Set(ByVal Value As String)
 			pCPlotFormat = Value
@@ -256,7 +256,7 @@ Friend Class pfqProject
 	
 	Public Property CPrintPlotPos() As String
 		Get
-			CPrintPlotPos = pCPrintPlotPos
+            Return pCPrintPlotPos
 		End Get
 		Set(ByVal Value As String)
 			pCPrintPlotPos = Value
@@ -265,7 +265,7 @@ Friend Class pfqProject
 	
 	Public Property CPlotPos() As String
 		Get
-			CPlotPos = pCPlotPos
+            Return pCPlotPos
 		End Get
 		Set(ByVal Value As String)
 			pCPlotPos = Value
@@ -274,7 +274,7 @@ Friend Class pfqProject
 	
 	Public Property CAdditional() As String
 		Get
-			CAdditional = pCAdditional
+            Return pCAdditional
 		End Get
 		Set(ByVal Value As String)
 			pCAdditional = Value
@@ -283,7 +283,7 @@ Friend Class pfqProject
 	
 	Public Property CIntermediate() As String
 		Get
-			CIntermediate = pCIntermediate
+            Return pCIntermediate
 		End Get
 		Set(ByVal Value As String)
 			pCIntermediate = Value
@@ -292,7 +292,7 @@ Friend Class pfqProject
 	
 	Public Property CConfidenceLimits() As String
 		Get
-			CConfidenceLimits = pCConfidenceLimits
+            Return pCConfidenceLimits
 		End Get
 		Set(ByVal Value As String)
 			pCConfidenceLimits = Value
@@ -301,7 +301,7 @@ Friend Class pfqProject
 	
 	Public Property CEMA() As String
 		Get
-			CEMA = pCEMA
+            Return pCEMA
 		End Get
 		Set(ByVal Value As String)
 			pCEMA = Value
@@ -489,9 +489,7 @@ Friend Class pfqProject
 		
 		Dim i As Integer
 		Dim s As String
-		Dim vSta As Object
-		Dim defsta As New pfqStation
-		
+
 		s = ""
 		If DefPrj Is Nothing Then 'no default specs, write out verbose
 			s = "Verbose" & vbCrLf
@@ -542,23 +540,17 @@ Friend Class pfqProject
 		If pEMA Then
 			s = s & "O EMA YES" & vbCrLf
 		End If
-		i = 0
-		For	Each vSta In pStations
-			i = i + 1
-			'UPGRADE_WARNING: Couldn't resolve default property of object vSta.Active. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If vSta.Active Then 'write station specs to string
-				If DefPrj Is Nothing Then 'write out all station specs
-					'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsVerbose. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					s = s & vSta.WriteSpecsVerbose
-				Else 'only write out non-default station specs
-					defsta = DefPrj.Stations(i)
-					'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsNonDefault. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					s = s & vSta.WriteSpecsNonDefault(defsta)
-					'UPGRADE_NOTE: Object defsta may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-					defsta = Nothing
-				End If
-			End If
-		Next vSta
+        i = -1
+        For Each lStation As pfqStation In pStations
+            i += 1
+            If lStation.Active Then 'write station specs to string
+                If DefPrj Is Nothing Then 'write out all station specs
+                    s &= lStation.WriteSpecsVerbose
+                Else 'only write out non-default station specs
+                    s &= lStation.WriteSpecsNonDefault(lStation)
+                End If
+            End If
+        Next
 		SaveAsString = s
 		
 	End Function
