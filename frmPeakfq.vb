@@ -64,83 +64,58 @@ Friend Class frmPeakfq
 	Private Sub PopulateGrid()
 		
 		Dim ipos, j, i, ilen, Ind As Integer
-        Dim lStation As Object
 
         With grdSpecs
             .Rows = 0
             i = 0
-            For Each lStation In PfqPrj.Stations
+            For Each lStation As pfqStation In PfqPrj.Stations
                 i = i + 1
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.id. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 0, lStation.id)
                 .col = 0
                 .row = i
                 .CellBackColor = grdSpecs.BackColorFixed
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.Active. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If lStation.Active Then
                     .set_TextMatrix(i, 1, "Yes")
                 Else
                     .set_TextMatrix(i, 1, "No")
                 End If
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.BegYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 2, lStation.BegYear)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.EndYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 3, lStation.EndYear)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.HistoricPeriod. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 4, lStation.HistoricPeriod)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.SkewOpt. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If lStation.SkewOpt = -1 Then
                     .set_TextMatrix(i, 5, "Station")
-                    'UPGRADE_WARNING: Couldn't resolve default property of object vSta.SkewOpt. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ElseIf lStation.SkewOpt = 0 Then
                     .set_TextMatrix(i, 5, "Weighted")
-                    'UPGRADE_WARNING: Couldn't resolve default property of object vSta.SkewOpt. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ElseIf lStation.SkewOpt = 1 Then
                     .set_TextMatrix(i, 5, "Generalized")
                 End If
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.GenSkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 6, lStation.GenSkew)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.SESkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 7, lStation.SESkew)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.SESkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 8, lStation.SESkew ^ 2)
                 .CellBackColor = .BackColorFixed
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.LowHistPeak. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 9, lStation.LowHistPeak)
                 .CellBackColor = .BackColorFixed
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.LowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 10, lStation.LowOutlier)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.HighSysPeak. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 11, lStation.HighSysPeak)
                 .CellBackColor = .BackColorFixed
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.HighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 12, lStation.HighOutlier)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.GageBaseDischarge. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 13, lStation.GageBaseDischarge)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 If lStation.UrbanRegPeaks Then
                     .set_TextMatrix(i, 14, "Yes")
                 Else
                     .set_TextMatrix(i, 14, "No")
                 End If
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.Lat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 15, lStation.Lat)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.Lng. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 16, lStation.Lng)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 .set_TextMatrix(i, 17, lStation.PlotName)
-                'UPGRADE_WARNING: Couldn't resolve default property of object vSta.PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                 ilen = Len(lStation.PlotName)
                 For j = i - 1 To 1 Step -1 'look for duplicate plot names and adjust as needed
-                    'UPGRADE_WARNING: Couldn't resolve default property of object vSta.PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     If VB.Left(.get_TextMatrix(j, 17), ilen) = lStation.PlotName Then 'duplicate found
                         ipos = InStr(.get_TextMatrix(j, 17), "-")
                         If ipos > 0 Then 'not first duplicate, increase index number
                             Ind = CInt(Mid(.get_TextMatrix(j, 17), ipos + 1))
-                            'UPGRADE_WARNING: Couldn't resolve default property of object vSta.PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             .set_TextMatrix(i, 17, lStation.PlotName & "-" & CStr(Ind + 1))
                         Else 'first duplicate
-                            'UPGRADE_WARNING: Couldn't resolve default property of object vSta.PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             .set_TextMatrix(i, 17, lStation.PlotName & "-1")
                         End If
                     End If

@@ -98,7 +98,6 @@
       <DependentUpon>frmGraph.vb</DependentUpon>
     </Compile>
     <Compile Include="frmGraph.vb">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmPeakfq.Designer.vb">
       <SubType>Code</SubType>
