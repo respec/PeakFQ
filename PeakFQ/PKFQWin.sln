@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Basic Express 2008
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "PKFQWin", "PKFQWin.vbproj", "{4E056C9F-0E8D-4D5D-AEDF-2617521FA006}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "atcUtility", "..\BASINS40\atcUtility\atcUtility.vbproj", "{67027820-9036-481E-80F6-077E5085F59D}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BASINS-MapWinUtility", "..\MapWindow4Plugins\MapWinUtility\BASINS-MapWinUtility.vbproj", "{3C991AE4-9EDB-4C24-BAF3-42F7303D7DF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E056C9F-0E8D-4D5D-AEDF-2617521FA006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E056C9F-0E8D-4D5D-AEDF-2617521FA006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E056C9F-0E8D-4D5D-AEDF-2617521FA006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E056C9F-0E8D-4D5D-AEDF-2617521FA006}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67027820-9036-481E-80F6-077E5085F59D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67027820-9036-481E-80F6-077E5085F59D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67027820-9036-481E-80F6-077E5085F59D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67027820-9036-481E-80F6-077E5085F59D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C991AE4-9EDB-4C24-BAF3-42F7303D7DF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C991AE4-9EDB-4C24-BAF3-42F7303D7DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C991AE4-9EDB-4C24-BAF3-42F7303D7DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C991AE4-9EDB-4C24-BAF3-42F7303D7DF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
