@@ -11,7 +11,7 @@ Friend Class pfqProject
 	Private pSpecFileName As String
 	Private pDataFileName As String
 	Private pDataType As Integer '0 - ASCII(Watstore), 1 - WDM
-	Private pStations As FColl.FastCollection 'of class pfqStation
+    Private pStations As Generic.List(Of pfqStation)
 	Private pOutFile As String
 	Private pAdditionalOutput As Integer
 	Private pAddOutFileName As String
@@ -94,15 +94,15 @@ Friend Class pfqProject
 		End Set
 	End Property
 	
-	Public Property Stations() As FColl.FastCollection
-		Get
-			If pStations Is Nothing Then pStations = New FColl.FastCollection
-			Stations = pStations
-		End Get
-		Set(ByVal Value As FColl.FastCollection)
-			pStations = Value
-		End Set
-	End Property
+    Public Property Stations() As Generic.List(Of pfqStation)
+        Get
+            If pStations Is Nothing Then pStations = New Generic.List(Of pfqStation)
+            Stations = pStations
+        End Get
+        Set(ByVal Value As Generic.List(Of pfqStation))
+            pStations = Value
+        End Set
+    End Property
 	
 	Public Property OutFile() As String
 		Get
@@ -323,7 +323,7 @@ Friend Class pfqProject
         Dim lInterval As pfqStation.IntervalType = Nothing
 		
 		CommentPending = False
-		pStations = New FColl.FastCollection
+        pStations = New Generic.List(Of pfqStation)
 		SpecFile = WholeFileString(pSpecFileName)
 		
 		While Len(SpecFile) > 0
@@ -956,7 +956,7 @@ Friend Class pfqProject
 		pPFQExeFileName = ""
 		pSpecFileName = ""
 		pDataFileName = ""
-		pStations = New FColl.FastCollection
+        pStations = New Generic.List(Of pfqStation)
 		pAdditionalOutput = 0
 		pIntermediateResults = False
 		pLinePrinter = False

@@ -37,8 +37,8 @@ Friend Class pfqStation
     Private pLng As Single
     Private pPlotName As String
     Private pPlotMade As Boolean
-    Private pThresholds As FColl.FastCollection 'of type ThresholdType
-    Private pIntervals As FColl.FastCollection 'of type IntervalType
+    Private pThresholds As Generic.List(Of ThresholdType)
+    Private pIntervals As Generic.List(Of IntervalType)
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCGenSkew As String
@@ -356,22 +356,22 @@ Friend Class pfqStation
         End Set
     End Property
 
-    Public Property Thresholds() As FColl.FastCollection
+    Public Property Thresholds() As Generic.List(Of pfqStation.ThresholdType)
         Get
-            If pThresholds Is Nothing Then pThresholds = New FColl.FastCollection
+            If pThresholds Is Nothing Then pThresholds = New Generic.List(Of pfqStation.ThresholdType)
             Thresholds = pThresholds
         End Get
-        Set(ByVal Value As FColl.FastCollection)
+        Set(ByVal Value As Generic.List(Of pfqStation.ThresholdType))
             pThresholds = Value
         End Set
     End Property
 
-    Public Property Intervals() As FColl.FastCollection
+    Public Property Intervals() As Generic.List(Of pfqStation.IntervalType)
         Get
-            If pIntervals Is Nothing Then pIntervals = New FColl.FastCollection
+            If pIntervals Is Nothing Then pIntervals = New Generic.List(Of pfqStation.IntervalType)
             Intervals = pIntervals
         End Get
-        Set(ByVal Value As FColl.FastCollection)
+        Set(ByVal Value As Generic.List(Of pfqStation.IntervalType))
             pIntervals = Value
         End Set
     End Property
@@ -497,8 +497,8 @@ Friend Class pfqStation
         SOText(1) = "Weighted"
         SOText(2) = "Generalized"
 
-        pThresholds = New FColl.FastCollection
-        pIntervals = New FColl.FastCollection
+        pThresholds = New Generic.List(Of pfqStation.ThresholdType)
+        pIntervals = New Generic.List(Of pfqStation.IntervalType)
 
     End Sub
     Public Sub New()
