@@ -71,6 +71,7 @@ Friend Class frmPeakfq
 
         Dim ipos, j, i, ilen, Ind As Integer
         Dim vSta As pfqStation = Nothing
+        Dim lName As String
 
         With grdSpecs 'At this point, there should already be one instantiated with header rows
             .Enabled = True
@@ -91,7 +92,13 @@ Friend Class frmPeakfq
                 .CellEditable(.Rows - 1, 0) = False
                 .Alignment(.Rows - 1, 0) = atcAlignment.HAlignRight
                 'add stations to pull-down list on Threshold tab
-                cboStation.Items.Add(vSta.id)
+                lName = vSta.id
+                i = 0
+                While cboStation.Items.Contains(lName)
+                    i += 1
+                    lName = vSta.id & "-" & i
+                End While
+                cboStation.Items.Add(lName)
 
                 If vSta.Active Then
                     .CellValue(.Rows - 1, 1) = "Yes"
@@ -887,6 +894,7 @@ FileCancel:
         Static PreviousTab As Short = sstPfq.SelectedIndex()
         frmPeakfq_Resize(Me, New System.EventArgs())
         PreviousTab = sstPfq.SelectedIndex()
+        sstPfq.SelectedTab.Focus()
     End Sub
 
     Private Sub SetGraphNames()
@@ -969,14 +977,14 @@ FileCancel:
     End Sub
 
     Private Sub cboStation_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cboStation.SelectedIndexChanged
-        If CurStationIndex > 0 Then 'process threshold/interval specs for current station
+        If CurStationIndex >= 0 Then 'process threshold/interval specs for current station
             ProcessThresholds()
         End If
         'update current station for threshold/interval specifying
-        CurStationIndex = cboStation.SelectedIndex + 1
-        Dim lStn As pfqStation = PfqPrj.Stations.ItemByIndex(CurStationIndex)
-        Dim lThrColl As FColl.FastCollection = lStn.Thresholds
-        Dim lIntColl As FColl.FastCollection = lStn.Intervals
+        CurStationIndex = cboStation.SelectedIndex '+ 1
+        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
+        Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = lStn.Thresholds
+        Dim lIntColl As Generic.List(Of pfqStation.IntervalType) = lStn.Intervals
 
         With grdThresh.Source
             .ColorCells = True
@@ -1000,8 +1008,12 @@ FileCancel:
                 Next
             Else 'add one blank row
                 .Rows += 1
+                For i As Integer = 0 To 3
+                    .CellEditable(.Rows - 1, i) = True
+                Next
             End If
         End With
+        grdThresh.Visible = True
         With grdInterval.Source
             .ColorCells = True
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
@@ -1021,21 +1033,27 @@ FileCancel:
                 Next
             Else 'add one blank row
                 .Rows += 1
+                For i As Integer = 0 To 2
+                    .CellEditable(.Rows - 1, i) = True
+                Next
             End If
         End With
+        grdInterval.Visible = True
     End Sub
 
     Private Sub ProcessThresholds()
-        Dim lThrColl As FColl.FastCollection = Nothing
-        Dim lIntColl As FColl.FastCollection = Nothing
-        Dim lThresh As pfqStation.ThresholdType
-        Dim lInterval As pfqStation.IntervalType
+        Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = Nothing
+        Dim lIntColl As Generic.List(Of pfqStation.IntervalType) = Nothing
+        'Dim lThresh As pfqStation.ThresholdType
+        'Dim lInterval As pfqStation.IntervalType
         Dim i As Integer
 
         With grdThresh.Source
+            lThrColl = New Generic.List(Of pfqStation.ThresholdType)
             For i = .FixedRows To .Rows - 1
                 If IsNumeric(.CellValue(i, 0)) AndAlso IsNumeric(.CellValue(i, 1)) AndAlso _
                    IsNumeric(.CellValue(i, 2)) AndAlso IsNumeric(.CellValue(i, 3)) Then
+                    Dim lThresh As New pfqStation.ThresholdType
                     lThresh.SYear = CInt(.CellValue(i, 0))
                     lThresh.EYear = CInt(.CellValue(i, 1))
                     lThresh.LowerLimit = CSng(.CellValue(i, 2))
@@ -1045,9 +1063,11 @@ FileCancel:
             Next
         End With
         With grdInterval.Source
+            lIntColl = New Generic.List(Of pfqStation.IntervalType)
             For i = .FixedRows To .Rows - 1
                 If IsNumeric(.CellValue(i, 0)) AndAlso IsNumeric(.CellValue(i, 1)) AndAlso _
                    IsNumeric(.CellValue(i, 2)) Then
+                    Dim lInterval As New pfqStation.IntervalType
                     lInterval.Year = CInt(.CellValue(i, 0))
                     lInterval.LowerLimit = CSng(.CellValue(i, 1))
                     lInterval.UpperLimit = CSng(.CellValue(i, 2))
@@ -1055,25 +1075,25 @@ FileCancel:
                 End If
             Next
         End With
-        Dim lStn As pfqStation = PfqPrj.Stations.ItemByIndex(CurStationIndex)
-        If Not lThrColl Is Nothing Then lStn.Thresholds = lThrColl
-        If Not lIntColl Is Nothing Then lStn.Intervals = lIntColl
+        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
+        lStn.Thresholds = lThrColl
+        lStn.Intervals = lIntColl
     End Sub
 
-    Private Sub _sstPfq_TabPage1_GotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles _sstPfq_TabPage1.GotFocus
+    Private Sub tabThresholds_GotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles tabThresholds.GotFocus
         With grdThresh 'At this point, there should already be one instantiated with header rows
             .Enabled = True
             .BackColor = SystemColors.Control
             .AllowHorizontalScrolling = False
             .Visible = True
-            .SizeAllColumnsToContents()
+            .SizeAllColumnsToContents(.Width, True)
         End With
         With grdInterval 'At this point, there should already be one instantiated with header rows
             .Enabled = True
             .BackColor = SystemColors.Control
             .AllowHorizontalScrolling = False
             .Visible = True
-            .SizeAllColumnsToContents()
+            .SizeAllColumnsToContents(.Width, True)
         End With
 
     End Sub

@@ -30,30 +30,30 @@
 	Public WithEvents cmdSave As System.Windows.Forms.Button
 	Public WithEvents cmdExit As System.Windows.Forms.Button
 	Public WithEvents fraButtons As System.Windows.Forms.Panel
-    Public WithEvents _sstPfq_TabPage0 As System.Windows.Forms.TabPage
-	Public WithEvents _cmdOpenOut_0 As System.Windows.Forms.Button
-	Public WithEvents _lblOutFile_0 As System.Windows.Forms.Label
-	Public WithEvents fraOutFile As System.Windows.Forms.GroupBox
-	Public WithEvents _optAddFormat_1 As System.Windows.Forms.RadioButton
-	Public WithEvents _optAddFormat_0 As System.Windows.Forms.RadioButton
-	Public WithEvents _chkAddOut_0 As System.Windows.Forms.CheckBox
-	Public WithEvents _chkAddOut_1 As System.Windows.Forms.CheckBox
-	Public WithEvents _cmdOpenOut_1 As System.Windows.Forms.Button
-	Public WithEvents _lblOutFile_1 As System.Windows.Forms.Label
-	Public WithEvents fraAddOut As System.Windows.Forms.GroupBox
-	Public WithEvents _optGraphFormat_4 As System.Windows.Forms.RadioButton
-	Public WithEvents _optGraphFormat_3 As System.Windows.Forms.RadioButton
-	Public WithEvents _optGraphFormat_2 As System.Windows.Forms.RadioButton
-	Public WithEvents _optGraphFormat_1 As System.Windows.Forms.RadioButton
-	Public WithEvents _optGraphFormat_0 As System.Windows.Forms.RadioButton
-	Public WithEvents chkPlotPos As System.Windows.Forms.CheckBox
-	Public WithEvents chkLinePrinter As System.Windows.Forms.CheckBox
-	Public WithEvents chkIntRes As System.Windows.Forms.CheckBox
+    Public WithEvents tabStationSpecs As System.Windows.Forms.TabPage
+    Public WithEvents _cmdOpenOut_0 As System.Windows.Forms.Button
+    Public WithEvents _lblOutFile_0 As System.Windows.Forms.Label
+    Public WithEvents fraOutFile As System.Windows.Forms.GroupBox
+    Public WithEvents _optAddFormat_1 As System.Windows.Forms.RadioButton
+    Public WithEvents _optAddFormat_0 As System.Windows.Forms.RadioButton
+    Public WithEvents _chkAddOut_0 As System.Windows.Forms.CheckBox
+    Public WithEvents _chkAddOut_1 As System.Windows.Forms.CheckBox
+    Public WithEvents _cmdOpenOut_1 As System.Windows.Forms.Button
+    Public WithEvents _lblOutFile_1 As System.Windows.Forms.Label
+    Public WithEvents fraAddOut As System.Windows.Forms.GroupBox
+    Public WithEvents _optGraphFormat_4 As System.Windows.Forms.RadioButton
+    Public WithEvents _optGraphFormat_3 As System.Windows.Forms.RadioButton
+    Public WithEvents _optGraphFormat_2 As System.Windows.Forms.RadioButton
+    Public WithEvents _optGraphFormat_1 As System.Windows.Forms.RadioButton
+    Public WithEvents _optGraphFormat_0 As System.Windows.Forms.RadioButton
+    Public WithEvents chkPlotPos As System.Windows.Forms.CheckBox
+    Public WithEvents chkLinePrinter As System.Windows.Forms.CheckBox
+    Public WithEvents chkIntRes As System.Windows.Forms.CheckBox
     Public WithEvents lblGraphics As System.Windows.Forms.Label
-	Public WithEvents lblPlotPos As System.Windows.Forms.Label
-	Public WithEvents lblCL As System.Windows.Forms.Label
-	Public WithEvents fraOutRight As System.Windows.Forms.Panel
-    Public WithEvents _sstPfq_TabPage2 As System.Windows.Forms.TabPage
+    Public WithEvents lblPlotPos As System.Windows.Forms.Label
+    Public WithEvents lblCL As System.Windows.Forms.Label
+    Public WithEvents fraOutRight As System.Windows.Forms.Panel
+    Public WithEvents tabOutput As System.Windows.Forms.TabPage
     Public WithEvents _cmdOutFileView_1 As System.Windows.Forms.Button
     Public WithEvents _lblOutFileView_1 As System.Windows.Forms.Label
     Public WithEvents _fraOutFileRes_1 As System.Windows.Forms.GroupBox
@@ -63,7 +63,7 @@
     Public WithEvents _cmdOutFileView_0 As System.Windows.Forms.Button
     Public WithEvents _lblOutFileView_0 As System.Windows.Forms.Label
     Public WithEvents _fraOutFileRes_0 As System.Windows.Forms.GroupBox
-    Public WithEvents _sstPfq_TabPage3 As System.Windows.Forms.TabPage
+    Public WithEvents tabResults As System.Windows.Forms.TabPage
     Public WithEvents sstPfq As System.Windows.Forms.TabControl
     Public cdlOpenOpen As System.Windows.Forms.OpenFileDialog
     Public cdlOpenSave As System.Windows.Forms.SaveFileDialog
@@ -103,16 +103,18 @@
         Me.cmdSave = New System.Windows.Forms.Button
         Me.cmdExit = New System.Windows.Forms.Button
         Me.sstPfq = New System.Windows.Forms.TabControl
-        Me._sstPfq_TabPage0 = New System.Windows.Forms.TabPage
+        Me.tabStationSpecs = New System.Windows.Forms.TabPage
         Me.grdSpecs = New atcControls.atcGrid
-        Me._sstPfq_TabPage1 = New System.Windows.Forms.TabPage
+        Me.tabThresholds = New System.Windows.Forms.TabPage
+        Me.lblIntervals = New System.Windows.Forms.Label
+        Me.lblThresholds = New System.Windows.Forms.Label
         Me.cmdAddInt = New System.Windows.Forms.Button
         Me.cmdAddThr = New System.Windows.Forms.Button
         Me.lblStation = New System.Windows.Forms.Label
         Me.cboStation = New System.Windows.Forms.ComboBox
         Me.grdInterval = New atcControls.atcGrid
         Me.grdThresh = New atcControls.atcGrid
-        Me._sstPfq_TabPage2 = New System.Windows.Forms.TabPage
+        Me.tabOutput = New System.Windows.Forms.TabPage
         Me.fraOutFile = New System.Windows.Forms.GroupBox
         Me._cmdOpenOut_0 = New System.Windows.Forms.Button
         Me._lblOutFile_0 = New System.Windows.Forms.Label
@@ -137,7 +139,7 @@
         Me.lblGraphics = New System.Windows.Forms.Label
         Me.lblPlotPos = New System.Windows.Forms.Label
         Me.lblCL = New System.Windows.Forms.Label
-        Me._sstPfq_TabPage3 = New System.Windows.Forms.TabPage
+        Me.tabResults = New System.Windows.Forms.TabPage
         Me._fraOutFileRes_1 = New System.Windows.Forms.GroupBox
         Me._cmdOutFileView_1 = New System.Windows.Forms.Button
         Me._lblOutFileView_1 = New System.Windows.Forms.Label
@@ -163,13 +165,13 @@
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
-        Me._sstPfq_TabPage0.SuspendLayout()
-        Me._sstPfq_TabPage1.SuspendLayout()
-        Me._sstPfq_TabPage2.SuspendLayout()
+        Me.tabStationSpecs.SuspendLayout()
+        Me.tabThresholds.SuspendLayout()
+        Me.tabOutput.SuspendLayout()
         Me.fraOutFile.SuspendLayout()
         Me.fraAddOut.SuspendLayout()
         Me.fraOutRight.SuspendLayout()
-        Me._sstPfq_TabPage3.SuspendLayout()
+        Me.tabResults.SuspendLayout()
         Me._fraOutFileRes_1.SuspendLayout()
         Me.fraGraphics.SuspendLayout()
         Me._fraOutFileRes_0.SuspendLayout()
@@ -301,10 +303,10 @@
         '
         'sstPfq
         '
-        Me.sstPfq.Controls.Add(Me._sstPfq_TabPage0)
-        Me.sstPfq.Controls.Add(Me._sstPfq_TabPage1)
-        Me.sstPfq.Controls.Add(Me._sstPfq_TabPage2)
-        Me.sstPfq.Controls.Add(Me._sstPfq_TabPage3)
+        Me.sstPfq.Controls.Add(Me.tabStationSpecs)
+        Me.sstPfq.Controls.Add(Me.tabThresholds)
+        Me.sstPfq.Controls.Add(Me.tabOutput)
+        Me.sstPfq.Controls.Add(Me.tabResults)
         Me.sstPfq.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.sstPfq.ItemSize = New System.Drawing.Size(42, 18)
         Me.sstPfq.Location = New System.Drawing.Point(8, 88)
@@ -313,15 +315,15 @@
         Me.sstPfq.Size = New System.Drawing.Size(737, 249)
         Me.sstPfq.TabIndex = 0
         '
-        '_sstPfq_TabPage0
+        'tabStationSpecs
         '
-        Me._sstPfq_TabPage0.Controls.Add(Me.grdSpecs)
-        Me._sstPfq_TabPage0.Location = New System.Drawing.Point(4, 22)
-        Me._sstPfq_TabPage0.Name = "_sstPfq_TabPage0"
-        Me._sstPfq_TabPage0.Size = New System.Drawing.Size(729, 223)
-        Me._sstPfq_TabPage0.TabIndex = 0
-        Me._sstPfq_TabPage0.Text = "Station Specifications"
-        Me._sstPfq_TabPage0.UseVisualStyleBackColor = True
+        Me.tabStationSpecs.Controls.Add(Me.grdSpecs)
+        Me.tabStationSpecs.Location = New System.Drawing.Point(4, 22)
+        Me.tabStationSpecs.Name = "tabStationSpecs"
+        Me.tabStationSpecs.Size = New System.Drawing.Size(729, 223)
+        Me.tabStationSpecs.TabIndex = 0
+        Me.tabStationSpecs.Text = "Station Specifications"
+        Me.tabStationSpecs.UseVisualStyleBackColor = True
         '
         'grdSpecs
         '
@@ -337,25 +339,46 @@
         Me.grdSpecs.Source = Nothing
         Me.grdSpecs.TabIndex = 2
         '
-        '_sstPfq_TabPage1
+        'tabThresholds
         '
-        Me._sstPfq_TabPage1.Controls.Add(Me.cmdAddInt)
-        Me._sstPfq_TabPage1.Controls.Add(Me.cmdAddThr)
-        Me._sstPfq_TabPage1.Controls.Add(Me.lblStation)
-        Me._sstPfq_TabPage1.Controls.Add(Me.cboStation)
-        Me._sstPfq_TabPage1.Controls.Add(Me.grdInterval)
-        Me._sstPfq_TabPage1.Controls.Add(Me.grdThresh)
-        Me._sstPfq_TabPage1.Location = New System.Drawing.Point(4, 22)
-        Me._sstPfq_TabPage1.Name = "_sstPfq_TabPage1"
-        Me._sstPfq_TabPage1.Padding = New System.Windows.Forms.Padding(3)
-        Me._sstPfq_TabPage1.Size = New System.Drawing.Size(729, 223)
-        Me._sstPfq_TabPage1.TabIndex = 3
-        Me._sstPfq_TabPage1.Text = "Threshholds"
-        Me._sstPfq_TabPage1.UseVisualStyleBackColor = True
+        Me.tabThresholds.Controls.Add(Me.lblIntervals)
+        Me.tabThresholds.Controls.Add(Me.lblThresholds)
+        Me.tabThresholds.Controls.Add(Me.cmdAddInt)
+        Me.tabThresholds.Controls.Add(Me.cmdAddThr)
+        Me.tabThresholds.Controls.Add(Me.lblStation)
+        Me.tabThresholds.Controls.Add(Me.cboStation)
+        Me.tabThresholds.Controls.Add(Me.grdInterval)
+        Me.tabThresholds.Controls.Add(Me.grdThresh)
+        Me.tabThresholds.Location = New System.Drawing.Point(4, 22)
+        Me.tabThresholds.Name = "tabThresholds"
+        Me.tabThresholds.Padding = New System.Windows.Forms.Padding(3)
+        Me.tabThresholds.Size = New System.Drawing.Size(729, 223)
+        Me.tabThresholds.TabIndex = 3
+        Me.tabThresholds.Text = "Threshholds"
+        Me.tabThresholds.UseVisualStyleBackColor = True
+        '
+        'lblIntervals
+        '
+        Me.lblIntervals.AutoSize = True
+        Me.lblIntervals.Location = New System.Drawing.Point(326, 45)
+        Me.lblIntervals.Name = "lblIntervals"
+        Me.lblIntervals.Size = New System.Drawing.Size(48, 14)
+        Me.lblIntervals.TabIndex = 11
+        Me.lblIntervals.Text = "Intervals"
+        '
+        'lblThresholds
+        '
+        Me.lblThresholds.AutoSize = True
+        Me.lblThresholds.Location = New System.Drawing.Point(91, 45)
+        Me.lblThresholds.Name = "lblThresholds"
+        Me.lblThresholds.Size = New System.Drawing.Size(61, 14)
+        Me.lblThresholds.TabIndex = 10
+        Me.lblThresholds.Text = "Thresholds"
         '
         'cmdAddInt
         '
-        Me.cmdAddInt.Location = New System.Drawing.Point(337, 200)
+        Me.cmdAddInt.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.cmdAddInt.Location = New System.Drawing.Point(329, 200)
         Me.cmdAddInt.Name = "cmdAddInt"
         Me.cmdAddInt.Size = New System.Drawing.Size(57, 21)
         Me.cmdAddInt.TabIndex = 9
@@ -364,7 +387,8 @@
         '
         'cmdAddThr
         '
-        Me.cmdAddThr.Location = New System.Drawing.Point(102, 200)
+        Me.cmdAddThr.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.cmdAddThr.Location = New System.Drawing.Point(94, 200)
         Me.cmdAddThr.Name = "cmdAddThr"
         Me.cmdAddThr.Size = New System.Drawing.Size(57, 21)
         Me.cmdAddThr.TabIndex = 7
@@ -396,9 +420,9 @@
         Me.grdInterval.Fixed3D = False
         Me.grdInterval.LineColor = System.Drawing.SystemColors.Control
         Me.grdInterval.LineWidth = 1.0!
-        Me.grdInterval.Location = New System.Drawing.Point(264, 41)
+        Me.grdInterval.Location = New System.Drawing.Point(248, 62)
         Me.grdInterval.Name = "grdInterval"
-        Me.grdInterval.Size = New System.Drawing.Size(200, 153)
+        Me.grdInterval.Size = New System.Drawing.Size(200, 132)
         Me.grdInterval.Source = Nothing
         Me.grdInterval.TabIndex = 4
         '
@@ -410,23 +434,23 @@
         Me.grdThresh.Fixed3D = False
         Me.grdThresh.LineColor = System.Drawing.SystemColors.Control
         Me.grdThresh.LineWidth = 1.0!
-        Me.grdThresh.Location = New System.Drawing.Point(1, 41)
+        Me.grdThresh.Location = New System.Drawing.Point(1, 62)
         Me.grdThresh.Name = "grdThresh"
-        Me.grdThresh.Size = New System.Drawing.Size(257, 153)
+        Me.grdThresh.Size = New System.Drawing.Size(228, 132)
         Me.grdThresh.Source = Nothing
         Me.grdThresh.TabIndex = 3
         '
-        '_sstPfq_TabPage2
+        'tabOutput
         '
-        Me._sstPfq_TabPage2.Controls.Add(Me.fraOutFile)
-        Me._sstPfq_TabPage2.Controls.Add(Me.fraAddOut)
-        Me._sstPfq_TabPage2.Controls.Add(Me.fraOutRight)
-        Me._sstPfq_TabPage2.Location = New System.Drawing.Point(4, 22)
-        Me._sstPfq_TabPage2.Name = "_sstPfq_TabPage2"
-        Me._sstPfq_TabPage2.Size = New System.Drawing.Size(729, 223)
-        Me._sstPfq_TabPage2.TabIndex = 1
-        Me._sstPfq_TabPage2.Text = "Output Options"
-        Me._sstPfq_TabPage2.UseVisualStyleBackColor = True
+        Me.tabOutput.Controls.Add(Me.fraOutFile)
+        Me.tabOutput.Controls.Add(Me.fraAddOut)
+        Me.tabOutput.Controls.Add(Me.fraOutRight)
+        Me.tabOutput.Location = New System.Drawing.Point(4, 22)
+        Me.tabOutput.Name = "tabOutput"
+        Me.tabOutput.Size = New System.Drawing.Size(729, 223)
+        Me.tabOutput.TabIndex = 1
+        Me.tabOutput.Text = "Output Options"
+        Me.tabOutput.UseVisualStyleBackColor = True
         '
         'fraOutFile
         '
@@ -819,17 +843,17 @@
         Me.lblCL.TabIndex = 27
         Me.lblCL.Text = "Confidence Limits:"
         '
-        '_sstPfq_TabPage3
+        'tabResults
         '
-        Me._sstPfq_TabPage3.Controls.Add(Me._fraOutFileRes_1)
-        Me._sstPfq_TabPage3.Controls.Add(Me.fraGraphics)
-        Me._sstPfq_TabPage3.Controls.Add(Me._fraOutFileRes_0)
-        Me._sstPfq_TabPage3.Location = New System.Drawing.Point(4, 22)
-        Me._sstPfq_TabPage3.Name = "_sstPfq_TabPage3"
-        Me._sstPfq_TabPage3.Size = New System.Drawing.Size(729, 223)
-        Me._sstPfq_TabPage3.TabIndex = 2
-        Me._sstPfq_TabPage3.Text = "Results"
-        Me._sstPfq_TabPage3.UseVisualStyleBackColor = True
+        Me.tabResults.Controls.Add(Me._fraOutFileRes_1)
+        Me.tabResults.Controls.Add(Me.fraGraphics)
+        Me.tabResults.Controls.Add(Me._fraOutFileRes_0)
+        Me.tabResults.Location = New System.Drawing.Point(4, 22)
+        Me.tabResults.Name = "tabResults"
+        Me.tabResults.Size = New System.Drawing.Size(729, 223)
+        Me.tabResults.TabIndex = 2
+        Me.tabResults.Text = "Results"
+        Me.tabResults.UseVisualStyleBackColor = True
         '
         '_fraOutFileRes_1
         '
@@ -1037,14 +1061,14 @@
         Me.MainMenu1.PerformLayout()
         Me.fraButtons.ResumeLayout(False)
         Me.sstPfq.ResumeLayout(False)
-        Me._sstPfq_TabPage0.ResumeLayout(False)
-        Me._sstPfq_TabPage1.ResumeLayout(False)
-        Me._sstPfq_TabPage1.PerformLayout()
-        Me._sstPfq_TabPage2.ResumeLayout(False)
+        Me.tabStationSpecs.ResumeLayout(False)
+        Me.tabThresholds.ResumeLayout(False)
+        Me.tabThresholds.PerformLayout()
+        Me.tabOutput.ResumeLayout(False)
         Me.fraOutFile.ResumeLayout(False)
         Me.fraAddOut.ResumeLayout(False)
         Me.fraOutRight.ResumeLayout(False)
-        Me._sstPfq_TabPage3.ResumeLayout(False)
+        Me.tabResults.ResumeLayout(False)
         Me._fraOutFileRes_1.ResumeLayout(False)
         Me.fraGraphics.ResumeLayout(False)
         Me._fraOutFileRes_0.ResumeLayout(False)
@@ -1060,12 +1084,14 @@
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents _sstPfq_TabPage1 As System.Windows.Forms.TabPage
+    Friend WithEvents tabThresholds As System.Windows.Forms.TabPage
     Friend WithEvents grdThresh As atcControls.atcGrid
     Friend WithEvents grdInterval As atcControls.atcGrid
     Friend WithEvents cboStation As System.Windows.Forms.ComboBox
     Friend WithEvents lblStation As System.Windows.Forms.Label
     Friend WithEvents cmdAddInt As System.Windows.Forms.Button
     Friend WithEvents cmdAddThr As System.Windows.Forms.Button
+    Friend WithEvents lblThresholds As System.Windows.Forms.Label
+    Friend WithEvents lblIntervals As System.Windows.Forms.Label
 #End Region
 End Class
