@@ -2,6 +2,8 @@ Option Strict Off
 Option Explicit On
 
 Imports atcUtility
+Imports MapWinUtility
+
 
 Friend Class pfqProject
 	
@@ -9,7 +11,7 @@ Friend Class pfqProject
 	Private pSpecFileName As String
 	Private pDataFileName As String
 	Private pDataType As Integer '0 - ASCII(Watstore), 1 - WDM
-    Private pStations As Generic.List(Of pfqStation)
+	Private pStations As FColl.FastCollection 'of class pfqStation
 	Private pOutFile As String
 	Private pAdditionalOutput As Integer
 	Private pAddOutFileName As String
@@ -39,7 +41,7 @@ Friend Class pfqProject
 	
 	Public Property PFQExeFileName() As String
 		Get
-            Return pPFQExeFileName
+			PFQExeFileName = pPFQExeFileName
 		End Get
 		Set(ByVal Value As String)
 			pPFQExeFileName = Value
@@ -48,11 +50,12 @@ Friend Class pfqProject
 	
 	Public Property SpecFileName() As String
 		Get
-            Return pSpecFileName
+			SpecFileName = pSpecFileName
 		End Get
 		Set(ByVal Value As String)
-            Dim s As String
-
+			Dim LastFile, s, CurFile As String
+			Dim FileIsStatic As Boolean
+			
 			pSpecFileName = Value
 			'  ReadSpecFile
 			'  If pStations.Count = 0 Then 'may be defaulted to do all stations
@@ -75,7 +78,7 @@ Friend Class pfqProject
 	
 	Public Property DataFileName() As String
 		Get
-            Return pDataFileName
+			DataFileName = pDataFileName
 		End Get
 		Set(ByVal Value As String)
 			pDataFileName = Value
@@ -84,26 +87,26 @@ Friend Class pfqProject
 	
 	Public Property DataType() As Integer
 		Get
-            Return pDataType
+			DataType = pDataType
 		End Get
 		Set(ByVal Value As Integer)
 			pDataType = Value
 		End Set
 	End Property
 	
-    Public Property Stations() As Generic.List(Of pfqStation)
-        Get
-            If pStations Is Nothing Then pStations = New Generic.List(Of pfqStation)
-            Return pStations
-        End Get
-        Set(ByVal Value As Generic.List(Of pfqStation))
-            pStations = Value
-        End Set
-    End Property
+	Public Property Stations() As FColl.FastCollection
+		Get
+			If pStations Is Nothing Then pStations = New FColl.FastCollection
+			Stations = pStations
+		End Get
+		Set(ByVal Value As FColl.FastCollection)
+			pStations = Value
+		End Set
+	End Property
 	
 	Public Property OutFile() As String
 		Get
-            Return pOutFile
+			OutFile = pOutFile
 		End Get
 		Set(ByVal Value As String)
 			pOutFile = Value
@@ -112,7 +115,7 @@ Friend Class pfqProject
 	
 	Public Property AdditionalOutput() As Integer
 		Get
-            Return pAdditionalOutput
+			AdditionalOutput = pAdditionalOutput
 		End Get
 		Set(ByVal Value As Integer)
 			pAdditionalOutput = Value
@@ -121,7 +124,7 @@ Friend Class pfqProject
 	
 	Public Property AddOutFileName() As String
 		Get
-            Return pAddOutFileName
+			AddOutFileName = pAddOutFileName
 		End Get
 		Set(ByVal Value As String)
 			pAddOutFileName = Value
@@ -130,7 +133,7 @@ Friend Class pfqProject
 	
 	Public Property IntermediateResults() As Boolean
 		Get
-            Return pIntermediateResults
+			IntermediateResults = pIntermediateResults
 		End Get
 		Set(ByVal Value As Boolean)
 			pIntermediateResults = Value
@@ -139,7 +142,7 @@ Friend Class pfqProject
 	
 	Public Property ConfidenceLimits() As Single
 		Get
-            Return pConfidenceLimits
+			ConfidenceLimits = pConfidenceLimits
 		End Get
 		Set(ByVal Value As Single)
 			pConfidenceLimits = Value
@@ -148,7 +151,7 @@ Friend Class pfqProject
 	
 	Public Property LinePrinter() As Boolean
 		Get
-            Return pLinePrinter
+			LinePrinter = pLinePrinter
 		End Get
 		Set(ByVal Value As Boolean)
 			pLinePrinter = Value
@@ -157,7 +160,7 @@ Friend Class pfqProject
 	
 	Public Property Graphic() As Boolean
 		Get
-            Return pGraphic
+			Graphic = pGraphic
 		End Get
 		Set(ByVal Value As Boolean)
 			pGraphic = Value
@@ -166,7 +169,7 @@ Friend Class pfqProject
 	
 	Public Property GraphFormat() As String
 		Get
-            Return pGraphFormat
+			GraphFormat = pGraphFormat
 		End Get
 		Set(ByVal Value As String)
 			pGraphFormat = Value
@@ -175,7 +178,7 @@ Friend Class pfqProject
 	
 	Public Property PlotPos() As Single
 		Get
-            Return pPlotPos
+			PlotPos = pPlotPos
 		End Get
 		Set(ByVal Value As Single)
 			pPlotPos = Value
@@ -184,7 +187,7 @@ Friend Class pfqProject
 	
 	Public Property PrintPlotPos() As Boolean
 		Get
-            Return pPrintPlotPos
+			PrintPlotPos = pPrintPlotPos
 		End Get
 		Set(ByVal Value As Boolean)
 			pPrintPlotPos = Value
@@ -193,7 +196,7 @@ Friend Class pfqProject
 	
 	Public Property InputDir() As String
 		Get
-            Return pInputDir
+			InputDir = pInputDir
 		End Get
 		Set(ByVal Value As String)
 			pInputDir = Value
@@ -202,7 +205,7 @@ Friend Class pfqProject
 	
 	Public Property OutputDir() As String
 		Get
-            Return pOutputDir
+			OutputDir = pOutputDir
 		End Get
 		Set(ByVal Value As String)
 			pOutputDir = Value
@@ -211,7 +214,7 @@ Friend Class pfqProject
 	
 	Public Property EMA() As Boolean
 		Get
-            Return pEMA
+			EMA = pEMA
 		End Get
 		Set(ByVal Value As Boolean)
 			pEMA = Value
@@ -220,7 +223,7 @@ Friend Class pfqProject
 	
 	Public Property CDataFile() As String
 		Get
-            Return pCDataFile
+			CDataFile = pCDataFile
 		End Get
 		Set(ByVal Value As String)
 			pCDataFile = Value
@@ -229,7 +232,7 @@ Friend Class pfqProject
 	
 	Public Property COutFile() As String
 		Get
-            Return pCOutFile
+			COutFile = pCOutFile
 		End Get
 		Set(ByVal Value As String)
 			pCOutFile = Value
@@ -238,7 +241,7 @@ Friend Class pfqProject
 	
 	Public Property CPlotStyle() As String
 		Get
-            Return pCPlotStyle
+			CPlotStyle = pCPlotStyle
 		End Get
 		Set(ByVal Value As String)
 			pCPlotStyle = Value
@@ -247,7 +250,7 @@ Friend Class pfqProject
 	
 	Public Property CPlotFormat() As String
 		Get
-            Return pCPlotFormat
+			CPlotFormat = pCPlotFormat
 		End Get
 		Set(ByVal Value As String)
 			pCPlotFormat = Value
@@ -256,7 +259,7 @@ Friend Class pfqProject
 	
 	Public Property CPrintPlotPos() As String
 		Get
-            Return pCPrintPlotPos
+			CPrintPlotPos = pCPrintPlotPos
 		End Get
 		Set(ByVal Value As String)
 			pCPrintPlotPos = Value
@@ -265,7 +268,7 @@ Friend Class pfqProject
 	
 	Public Property CPlotPos() As String
 		Get
-            Return pCPlotPos
+			CPlotPos = pCPlotPos
 		End Get
 		Set(ByVal Value As String)
 			pCPlotPos = Value
@@ -274,7 +277,7 @@ Friend Class pfqProject
 	
 	Public Property CAdditional() As String
 		Get
-            Return pCAdditional
+			CAdditional = pCAdditional
 		End Get
 		Set(ByVal Value As String)
 			pCAdditional = Value
@@ -283,7 +286,7 @@ Friend Class pfqProject
 	
 	Public Property CIntermediate() As String
 		Get
-            Return pCIntermediate
+			CIntermediate = pCIntermediate
 		End Get
 		Set(ByVal Value As String)
 			pCIntermediate = Value
@@ -292,7 +295,7 @@ Friend Class pfqProject
 	
 	Public Property CConfidenceLimits() As String
 		Get
-            Return pCConfidenceLimits
+			CConfidenceLimits = pCConfidenceLimits
 		End Get
 		Set(ByVal Value As String)
 			pCConfidenceLimits = Value
@@ -301,7 +304,7 @@ Friend Class pfqProject
 	
 	Public Property CEMA() As String
 		Get
-            Return pCEMA
+			CEMA = pCEMA
 		End Get
 		Set(ByVal Value As String)
 			pCEMA = Value
@@ -316,16 +319,18 @@ Friend Class pfqProject
         Dim lCom As String = ""
 		Dim CommentPending As Boolean
         Dim CurStation As pfqStation = Nothing
+        Dim lThresh As pfqStation.ThresholdType = Nothing
+        Dim lInterval As pfqStation.IntervalType = Nothing
 		
 		CommentPending = False
-        pStations = New Generic.List(Of pfqStation)
+		pStations = New FColl.FastCollection
 		SpecFile = WholeFileString(pSpecFileName)
 		
 		While Len(SpecFile) > 0
 			Rec = StrSplit(SpecFile, vbCrLf, "")
 			If Left(Rec, 1) = "'" Then 'process comment
 				If CommentPending Then 'multiple line comment
-                    lCom &= vbCrLf & Rec
+					lCom = lCom & vbCrLf & Rec
 				Else 'new comment
 					lCom = Rec
 					CommentPending = True
@@ -437,11 +442,11 @@ Friend Class pfqProject
 						If CommentPending Then CurStation.CHistoric = lCom
 					Case "SKEWOPT"
 						If UCase(Rec) = "STATION" Then
-							CurStation.SkewOpt = -1
+                            CurStation.SkewOpt = 0
 						ElseIf UCase(Rec) = "WEIGHTED" Then 
-							CurStation.SkewOpt = 0
+                            CurStation.SkewOpt = 1
 						ElseIf UCase(Rec) = "GENERALIZED" Then 
-							CurStation.SkewOpt = 1
+                            CurStation.SkewOpt = 2
 						End If
 						If CommentPending Then CurStation.CSkewOpt = lCom
 					Case "URB/REG"
@@ -472,8 +477,21 @@ Friend Class pfqProject
 						CurStation.LowHistPeak = CSng(Rec)
 					Case "PLOTNAME"
 						CurStation.PlotName = Rec
-						If CommentPending Then CurStation.CPlotName = lCom
-				End Select
+                        If CommentPending Then CurStation.CPlotName = lCom
+                    Case "PCPT_THRESH"
+                        lThresh = New pfqStation.ThresholdType
+                        lThresh.SYear = CSng(StrRetRem(Rec))
+                        lThresh.EYear = CSng(StrRetRem(Rec))
+                        lThresh.LowerLimit = CSng(StrRetRem(Rec))
+                        lThresh.UpperLimit = CSng(StrRetRem(Rec))
+                        CurStation.Thresholds.Add(lThresh)
+                    Case "INTERVAL"
+                        lInterval = New pfqStation.IntervalType
+                        lInterval.Year = CSng(StrRetRem(Rec))
+                        lInterval.LowerLimit = CSng(StrRetRem(Rec))
+                        lInterval.UpperLimit = CSng(StrRetRem(Rec))
+                        CurStation.Intervals.Add(lInterval)
+                End Select
 				CommentPending = False 'assume any pending comment was stored with a specification
 			End If
 		End While
@@ -489,7 +507,9 @@ Friend Class pfqProject
 		
 		Dim i As Integer
 		Dim s As String
-
+        Dim vSta As pfqStation
+		Dim defsta As New pfqStation
+		
 		s = ""
 		If DefPrj Is Nothing Then 'no default specs, write out verbose
 			s = "Verbose" & vbCrLf
@@ -540,17 +560,23 @@ Friend Class pfqProject
 		If pEMA Then
 			s = s & "O EMA YES" & vbCrLf
 		End If
-        i = -1
-        For Each lStation As pfqStation In pStations
-            i += 1
-            If lStation.Active Then 'write station specs to string
-                If DefPrj Is Nothing Then 'write out all station specs
-                    s &= lStation.WriteSpecsVerbose
-                Else 'only write out non-default station specs
-                    s &= lStation.WriteSpecsNonDefault(lStation)
-                End If
-            End If
-        Next
+		i = 0
+		For	Each vSta In pStations
+			i = i + 1
+			'UPGRADE_WARNING: Couldn't resolve default property of object vSta.Active. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+			If vSta.Active Then 'write station specs to string
+				If DefPrj Is Nothing Then 'write out all station specs
+					'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsVerbose. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+					s = s & vSta.WriteSpecsVerbose
+				Else 'only write out non-default station specs
+					defsta = DefPrj.Stations(i)
+					'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsNonDefault. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+					s = s & vSta.WriteSpecsNonDefault(defsta)
+					'UPGRADE_NOTE: Object defsta may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+					defsta = Nothing
+				End If
+			End If
+		Next vSta
 		SaveAsString = s
 		
 	End Function
@@ -580,29 +606,43 @@ Friend Class pfqProject
 		Dim oldlen, i, curlen As Integer
 		
 		On Error Resume Next
-        If Len(pPFQExeFileName) > 0 Then
-            Dim lPath As String = IO.Path.GetDirectoryName(pPFQExeFileName)
-            If CurDir() <> lPath Then
-                'copy support files for batch executable
-                FileCopy(lPath & "\pkfqms.wdm", "pkfqms.wdm")
-                FileCopy(lPath & "\interact.ini", "interact.ini")
-            End If
+		If Len(pPFQExeFileName) > 0 Then
+			If CurDir() <> PathNameOnly(pPFQExeFileName) Then
+				'copy support files for batch executable
+				FileCopy(PathNameOnly(pPFQExeFileName) & "\pkfqms.wdm", "pkfqms.wdm")
+				FileCopy(PathNameOnly(pPFQExeFileName) & "\interact.ini", "interact.ini")
+			End If
+			
+			If FileExists(PfqPrj.OutFile) Then 'delete old output file
+				Kill(PfqPrj.OutFile)
+			End If
+			
+            'gIPC.SendMonitorMessage("(Caption PKFQWin Status)")
+            'gIPC.SendMonitorMessage("Starting " & pPFQExeFileName)
+            Logger.Status("Caption PKFQWin Status")
+            Logger.Status("Starting " & pPFQExeFileName)
+            Dim lProcess As New Process
+            With lProcess.StartInfo
+                .FileName = pPFQExeFileName
+                .WorkingDirectory = CurDir()
+                .Arguments = FilenameNoPath(pSpecFileName)
+                .CreateNoWindow = True
+                .UseShellExecute = False
+            End With
+            lProcess.Start()
 
-            If IO.File.Exists(PfqPrj.OutFile) Then 'delete old output file
-                Kill(PfqPrj.OutFile)
+            'If lProcess Is Nothing Then
+            '    'gIPC.SendMonitorMessage("(Open)")
+            '    'gIPC.SendMonitorMessage("(MSG1 Unable to start PeakFQ batch program.)")
+            '    Logger.Status("Unable to start PeakFQ batch program.")
+            'Else
+            lProcess.WaitForExit(60000)
+            If Not FileExists(PfqPrj.OutFile) Then
+                'gIPC.SendMonitorMessage("(Open)")
+                'gIPC.SendMonitorMessage("(MSG1 Problem running PeakFQ batch program.)")
+                Logger.Status("Problem running PeakFQ batch program.")
             End If
-
-            gIPC.SendMonitorMessage("(Caption PKFQWin Status)")
-            gIPC.SendMonitorMessage("Starting " & pPFQExeFileName)
-            If Not gIPC.StartProcess("PeakFQ", """" & pPFQExeFileName & """ " & FilenameNoPath(pSpecFileName), 10000, 20000) Then
-                gIPC.SendMonitorMessage("(Open)")
-                gIPC.SendMonitorMessage("(MSG1 Unable to start PeakFQ batch program.)")
-            Else
-                If Not IO.File.Exists(PfqPrj.OutFile) Then
-                    gIPC.SendMonitorMessage("(Open)")
-                    gIPC.SendMonitorMessage("(MSG1 Problem running PeakFQ batch program.)")
-                End If
-            End If
+            'End If
 
             '    i = Shell(pPFQExeFileName & " " & FilenameNoPath(pSpecFileName) & " >PeakFQ.run")
             '    oldlen = -1
@@ -610,13 +650,13 @@ Friend Class pfqProject
             '    If i > 0 Then
             '      'this while loop should be replaced with StatusMonitor
             '      While oldlen <> curlen
-            '        If IO.File.Exists(PfqPrj.OutFile) Then
+            '        If FileExists(PfqPrj.OutFile) Then
             '          oldlen = FileLen(PfqPrj.OutFile)
             '        Else
             '          oldlen = 0
             '        End If
             '        Sleep 2000
-            '        If IO.File.Exists(PfqPrj.OutFile) Then
+            '        If FileExists(PfqPrj.OutFile) Then
             '          curlen = FileLen(PfqPrj.OutFile)
             '        Else 'problem if still no output file
             '          curlen = 0
@@ -627,7 +667,7 @@ Friend Class pfqProject
             '      MsgBox "Problem running PeakFQ batch program." & vbCrLf & _
             ''             "Check PeakFQ.RUN file for details", vbExclamation, "PKFQWin"
             '    End If
-            If CurDir() <> lPath Then
+            If CurDir() <> PathNameOnly(pPFQExeFileName) Then
                 Kill("pkfqms.wdm")
                 Kill("interact.ini")
             End If
@@ -645,10 +685,11 @@ Friend Class pfqProject
 	End Sub
 	
 	Public Function Copy() As pfqProject
-		Dim oldStation As Object
-		Dim vPT As Object
-		Dim newStation As pfqStation
-		Dim retval As New pfqProject
+        Dim oldStation As pfqStation = Nothing
+        Dim newStation As pfqStation = Nothing
+        Dim retval As New pfqProject
+        Dim vPT As Object = Nothing
+
 		With retval
 			.AdditionalOutput = pAdditionalOutput
 			.AddOutFileName = pAddOutFileName
@@ -677,86 +718,54 @@ Friend Class pfqProject
 			.CConfidenceLimits = pCConfidenceLimits
 			.CEMA = pCEMA
 			
-			'    .SpecFileName = pSpecFileName
-			'UPGRADE_NOTE: Object retval.Stations may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-			.Stations = Nothing
-			For	Each oldStation In Stations
-				newStation = New pfqStation
-				With newStation
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.Active. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.Active = oldStation.Active
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.PerceptThresh. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					For	Each vPT In oldStation.PerceptThresh
-					Next vPT
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.BegYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.BegYear = oldStation.BegYear
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.EndYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.EndYear = oldStation.EndYear
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.GageBaseDischarge. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.GageBaseDischarge = oldStation.GageBaseDischarge
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.GenSkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.GenSkew = oldStation.GenSkew
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.HighSysPeak. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.HighSysPeak = oldStation.HighSysPeak
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.HighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.HighOutlier = oldStation.HighOutlier
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.HistoricPeriod. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.HistoricPeriod = oldStation.HistoricPeriod
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.id. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.id = oldStation.id
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.Lat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.Lat = oldStation.Lat
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.Lng. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.Lng = oldStation.Lng
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.LowHistPeak. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.LowHistPeak = oldStation.LowHistPeak
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.LowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.LowOutlier = oldStation.LowOutlier
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.Name. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.Name = oldStation.Name
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.PlotMade. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.PlotMade = oldStation.PlotMade
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.SESkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.SESkew = oldStation.SESkew
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.SkewOpt. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.SkewOpt = oldStation.SkewOpt
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.UrbanRegPeaks = oldStation.UrbanRegPeaks
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.PlotName = oldStation.PlotName
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.Comment. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.Comment = oldStation.Comment
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CGenSkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CGenSkew = oldStation.CGenSkew
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CSESkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CSESkew = oldStation.CSESkew
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CBegYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CBegYear = oldStation.CBegYear
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CEndYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CEndYear = oldStation.CEndYear
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CHistoric. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CHistoric = oldStation.CHistoric
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CSkewOpt. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CSkewOpt = oldStation.CSkewOpt
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CUrban. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CUrban = oldStation.CUrban
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CLowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CLowOutlier = oldStation.CLowOutlier
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CHighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CHighOutlier = oldStation.CHighOutlier
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CGageBase. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CGageBase = oldStation.CGageBase
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CLat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CLat = oldStation.CLat
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CLong. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CLong = oldStation.CLong
-					'UPGRADE_WARNING: Couldn't resolve default property of object oldStation.CPlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					.CPlotName = oldStation.CPlotName
-				End With
-				.Stations.Add(newStation)
-				'UPGRADE_NOTE: Object newStation may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-				newStation = Nothing
-			Next oldStation
+            '.SpecFileName = pSpecFileName
+            'UPGRADE_NOTE: Object retval.Stations may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+            .Stations.Clear()
+            '.Stations = Nothing
+            For Each oldStation In Stations
+                newStation = New pfqStation
+                With newStation
+                    .Active = oldStation.Active
+                    'For Each vPT In oldStation.PerceptThresh
+                    'Next
+
+                    .BegYear = oldStation.BegYear
+                    .EndYear = oldStation.EndYear
+                    .GageBaseDischarge = oldStation.GageBaseDischarge
+                    .GenSkew = oldStation.GenSkew
+                    .HighSysPeak = oldStation.HighSysPeak
+                    .HighOutlier = oldStation.HighOutlier
+                    .HistoricPeriod = oldStation.HistoricPeriod
+                    .id = oldStation.id
+                    .Lat = oldStation.Lat
+                    .Lng = oldStation.Lng
+                    .LowHistPeak = oldStation.LowHistPeak
+                    .LowOutlier = oldStation.LowOutlier
+                    .Name = oldStation.Name
+                    .PlotMade = oldStation.PlotMade
+                    .SESkew = oldStation.SESkew
+                    .SkewOpt = oldStation.SkewOpt
+                    .UrbanRegPeaks = oldStation.UrbanRegPeaks
+                    .PlotName = oldStation.PlotName
+                    .Comment = oldStation.Comment
+                    .CGenSkew = oldStation.CGenSkew
+                    .CSESkew = oldStation.CSESkew
+                    .CBegYear = oldStation.CBegYear
+                    .CEndYear = oldStation.CEndYear
+                    .CHistoric = oldStation.CHistoric
+                    .CSkewOpt = oldStation.CSkewOpt
+                    .CUrban = oldStation.CUrban
+                    .CLowOutlier = oldStation.CLowOutlier
+                    .CHighOutlier = oldStation.CHighOutlier
+                    .CGageBase = oldStation.CGageBase
+                    .CLat = oldStation.CLat
+                    .CLong = oldStation.CLong
+                    .CPlotName = oldStation.CPlotName
+                End With
+                .Stations.Add(newStation)
+                'UPGRADE_NOTE: Object newStation may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+                newStation = Nothing
+            Next oldStation
 		End With
 		Copy = retval
 		'UPGRADE_NOTE: Object retval may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
@@ -770,7 +779,7 @@ Friend Class pfqProject
 		Dim prj As New pfqProject
 		Dim i As Integer
 		Dim Rec, Kwd As String
-        Dim lCom As String = ""
+		Dim lCom As String
 		Dim CommentPending As Boolean
 		'  Dim CurStation As pfqStation
 		
@@ -782,7 +791,7 @@ Friend Class pfqProject
 				Rec = StrSplit(FileStr, vbCrLf, "")
 				If Left(Rec, 1) = "'" Then 'process comment
 					If CommentPending Then 'multiple line comment
-                        lCom &= vbCrLf & Rec
+						lCom = lCom & vbCrLf & Rec
 					Else 'new comment
 						lCom = Rec
 						CommentPending = True
@@ -947,7 +956,7 @@ Friend Class pfqProject
 		pPFQExeFileName = ""
 		pSpecFileName = ""
 		pDataFileName = ""
-        pStations = New Generic.List(Of pfqStation)
+		pStations = New FColl.FastCollection
 		pAdditionalOutput = 0
 		pIntermediateResults = False
 		pLinePrinter = False

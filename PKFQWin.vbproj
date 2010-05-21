@@ -4,7 +4,7 @@
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DE907B11-7857-4D90-BACE-948DE0CF2BC5}</ProjectGuid>
+    <ProjectGuid>{4E056C9F-0E8D-4D5D-AEDF-2617521FA006}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <AssemblyName>PKFQWin</AssemblyName>
@@ -44,9 +44,21 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="atcUtility, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="atcControls, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\dev\BASINS40\Bin\Plugins\BASINS\atcUtility.dll</HintPath>
+      <HintPath>..\BASINS40\Bin\Plugins\BASINS\atcControls.dll</HintPath>
+    </Reference>
+    <Reference Include="AxInterop.ATCoCtl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>obj\Debug\AxInterop.ATCoCtl.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.ATCoCtl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>obj\Debug\Interop.ATCoCtl.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.FColl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>obj\Debug\Interop.FColl.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic.Compatibility">
       <Name>Microsoft.VisualBasic.Compatibility</Name>
@@ -66,22 +78,9 @@
     <Reference Include="System.XML">
       <Name>System.XML</Name>
     </Reference>
-    <COMReference Include="ATCoCtl">
-      <Guid>{872F11D5-3322-11D4-9D23-00A0C9768F70}</Guid>
-      <Lcid>0</Lcid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>11</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-    </COMReference>
-    <COMReference Include="AxATCoCtl">
-      <Guid>{872F11D5-3322-11D4-9D23-00A0C9768F70}</Guid>
-      <Lcid>0</Lcid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>11</VersionMinor>
-      <WrapperTool>aximp</WrapperTool>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Import Include="atcControls" />
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="Microsoft.VisualBasic.Compatibility" />
     <Import Include="System" />
@@ -98,6 +97,7 @@
       <DependentUpon>frmGraph.vb</DependentUpon>
     </Compile>
     <Compile Include="frmGraph.vb">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmPeakfq.Designer.vb">
       <SubType>Code</SubType>
@@ -115,6 +115,9 @@
     <Compile Include="Station.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UtilShell.vb">
+      <SubType>Code</SubType>
+    </Compile>
     <EmbeddedResource Include="frmGraph.resX">
       <DependentUpon>frmGraph.vb</DependentUpon>
     </EmbeddedResource>
@@ -122,9 +125,16 @@
       <DependentUpon>frmPeakfq.vb</DependentUpon>
     </EmbeddedResource>
     <Content Include="PKFQWin.ico" />
-    <None Include="_UpgradeReport.htm">
-      <SubType>Preview</SubType>
-    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BASINS40\atcUtility\atcUtility.vbproj">
+      <Project>{67027820-9036-481E-80F6-077E5085F59D}</Project>
+      <Name>atcUtility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MapWindow4Plugins\MapWinUtility\BASINS-MapWinUtility.vbproj">
+      <Project>{3C991AE4-9EDB-4C24-BAF3-42F7303D7DF3}</Project>
+      <Name>BASINS-MapWinUtility</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />

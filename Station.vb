@@ -1,59 +1,63 @@
 Option Strict Off
 Option Explicit On
+
+Imports atcUtility
+
 Friend Class pfqStation
-	
-	Private Structure PerceptThreshType
-		Dim SYear As Integer
-		Dim EYear As Integer
-		Dim LowerLimit As Single
-		Dim UpperLimit As Single
-	End Structure
-	Private pID As String
-	Private pName As String
-	Private pActive As Boolean
-	Private pBegYear As Integer
-	Private pEndYear As Integer
-	Private pSkewOpt As Integer '-1 - Station, 0 - Weighted, 1 - Generalized
-	Private pUrbanRegPeaks As Boolean
-	Private pHistoricPeriod As Single
-	Private pGenSkew As Single
-	Private pHighSysPeak As Single
-	Private pHighOutlier As Single
-	Private pLowHistPeak As Single
-	Private pLowOutlier As Single
-	Private pGageBaseDischarge As Single
-	Private pSESkew As Single
-	Private pLat As Single
-	Private pLng As Single
-	Private pPlotName As String
-	Private pPlotMade As Boolean
-	'Private pPerceptThresh As FastCollection 'of type PerceptThreshType
-	'the following are for storing comments for various specification records
-	Private pComment As String
-	Private pCGenSkew As String
-	Private pCSESkew As String
-	Private pCBegYear As String
-	Private pCEndYear As String
-	Private pCHistoric As String
-	Private pCSkewOpt As String
-	Private pCUrban As String
-	Private pCLowOutlier As String
-	Private pCHighOutlier As String
-	Private pCGageBase As String
-	Private pCLat As String
-	Private pCLong As String
-	Private pCPlotName As String
-	
-	'UPGRADE_ISSUE: Declaration type not supported: Array with lower bound less than zero. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="934BD4FF-1FF9-47BD-888F-D411E47E78FA"'
+
+    Public Structure ThresholdType
+        Dim SYear As Integer
+        Dim EYear As Integer
+        Dim LowerLimit As Single
+        Dim UpperLimit As Single
+    End Structure
+
+    Public Structure IntervalType
+        Dim Year As Integer
+        Dim LowerLimit As Single
+        Dim UpperLimit As Single
+    End Structure
+
+    Private pID As String
+    Private pName As String
+    Private pActive As Boolean
+    Private pBegYear As Integer
+    Private pEndYear As Integer
+    Private pSkewOpt As Integer '0 - Station, 1 - Weighted, 2 - Generalized
+    Private pUrbanRegPeaks As Boolean
+    Private pHistoricPeriod As Single
+    Private pGenSkew As Single
+    Private pHighSysPeak As Single
+    Private pHighOutlier As Single
+    Private pLowHistPeak As Single
+    Private pLowOutlier As Single
+    Private pGageBaseDischarge As Single
+    Private pSESkew As Single
+    Private pLat As Single
+    Private pLng As Single
+    Private pPlotName As String
+    Private pPlotMade As Boolean
+    Private pThresholds As FColl.FastCollection 'of type ThresholdType
+    Private pIntervals As FColl.FastCollection 'of type IntervalType
+    'the following are for storing comments for various specification records
+    Private pComment As String
+    Private pCGenSkew As String
+    Private pCSESkew As String
+    Private pCBegYear As String
+    Private pCEndYear As String
+    Private pCHistoric As String
+    Private pCSkewOpt As String
+    Private pCUrban As String
+    Private pCLowOutlier As String
+    Private pCHighOutlier As String
+    Private pCGageBase As String
+    Private pCLat As String
+    Private pCLong As String
+    Private pCPlotName As String
+
+    'UPGRADE_ISSUE: Declaration type not supported: Array with lower bound less than zero. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="934BD4FF-1FF9-47BD-888F-D411E47E78FA"'
     'Private SOText(-1 To 1) As String
-    Private Function SOText(ByVal aIndex As Integer) As String
-        Select Case aIndex
-            Case -1 : Return "Station"
-            Case 0 : Return "Weighted"
-            Case 1 : Return "Generalized"
-            Case Else : Return ""
-        End Select
-    End Function
+    Private SOText(2) As String
 
     Public Property id() As String
         Get
@@ -352,9 +356,30 @@ Friend Class pfqStation
         End Set
     End Property
 
+    Public Property Thresholds() As FColl.FastCollection
+        Get
+            If pThresholds Is Nothing Then pThresholds = New FColl.FastCollection
+            Thresholds = pThresholds
+        End Get
+        Set(ByVal Value As FColl.FastCollection)
+            pThresholds = Value
+        End Set
+    End Property
+
+    Public Property Intervals() As FColl.FastCollection
+        Get
+            If pIntervals Is Nothing Then pIntervals = New FColl.FastCollection
+            Intervals = pIntervals
+        End Get
+        Set(ByVal Value As FColl.FastCollection)
+            pIntervals = Value
+        End Set
+    End Property
+
     Public Function WriteSpecsVerbose() As String
 
         Dim s As String
+        Dim vPT As ThresholdType
         Const pad As String = "     "
 
         If Len(pComment) > 0 Then
@@ -362,19 +387,18 @@ Friend Class pfqStation
         Else
             s = "Station " & pID & vbCrLf
         End If
-        'Dim vPT As Object
-        '  If pPerceptThresh.Count > 0 Then 'using perception threshholds, not beg/end years and hist. period
-        '    For Each vPT In pPerceptThresh
-        '      s = s & "PCPT_THRESH " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
-        '    Next
-        '  Else 'using beg/end years and hist. period
-        If Len(pCBegYear) > 0 Then s = s & pad & pCBegYear & vbCrLf
-        If pBegYear > 0 Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
-        If Len(pCEndYear) > 0 Then s = s & pad & pCEndYear & vbCrLf
-        If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
-        If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
-        If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
-        '  End If
+        If pThresholds.Count > 0 Then 'using perception threshholds, not beg/end years and hist. period
+            For Each vPT In pThresholds
+                s = s & "PCPT_THRESH " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
+            Next
+        Else 'using beg/end years and hist. period
+            If Len(pCBegYear) > 0 Then s = s & pad & pCBegYear & vbCrLf
+            If pBegYear > 0 Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
+            If Len(pCEndYear) > 0 Then s = s & pad & pCEndYear & vbCrLf
+            If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
+            If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
+            If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
+        End If
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
         s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
         If Len(pCGenSkew) > 0 Then s = s & pad & pCGenSkew & vbCrLf
@@ -403,6 +427,7 @@ Friend Class pfqStation
     Public Function WriteSpecsNonDefault(ByRef defsta As pfqStation) As String
 
         Dim s As String
+        Dim vPT As ThresholdType
         Const pad As String = "     "
 
         '!!! KLUGE WARNING: Station comments get lost in active project,
@@ -412,6 +437,11 @@ Friend Class pfqStation
             s = defsta.Comment & vbCrLf & "Station " & pID & vbCrLf
         Else
             s = "Station " & pID & vbCrLf
+        End If
+        If pThresholds.Count > 0 Then 'using perception threshholds
+            For Each vPT In pThresholds
+                s = s & "PCPT_THRESH " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
+            Next
         End If
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
         If pBegYear <> defsta.BegYear Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
@@ -447,7 +477,8 @@ Friend Class pfqStation
     Private Sub Class_Initialize_Renamed()
 
         pActive = True 'init all stations to be analyzed
-        pSkewOpt = 0 'Weighted skew option
+        'pSkewOpt = 0 'Weighted skew option (middle of -1, 0, 1)
+        pSkewOpt = 1  'TODO: Need to determine if this should be assigned differently (middle of 0, 1, 2)
         pUrbanRegPeaks = False
         pBegYear = 0
         pEndYear = 0
@@ -459,7 +490,15 @@ Friend Class pfqStation
         pSESkew = 0.55
         pLat = 0.0#
         pLng = 0.0#
-        'pPerceptThresh = New FastCollection
+        'SOText(-1) = "Station"
+        'SOText(0) = "Weighted"
+        'SOText(1) = "Generalized"
+        SOText(0) = "Station"
+        SOText(1) = "Weighted"
+        SOText(2) = "Generalized"
+
+        pThresholds = New FColl.FastCollection
+        pIntervals = New FColl.FastCollection
 
     End Sub
     Public Sub New()
