@@ -407,7 +407,9 @@
         'cboStation
         '
         Me.cboStation.FormattingEnabled = True
+        Me.cboStation.ItemHeight = 14
         Me.cboStation.Location = New System.Drawing.Point(217, 6)
+        Me.cboStation.MaxDropDownItems = 20
         Me.cboStation.Name = "cboStation"
         Me.cboStation.Size = New System.Drawing.Size(155, 22)
         Me.cboStation.TabIndex = 5

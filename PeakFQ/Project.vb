@@ -53,13 +53,10 @@ Friend Class pfqProject
 			SpecFileName = pSpecFileName
 		End Get
 		Set(ByVal Value As String)
-			Dim LastFile, s, CurFile As String
-			Dim FileIsStatic As Boolean
-			
+            Dim s As String
+
 			pSpecFileName = Value
-			'  ReadSpecFile
-			'  If pStations.Count = 0 Then 'may be defaulted to do all stations
-			s = WholeFileString(pSpecFileName)
+            s = WholeFileString(pSpecFileName)
 			If UCase(Left(s, 7)) <> "VERBOSE" Then
 				'update spec file to verbose mode that explicitly defines all station specs
 				If InStr(Right(s, 2), vbLf) > 0 Then 'already have line feed
@@ -485,12 +482,14 @@ Friend Class pfqProject
                         lThresh.LowerLimit = CSng(StrRetRem(Rec))
                         lThresh.UpperLimit = CSng(StrRetRem(Rec))
                         CurStation.Thresholds.Add(lThresh)
+                        If CommentPending Then CurStation.CThresholds = lCom
                     Case "INTERVAL"
                         lInterval = New pfqStation.IntervalType
                         lInterval.Year = CSng(StrRetRem(Rec))
                         lInterval.LowerLimit = CSng(StrRetRem(Rec))
                         lInterval.UpperLimit = CSng(StrRetRem(Rec))
                         CurStation.Intervals.Add(lInterval)
+                        If CommentPending Then CurStation.CIntervals = lCom
                 End Select
 				CommentPending = False 'assume any pending comment was stored with a specification
 			End If
@@ -726,9 +725,8 @@ Friend Class pfqProject
                 newStation = New pfqStation
                 With newStation
                     .Active = oldStation.Active
-                    'For Each vPT In oldStation.PerceptThresh
-                    'Next
-
+                    .Thresholds = oldStation.Thresholds
+                    .Intervals = oldStation.Intervals
                     .BegYear = oldStation.BegYear
                     .EndYear = oldStation.EndYear
                     .GageBaseDischarge = oldStation.GageBaseDischarge
