@@ -11,7 +11,7 @@ Friend Class frmPeakfq
     Const tmpSpecName As String = "PKFQWPSF.TMP"
     Dim CurGraphName As String
     Dim RemoveBMPs As Boolean
-    Dim CurStationIndex As Integer = 0
+    Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
     Dim CurIntervalRow As Integer = 0
 
@@ -985,11 +985,21 @@ FileCancel:
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = lStn.Thresholds
         Dim lIntColl As Generic.List(Of pfqStation.IntervalType) = lStn.Intervals
+        Dim lNewSource As New atcControls.atcGridSource
 
-        With grdThresh.Source
-            .ColorCells = True
+        With lNewSource
+            .FixedRows = 2
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
             .Columns = 4 'start/end year followed by low/high thresholds
+            .CellValue(0, 0) = "Start"
+            .CellValue(1, 0) = "Year"
+            .CellValue(0, 1) = "End"
+            .CellValue(1, 1) = "Year"
+            .CellValue(0, 2) = "Low"
+            .CellValue(1, 2) = "Threshold"
+            .CellValue(0, 3) = "High"
+            .CellValue(1, 3) = "Threshold"
+            .ColorCells = True
             If lThrColl.Count > 0 Then
                 For Each lThresh As pfqStation.ThresholdType In lThrColl
                     .Rows += 1
@@ -1010,14 +1020,26 @@ FileCancel:
                 .Rows += 1
                 For i As Integer = 0 To 3
                     .CellEditable(.Rows - 1, i) = True
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
                 Next
             End If
         End With
+        grdThresh.Initialize(lNewSource)
         grdThresh.Visible = True
-        With grdInterval.Source
-            .ColorCells = True
+        grdThresh.SizeAllColumnsToContents(grdThresh.Width, True)
+        grdThresh.Refresh()
+
+        lNewSource = New atcControls.atcGridSource
+        With lNewSource
+            .FixedRows = 2
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
             .Columns = 3 'year followed by low/high thresholds
+            .CellValue(1, 0) = "Year"
+            .CellValue(0, 1) = "Low"
+            .CellValue(1, 1) = "Interval"
+            .CellValue(0, 2) = "High"
+            .CellValue(1, 2) = "Interval"
+            .ColorCells = True
             If lIntColl.Count > 0 Then
                 For Each lInterval As pfqStation.IntervalType In lIntColl
                     .Rows += 1
@@ -1035,10 +1057,14 @@ FileCancel:
                 .Rows += 1
                 For i As Integer = 0 To 2
                     .CellEditable(.Rows - 1, i) = True
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
                 Next
             End If
         End With
+        grdInterval.Initialize(lNewSource)
         grdInterval.Visible = True
+        grdInterval.SizeAllColumnsToContents(grdInterval.Width, True)
+        grdInterval.Refresh()
     End Sub
 
     Private Sub ProcessThresholds()
@@ -1081,6 +1107,7 @@ FileCancel:
     End Sub
 
     Private Sub tabThresholds_GotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles tabThresholds.GotFocus
+        If CurStationIndex < 0 Then cboStation.SelectedIndex = 0
         With grdThresh 'At this point, there should already be one instantiated with header rows
             .Enabled = True
             .BackColor = SystemColors.Control
@@ -1099,10 +1126,22 @@ FileCancel:
     End Sub
 
     Private Sub cmdAddInt_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdAddInt.Click
-        grdInterval.Source.Rows += 1
+        With grdInterval.Source
+            .Rows += 1
+            For i As Integer = 0 To 2
+                .CellEditable(.Rows - 1, i) = True
+                .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+            Next
+        End With
     End Sub
 
     Private Sub cmdAddThr_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdAddThr.Click
-        grdThresh.Source.Rows += 1
+        With grdThresh.Source
+            .Rows += 1
+            For i As Integer = 0 To 3
+                .CellEditable(.Rows - 1, i) = True
+                .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+            Next
+        End With
     End Sub
 End Class

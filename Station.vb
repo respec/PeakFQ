@@ -54,6 +54,8 @@ Friend Class pfqStation
     Private pCLat As String
     Private pCLong As String
     Private pCPlotName As String
+    Private pCThresholds As String
+    Private pCIntervals As String
 
     'UPGRADE_ISSUE: Declaration type not supported: Array with lower bound less than zero. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="934BD4FF-1FF9-47BD-888F-D411E47E78FA"'
     'Private SOText(-1 To 1) As String
@@ -230,6 +232,26 @@ Friend Class pfqStation
         End Set
     End Property
 
+    Public Property Thresholds() As Generic.List(Of pfqStation.ThresholdType)
+        Get
+            If pThresholds Is Nothing Then pThresholds = New Generic.List(Of pfqStation.ThresholdType)
+            Thresholds = pThresholds
+        End Get
+        Set(ByVal Value As Generic.List(Of pfqStation.ThresholdType))
+            pThresholds = Value
+        End Set
+    End Property
+
+    Public Property Intervals() As Generic.List(Of pfqStation.IntervalType)
+        Get
+            If pIntervals Is Nothing Then pIntervals = New Generic.List(Of pfqStation.IntervalType)
+            Intervals = pIntervals
+        End Get
+        Set(ByVal Value As Generic.List(Of pfqStation.IntervalType))
+            pIntervals = Value
+        End Set
+    End Property
+
     Public Property Comment() As String
         Get
             Comment = pComment
@@ -356,30 +378,27 @@ Friend Class pfqStation
         End Set
     End Property
 
-    Public Property Thresholds() As Generic.List(Of pfqStation.ThresholdType)
+    Public Property CThresholds() As String
         Get
-            If pThresholds Is Nothing Then pThresholds = New Generic.List(Of pfqStation.ThresholdType)
-            Thresholds = pThresholds
+            CThresholds = pCThresholds
         End Get
-        Set(ByVal Value As Generic.List(Of pfqStation.ThresholdType))
-            pThresholds = Value
+        Set(ByVal Value As String)
+            pCThresholds = Value
         End Set
     End Property
 
-    Public Property Intervals() As Generic.List(Of pfqStation.IntervalType)
+    Public Property CIntervals() As String
         Get
-            If pIntervals Is Nothing Then pIntervals = New Generic.List(Of pfqStation.IntervalType)
-            Intervals = pIntervals
+            CIntervals = pCIntervals
         End Get
-        Set(ByVal Value As Generic.List(Of pfqStation.IntervalType))
-            pIntervals = Value
+        Set(ByVal Value As String)
+            pCIntervals = Value
         End Set
     End Property
 
     Public Function WriteSpecsVerbose() As String
 
         Dim s As String
-        Dim vPT As ThresholdType
         Const pad As String = "     "
 
         If Len(pComment) > 0 Then
@@ -388,7 +407,7 @@ Friend Class pfqStation
             s = "Station " & pID & vbCrLf
         End If
         If pThresholds.Count > 0 Then 'using perception threshholds, not beg/end years and hist. period
-            For Each vPT In pThresholds
+            For Each vPT As ThresholdType In pThresholds
                 s = s & "PCPT_THRESH " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
             Next
         Else 'using beg/end years and hist. period
@@ -398,6 +417,11 @@ Friend Class pfqStation
             If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
             If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
             If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
+        End If
+        If pIntervals.Count > 0 Then 'using perception threshholds
+            For Each vInt As IntervalType In pIntervals
+                s = s & "INTERVAL " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
+            Next
         End If
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
         s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
@@ -427,7 +451,6 @@ Friend Class pfqStation
     Public Function WriteSpecsNonDefault(ByRef defsta As pfqStation) As String
 
         Dim s As String
-        Dim vPT As ThresholdType
         Const pad As String = "     "
 
         '!!! KLUGE WARNING: Station comments get lost in active project,
@@ -439,8 +462,13 @@ Friend Class pfqStation
             s = "Station " & pID & vbCrLf
         End If
         If pThresholds.Count > 0 Then 'using perception threshholds
-            For Each vPT In pThresholds
+            For Each vPT As ThresholdType In pThresholds
                 s = s & "PCPT_THRESH " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
+            Next
+        End If
+        If pIntervals.Count > 0 Then 'using perception threshholds
+            For Each vInt As IntervalType In pIntervals
+                s = s & "INTERVAL " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
             Next
         End If
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
