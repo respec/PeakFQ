@@ -947,7 +947,53 @@ Friend Class pfqProject
 		SaveDefaults = prj
 		
 	End Function
-	
+
+    Public Sub ReadPeaks()
+        Dim lOutStr As String = WholeFileString(Me.OutFile)
+        Dim lStr As String
+        Dim lValStr As String
+        Dim lInd As Integer = 0
+        Dim lPeak As pfqStation.PeakType
+        Dim lPeaks As Generic.List(Of pfqStation.PeakType)
+
+        'find heading for peak values
+        lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")
+        While lOutStr.Length > 0
+            lStr = StrSplit(lOutStr, vbCrLf, "") 'skip blank line
+            lStr = StrSplit(lOutStr, vbCrLf, "")
+            lStr = StrSplit(lOutStr, vbCrLf, "") 'read first line of values
+            lPeaks = New Generic.List(Of pfqStation.PeakType)
+            While lStr.Length > 0 'read records until blank line is reached
+                lPeak = New pfqStation.PeakType
+                Do 'read values on this record
+                    lPeak.Year = CInt(StrRetRem(lStr))
+                    lPeak.Value = CDbl(StrRetRem(lStr))
+                    lValStr = StrRetRem(lStr)
+                    If Not IsNumeric(lValStr) Then 'Code exists for this value
+                        lPeak.Code = lValStr
+                        lValStr = StrRetRem(lStr)
+                    End If
+                    lPeaks.Add(lPeak)
+                    If lValStr.Length > 0 Then 'second set of values on this record
+                        lPeak = New pfqStation.PeakType
+                        lPeak.Year = CInt(lValStr)
+                        lPeak.Value = CDbl(StrRetRem(lStr))
+                        lValStr = StrRetRem(lStr)
+                        If lValStr.Length > 0 Then 'code exists for this value
+                            lPeak.Code = lValStr
+                            lValStr = "" 'trigger exit of "read record" loop
+                        End If
+                        lPeaks.Add(lPeak)
+                    End If
+                Loop While lValStr.Length > 0
+                lStr = StrSplit(lOutStr, vbCrLf, "") 'read next line of values
+            End While
+            lPeaks.Sort()
+            PfqPrj.Stations(lInd).Peaks = lPeaks
+            lInd += 1
+            lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")
+        End While
+    End Sub
 	
 	'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
 	Private Sub Class_Initialize_Renamed()
