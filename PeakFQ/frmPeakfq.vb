@@ -444,7 +444,7 @@ FileCancel:
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             lstGraphs.Items.Clear()
             ProcessGrid()
-            ProcessThresholds()
+            If CurStationIndex >= 0 Then ProcessThresholds()
             ProcessOutput()
             s = PfqPrj.SaveAsString
             SaveFileString((PfqPrj.SpecFileName), s)
@@ -810,7 +810,10 @@ FileCancel:
             PfqPrj.SpecFileName = tmpSpecName 'make working verbose copy
             DefPfqPrj = PfqPrj.SaveDefaults(s)
         End If
-        If FileExists(PfqPrj.OutFile) Then 'delete output file generated from reading data
+        If FileExists(PfqPrj.OutFile) Then
+            'read peak data for each station from output file
+            PfqPrj.ReadPeaks()
+            'delete output file generated from reading data
             Kill(PfqPrj.OutFile)
         End If
         Me.Cursor = System.Windows.Forms.Cursors.Default
@@ -881,7 +884,7 @@ FileCancel:
         cdlOpenSave.ShowDialog()
         cdlOpenOpen.FileName = cdlOpenSave.FileName
         ProcessGrid()
-        ProcessThresholds()
+        If CurStationIndex >= 0 Then ProcessThresholds()
         ProcessOutput()
         s = PfqPrj.SaveAsString(DefPfqPrj)
         SaveFileString((cdlOpenOpen.FileName), s) 'save spec file under selected name
@@ -1143,5 +1146,16 @@ FileCancel:
                 .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
             Next
         End With
+    End Sub
+
+    Private Sub cmdUpdateGraph_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdateGraph.Click
+        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
+        For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+
+        Next
+        For Each vInterval As pfqStation.IntervalType In lStn.Intervals
+
+        Next
+
     End Sub
 End Class

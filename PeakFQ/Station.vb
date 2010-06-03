@@ -18,6 +18,18 @@ Friend Class pfqStation
         Dim UpperLimit As Single
     End Structure
 
+    Public Class PeakType
+        Implements IComparable
+
+        Public Year As Integer
+        Public Value As Double
+        Public Code As String
+
+        Public Function CompareTo(ByVal obj As Object) As Integer Implements System.IComparable.CompareTo
+            Return Year.CompareTo(obj.Year)
+        End Function
+    End Class
+
     Private pID As String
     Private pName As String
     Private pActive As Boolean
@@ -39,6 +51,7 @@ Friend Class pfqStation
     Private pPlotMade As Boolean
     Private pThresholds As Generic.List(Of ThresholdType)
     Private pIntervals As Generic.List(Of IntervalType)
+    Private pPeaks As Generic.List(Of PeakType)
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCGenSkew As String
@@ -249,6 +262,16 @@ Friend Class pfqStation
         End Get
         Set(ByVal Value As Generic.List(Of pfqStation.IntervalType))
             pIntervals = Value
+        End Set
+    End Property
+
+    Public Property Peaks() As Generic.List(Of pfqStation.PeakType)
+        Get
+            If pPeaks Is Nothing Then pPeaks = New Generic.List(Of pfqStation.PeakType)
+            Peaks = pPeaks
+        End Get
+        Set(ByVal Value As Generic.List(Of pfqStation.PeakType))
+            pPeaks = Value
         End Set
     End Property
 
@@ -525,8 +548,9 @@ Friend Class pfqStation
         SOText(1) = "Weighted"
         SOText(2) = "Generalized"
 
-        pThresholds = New Generic.List(Of pfqStation.ThresholdType)
-        pIntervals = New Generic.List(Of pfqStation.IntervalType)
+        pThresholds = New Generic.List(Of ThresholdType)
+        pIntervals = New Generic.List(Of IntervalType)
+        pPeaks = New Generic.List(Of PeakType)
 
     End Sub
     Public Sub New()

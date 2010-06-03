@@ -162,6 +162,8 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
+        Me.zgcThresh = New ZedGraph.ZedGraphControl
+        Me.cmdUpdateGraph = New System.Windows.Forms.Button
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -341,6 +343,8 @@
         '
         'tabThresholds
         '
+        Me.tabThresholds.Controls.Add(Me.cmdUpdateGraph)
+        Me.tabThresholds.Controls.Add(Me.zgcThresh)
         Me.tabThresholds.Controls.Add(Me.lblIntervals)
         Me.tabThresholds.Controls.Add(Me.lblThresholds)
         Me.tabThresholds.Controls.Add(Me.cmdAddInt)
@@ -398,7 +402,7 @@
         'lblStation
         '
         Me.lblStation.AutoSize = True
-        Me.lblStation.Location = New System.Drawing.Point(172, 9)
+        Me.lblStation.Location = New System.Drawing.Point(29, 9)
         Me.lblStation.Name = "lblStation"
         Me.lblStation.Size = New System.Drawing.Size(43, 14)
         Me.lblStation.TabIndex = 6
@@ -408,7 +412,7 @@
         '
         Me.cboStation.FormattingEnabled = True
         Me.cboStation.ItemHeight = 14
-        Me.cboStation.Location = New System.Drawing.Point(217, 6)
+        Me.cboStation.Location = New System.Drawing.Point(74, 6)
         Me.cboStation.MaxDropDownItems = 20
         Me.cboStation.Name = "cboStation"
         Me.cboStation.Size = New System.Drawing.Size(155, 22)
@@ -1040,6 +1044,30 @@
         'cmdOutFileView
         '
         '
+        'zgcThresh
+        '
+        Me.zgcThresh.Dock = System.Windows.Forms.DockStyle.Right
+        Me.zgcThresh.Location = New System.Drawing.Point(452, 3)
+        Me.zgcThresh.Name = "zgcThresh"
+        Me.zgcThresh.ScrollGrace = 0
+        Me.zgcThresh.ScrollMaxX = 0
+        Me.zgcThresh.ScrollMaxY = 0
+        Me.zgcThresh.ScrollMaxY2 = 0
+        Me.zgcThresh.ScrollMinX = 0
+        Me.zgcThresh.ScrollMinY = 0
+        Me.zgcThresh.ScrollMinY2 = 0
+        Me.zgcThresh.Size = New System.Drawing.Size(274, 217)
+        Me.zgcThresh.TabIndex = 12
+        '
+        'cmdUpdateGraph
+        '
+        Me.cmdUpdateGraph.Location = New System.Drawing.Point(300, 6)
+        Me.cmdUpdateGraph.Name = "cmdUpdateGraph"
+        Me.cmdUpdateGraph.Size = New System.Drawing.Size(98, 22)
+        Me.cmdUpdateGraph.TabIndex = 13
+        Me.cmdUpdateGraph.Text = "Update Graph"
+        Me.cmdUpdateGraph.UseVisualStyleBackColor = True
+        '
         'frmPeakfq
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1095,5 +1123,7 @@
     Friend WithEvents cmdAddThr As System.Windows.Forms.Button
     Friend WithEvents lblThresholds As System.Windows.Forms.Label
     Friend WithEvents lblIntervals As System.Windows.Forms.Label
+    Friend WithEvents cmdUpdateGraph As System.Windows.Forms.Button
+    Friend WithEvents zgcThresh As ZedGraph.ZedGraphControl
 #End Region
 End Class
