@@ -4,9 +4,14 @@ Imports VB = Microsoft.VisualBasic
 Imports atcUtility
 Imports MapWinUtility
 Imports System.Drawing.SystemColors
+Imports ZedGraph
 
 Friend Class frmPeakfq
     Inherits System.Windows.Forms.Form
+
+    Friend DefaultMajorGridColor As Color = Color.FromArgb(255, 225, 225, 225)
+    Friend DefaultMinorGridColor As Color = Color.FromArgb(255, 245, 245, 245)
+
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
     Dim CurGraphName As String
@@ -586,6 +591,8 @@ FileCancel:
             .CellValue(1, 2) = "Interval"
         End With
 
+        InitGraph()
+
         sstPfq.SelectedIndex = 0
         sstPfq.TabPages.Item(0).Enabled = False
         sstPfq.TabPages.Item(1).Enabled = False
@@ -1068,6 +1075,8 @@ FileCancel:
         grdInterval.Visible = True
         grdInterval.SizeAllColumnsToContents(grdInterval.Width, True)
         grdInterval.Refresh()
+
+        UpdateGraph()
     End Sub
 
     Private Sub ProcessThresholds()
@@ -1110,6 +1119,7 @@ FileCancel:
     End Sub
 
     Private Sub tabThresholds_GotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles tabThresholds.GotFocus
+        ProcessGrid()
         If CurStationIndex < 0 Then cboStation.SelectedIndex = 0
         With grdThresh 'At this point, there should already be one instantiated with header rows
             .Enabled = True
@@ -1125,7 +1135,6 @@ FileCancel:
             .Visible = True
             .SizeAllColumnsToContents(.Width, True)
         End With
-
     End Sub
 
     Private Sub cmdAddInt_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdAddInt.Click
@@ -1149,13 +1158,277 @@ FileCancel:
     End Sub
 
     Private Sub cmdUpdateGraph_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdateGraph.Click
-        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
-        For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+        ProcessThresholds()
+        UpdateGraph()
+    End Sub
 
+    Private Sub UpdateGraph()
+        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
+        Dim lYearMin As Double = 10000
+        Dim lYearMax As Double = -10000
+        Dim lPkVals(lStn.Peaks.Count - 1) As Double
+        Dim lDateVals(lStn.Peaks.Count - 1) As Double
+        Dim lThrshVals(1) As Double
+        Dim lThrshDates(1) As Double
+        Dim lDataMin As Double = 10000
+        Dim lDataMax As Double = -10000
+        Dim lLogFlag As Boolean = True
+        Dim lPane As GraphPane = zgcThresh.MasterPane.PaneList(0)
+        Dim lYAxis As Axis = lPane.YAxis
+        Dim lCurve As LineItem = Nothing
+
+        'clear previous curves
+        lPane.CurveList.Clear()
+
+        'find ranges for axes
+        For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+            lThrshDates(0) = vThresh.SYear
+            lThrshDates(1) = vThresh.EYear
+            If lThrshDates(0) < lYearMin Then lYearMin = lThrshDates(0)
+            If lThrshDates(1) > lYearMax Then lYearMax = lThrshDates(1)
+            lThrshVals(0) = vThresh.LowerLimit
+            lThrshVals(1) = vThresh.LowerLimit
+            If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
+            If lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
+            lCurve = lPane.AddCurve("Thresholds", lThrshDates, lThrshVals, Color.Blue, SymbolType.None)
+            lCurve.Line.Fill = New Fill(Color.Blue, Color.Blue, 45)
         Next
         For Each vInterval As pfqStation.IntervalType In lStn.Intervals
-
+            lThrshDates(0) = vInterval.Year
+            lThrshDates(1) = vInterval.Year
+            If lThrshDates(0) < lYearMin Then lYearMin = lThrshDates(0)
+            If lThrshDates(0) > lYearMax Then lYearMax = lThrshDates(0)
+            lThrshVals(0) = vInterval.LowerLimit
+            lThrshVals(1) = vInterval.UpperLimit
+            If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
+            If lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
+            lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
         Next
+        If lStn.Peaks(0).Year < lYearMin Then lYearMin = lStn.Peaks(0).Year
+        If lStn.Peaks(lStn.Peaks.Count - 1).Year > lYearMax Then lYearMax = lStn.Peaks(lStn.Peaks.Count - 1).Year
+        For i As Integer = 0 To lStn.Peaks.Count - 1
+            If lStn.Peaks(i).Value > 0 Or lStn.HistoricPeriod > 0 Then
+                lPkVals(i) = Math.Abs(lStn.Peaks(i).Value)
+                lDateVals(i) = lStn.Peaks(i).Year
+                If lPkVals(i) > 0 AndAlso lPkVals(i) < lDataMin Then lDataMin = lPkVals(i)
+                If lPkVals(i) > lDataMax Then lDataMax = lPkVals(i)
+            End If
+        Next
+        'set y-axis range
+        Scalit(lDataMin, lDataMax, lLogFlag, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
+        'set x-axis range
+        lPane.X2Axis.Scale.Min = lYearMin
+        lPane.X2Axis.Scale.Max = lYearMax
 
+        lYAxis.IsVisible = True
+        lYAxis.Scale.IsVisible = True
+        lCurve = lPane.AddCurve("Peaks", lDateVals, lPkVals, Color.Red, SymbolType.Plus)
+        lCurve.Line.IsVisible = False
+
+        zgcThresh.AxisChange()
+        zgcThresh.Refresh()
+
+    End Sub
+
+    Private Sub InitGraph()
+        Dim lPaneMain As New ZedGraph.GraphPane
+        FormatPaneWithDefaults(lPaneMain)
+
+        With zgcThresh
+            .Visible = True
+            .IsSynchronizeXAxes = True
+            With .MasterPane
+                .PaneList.Clear() 'remove default GraphPane
+                .Border.IsVisible = False
+                .Legend.IsVisible = False
+                .Margin.All = 2
+                .InnerPaneGap = 1
+                .IsCommonScaleFactor = True
+                .PaneList.Add(lPaneMain)
+            End With
+        End With
+
+    End Sub
+
+    Public Sub FormatPaneWithDefaults(ByVal aPane As ZedGraph.GraphPane)
+        With aPane
+            .IsAlignGrids = True
+            .IsFontsScaled = False
+            .IsPenWidthScaled = False
+            With .XAxis
+                .Scale.FontSpec.Size = 8
+                .Scale.FontSpec.IsBold = True
+                .Scale.IsUseTenPower = False
+                .Title.IsOmitMag = True
+                .Scale.Mag = 0
+                .MajorTic.IsOutside = False
+                .MajorTic.IsInside = True
+                .MajorTic.IsOpposite = True
+                .MinorTic.IsOutside = False
+                .MinorTic.IsInside = True
+                .MinorTic.IsOpposite = True
+                .Scale.Format = "0000"
+                With .MajorGrid
+                    .Color = DefaultMajorGridColor
+                    .DashOn = 0
+                    .DashOff = 0
+                    .IsVisible = True
+                End With
+                With .MinorGrid
+                    .Color = DefaultMinorGridColor
+                    .DashOn = 0
+                    .DashOff = 0
+                    .IsVisible = True
+                End With
+                .Title.FontSpec.Size = 8
+                .Title.Text = "Water Year"
+            End With
+            With .X2Axis
+                .IsVisible = False
+            End With
+            SetYaxisDefaults(.YAxis)
+            SetYaxisDefaults(.Y2Axis)
+            .YAxis.MinSpace = 80
+            .Y2Axis.MinSpace = 20
+            .Y2Axis.Scale.IsVisible = False 'Default to not labeling on Y2, will be turned on later if different from Y
+            With .Legend
+                .Position = LegendPos.Float
+                .Location = New Location(0.05, 0.05, CoordType.ChartFraction, AlignH.Left, AlignV.Top)
+                .IsHStack = False
+                .Border.IsVisible = False
+                .Fill.IsVisible = False
+            End With
+            .Border.IsVisible = False
+        End With
+    End Sub
+
+    Private Sub SetYaxisDefaults(ByVal aYaxis As Axis)
+        With aYaxis
+            .Type = AxisType.Log
+            .Title.IsOmitMag = True
+            .MajorGrid.IsVisible = True
+            .MajorTic.IsOutside = False
+            .MajorTic.IsInside = True
+            .MinorTic.IsOutside = False
+            .MinorTic.IsInside = True
+            .Scale.IsUseTenPower = False
+            .Scale.FontSpec.Size = 8
+            .Scale.FontSpec.IsBold = True
+            .Scale.Mag = 0
+            .Scale.Format = "#,##0.###"
+            .Scale.Align = AlignP.Inside
+            With .MajorGrid
+                .Color = DefaultMajorGridColor
+                .DashOn = 0
+                .DashOff = 0
+                .IsVisible = True
+            End With
+            With .MinorGrid
+                .Color = DefaultMinorGridColor
+                .DashOn = 0
+                .DashOff = 0
+                .IsVisible = True
+            End With
+            .Title.FontSpec.Size = 8
+            .Title.Text = "Discharge (cfs)"
+        End With
+    End Sub
+
+    ''' <summary>
+    ''' Determines an appropriate scale based on the minimum and maximum values and 
+    ''' whether an arithmetic or logarithmic scale is requested. 
+    ''' For log scales, the minimum and maximum must not be transformed.
+    ''' </summary>
+    ''' <param name="aDataMin"></param>
+    ''' <param name="aDataMax"></param>
+    ''' <param name="aLogScale"></param>
+    ''' <param name="aScaleMin"></param>
+    ''' <param name="aScaleMax"></param>
+    ''' <remarks></remarks>
+    Public Sub Scalit(ByVal aDataMin As Double, ByVal aDataMax As Double, ByVal aLogScale As Boolean, _
+                      ByRef aScaleMin As Double, ByRef aScaleMax As Double)
+        'TODO: should existing ScaleMin and ScaleMax be respected?
+        If Not aLogScale Then 'arithmetic scale
+            'get next lowest mult of 10
+            Static lRange(15) As Double
+            If lRange(1) < 0.09 Then 'need to initialze
+                lRange(1) = 0.1
+                lRange(2) = 0.15
+                lRange(3) = 0.2
+                lRange(4) = 0.4
+                lRange(5) = 0.5
+                lRange(6) = 0.6
+                lRange(7) = 0.8
+                lRange(8) = 1.0#
+                lRange(9) = 1.5
+                lRange(10) = 2.0#
+                lRange(11) = 4.0#
+                lRange(12) = 5.0#
+                lRange(13) = 6.0#
+                lRange(14) = 8.0#
+                lRange(15) = 10.0#
+            End If
+
+            Dim lRangeIndex As Integer
+            Dim lRangeInc As Integer
+            Dim lDataRndlow As Double = Rndlow(aDataMax)
+            If lDataRndlow > 0.0# Then
+                lRangeInc = 1
+                lRangeIndex = 1
+            Else
+                lRangeInc = -1
+                lRangeIndex = 15
+            End If
+            Do
+                aScaleMax = lRange(lRangeIndex) * lDataRndlow
+                lRangeIndex += lRangeInc
+            Loop While aDataMax > aScaleMax And lRangeIndex <= 15 And lRangeIndex >= 1
+
+            If aDataMin < 0.5 * aDataMax And aDataMin >= 0.0# And aDataMin = 1 Then
+                aScaleMin = 0.0#
+            Else 'get next lowest mult of 10
+                lDataRndlow = Rndlow(aDataMin)
+                If lDataRndlow >= 0.0# Then
+                    lRangeInc = -1
+                    lRangeIndex = 15
+                Else
+                    lRangeInc = 1
+                    lRangeIndex = 1
+                End If
+                Do
+                    aScaleMin = lRange(lRangeIndex) * lDataRndlow
+                    lRangeIndex += lRangeInc
+                Loop While aDataMin < aScaleMin And lRangeIndex >= 1 And lRangeIndex <= 15
+            End If
+        Else 'logarithmic scale
+            Dim lLogMin As Integer
+            If aDataMin > 0.000000001 Then
+                lLogMin = Fix(Log10(aDataMin))
+            Else
+                'too small or neg value, set to -9
+                lLogMin = -9
+            End If
+            If aDataMin < 1.0# Then
+                lLogMin -= 1
+            End If
+            aScaleMin = 10.0# ^ lLogMin
+
+            Dim lLogMax As Integer
+            If aDataMax > 0.000000001 Then
+                lLogMax = Fix(Log10(aDataMax))
+            Else
+                'too small or neg value, set to -8
+                lLogMax = -8
+            End If
+            If aDataMax > 1.0# Then
+                lLogMax += 1
+            End If
+            aScaleMax = 10.0# ^ lLogMax
+
+            If aScaleMin * 10000000.0# < aScaleMax Then
+                'limit range to 7 cycles
+                aScaleMin = aScaleMax / 10000000.0
+            End If
+        End If
     End Sub
 End Class
