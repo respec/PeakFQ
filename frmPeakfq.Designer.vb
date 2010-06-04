@@ -106,6 +106,8 @@
         Me.tabStationSpecs = New System.Windows.Forms.TabPage
         Me.grdSpecs = New atcControls.atcGrid
         Me.tabThresholds = New System.Windows.Forms.TabPage
+        Me.cmdUpdateGraph = New System.Windows.Forms.Button
+        Me.zgcThresh = New ZedGraph.ZedGraphControl
         Me.lblIntervals = New System.Windows.Forms.Label
         Me.lblThresholds = New System.Windows.Forms.Label
         Me.cmdAddInt = New System.Windows.Forms.Button
@@ -162,8 +164,6 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
-        Me.zgcThresh = New ZedGraph.ZedGraphControl
-        Me.cmdUpdateGraph = New System.Windows.Forms.Button
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -360,6 +360,32 @@
         Me.tabThresholds.TabIndex = 3
         Me.tabThresholds.Text = "Threshholds"
         Me.tabThresholds.UseVisualStyleBackColor = True
+        '
+        'cmdUpdateGraph
+        '
+        Me.cmdUpdateGraph.Location = New System.Drawing.Point(300, 6)
+        Me.cmdUpdateGraph.Name = "cmdUpdateGraph"
+        Me.cmdUpdateGraph.Size = New System.Drawing.Size(98, 22)
+        Me.cmdUpdateGraph.TabIndex = 13
+        Me.cmdUpdateGraph.Text = "Update Graph"
+        Me.cmdUpdateGraph.UseVisualStyleBackColor = True
+        '
+        'zgcThresh
+        '
+        Me.zgcThresh.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.zgcThresh.Location = New System.Drawing.Point(452, 3)
+        Me.zgcThresh.Name = "zgcThresh"
+        Me.zgcThresh.ScrollGrace = 0
+        Me.zgcThresh.ScrollMaxX = 0
+        Me.zgcThresh.ScrollMaxY = 0
+        Me.zgcThresh.ScrollMaxY2 = 0
+        Me.zgcThresh.ScrollMinX = 0
+        Me.zgcThresh.ScrollMinY = 0
+        Me.zgcThresh.ScrollMinY2 = 0
+        Me.zgcThresh.Size = New System.Drawing.Size(274, 217)
+        Me.zgcThresh.TabIndex = 12
         '
         'lblIntervals
         '
@@ -1043,30 +1069,6 @@
         '
         'cmdOutFileView
         '
-        '
-        'zgcThresh
-        '
-        Me.zgcThresh.Dock = System.Windows.Forms.DockStyle.Right
-        Me.zgcThresh.Location = New System.Drawing.Point(452, 3)
-        Me.zgcThresh.Name = "zgcThresh"
-        Me.zgcThresh.ScrollGrace = 0
-        Me.zgcThresh.ScrollMaxX = 0
-        Me.zgcThresh.ScrollMaxY = 0
-        Me.zgcThresh.ScrollMaxY2 = 0
-        Me.zgcThresh.ScrollMinX = 0
-        Me.zgcThresh.ScrollMinY = 0
-        Me.zgcThresh.ScrollMinY2 = 0
-        Me.zgcThresh.Size = New System.Drawing.Size(274, 217)
-        Me.zgcThresh.TabIndex = 12
-        '
-        'cmdUpdateGraph
-        '
-        Me.cmdUpdateGraph.Location = New System.Drawing.Point(300, 6)
-        Me.cmdUpdateGraph.Name = "cmdUpdateGraph"
-        Me.cmdUpdateGraph.Size = New System.Drawing.Size(98, 22)
-        Me.cmdUpdateGraph.TabIndex = 13
-        Me.cmdUpdateGraph.Text = "Update Graph"
-        Me.cmdUpdateGraph.UseVisualStyleBackColor = True
         '
         'frmPeakfq
         '
