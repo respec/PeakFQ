@@ -782,7 +782,7 @@ Friend Class pfqProject
 		'  Dim CurStation As pfqStation
 		
 		CommentPending = False
-		i = 0
+        i = -1 '0
 		prj = Me.Copy
 		With prj
 			While Len(FileStr) > 0
