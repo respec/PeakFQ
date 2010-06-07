@@ -220,16 +220,14 @@ Friend Class frmPeakfq
         Dim curSta As pfqStation
 
         'UPGRADE_NOTE: Object PfqPrj.Stations may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-        PfqPrj.Stations.Clear()
-        PfqPrj.Stations = Nothing
-        '  lstGraphs.Clear
+        '        PfqPrj.Stations.Clear()
+        '       PfqPrj.Stations = Nothing
         With grdSpecs.Source
             For i = .FixedRows To .Rows - 1
-                curSta = New pfqStation
+                curSta = PfqPrj.Stations.Item(i - .FixedRows) ' New pfqStation
                 curSta.id = .CellValue(i, 0)
                 If .CellValue(i, 1) = "Yes" Then
                     curSta.Active = True
-                    '      lstGraphs.AddItem curSta.id
                 Else
                     curSta.Active = False
                 End If
@@ -256,7 +254,7 @@ Friend Class frmPeakfq
                 If IsNumeric(.CellValue(i, 15)) Then curSta.Lat = CSng(.CellValue(i, 15))
                 If IsNumeric(.CellValue(i, 16)) Then curSta.Lng = CSng(.CellValue(i, 16))
                 curSta.PlotName = .CellValue(i, 17)
-                PfqPrj.Stations.Add(curSta)
+                'PfqPrj.Stations.Add(curSta)
             Next
         End With
     End Sub
@@ -1207,9 +1205,9 @@ FileCancel:
         If lStn.Peaks(0).Year < lYearMin Then lYearMin = lStn.Peaks(0).Year
         If lStn.Peaks(lStn.Peaks.Count - 1).Year > lYearMax Then lYearMax = lStn.Peaks(lStn.Peaks.Count - 1).Year
         For i As Integer = 0 To lStn.Peaks.Count - 1
-            If lStn.Peaks(i).Value > 0 Or lStn.HistoricPeriod > 0 Then
+            If lStn.Peaks(i).Code <> "H" Or lStn.HistoricPeriod > 0 Then
                 lPkVals(i) = Math.Abs(lStn.Peaks(i).Value)
-                lDateVals(i) = lStn.Peaks(i).Year
+                lDateVals(i) = Math.Abs(lStn.Peaks(i).Year)
                 If lPkVals(i) > 0 AndAlso lPkVals(i) < lDataMin Then lDataMin = lPkVals(i)
                 If lPkVals(i) > lDataMax Then lDataMax = lPkVals(i)
             End If
