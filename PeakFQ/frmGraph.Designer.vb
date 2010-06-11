@@ -21,33 +21,47 @@
 	'It can be modified using the Windows Form Designer.
 	'Do not modify it using the code editor.
 	<System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-		Dim resources As System.Resources.ResourceManager = New System.Resources.ResourceManager(GetType(frmGraph))
-		Me.components = New System.ComponentModel.Container()
-		Me.ToolTip1 = New System.Windows.Forms.ToolTip(components)
-		Me.SuspendLayout()
-		Me.ToolTip1.Active = True
-		Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
-		Me.Text = "PEAKFQ Graph"
-		Me.ClientSize = New System.Drawing.Size(639, 480)
-		Me.Location = New System.Drawing.Point(3, 22)
-		Me.Icon = CType(resources.GetObject("frmGraph.Icon"), System.Drawing.Icon)
-		Me.MaximizeBox = False
-		Me.MinimizeBox = False
-		Me.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultLocation
-		Me.Font = New System.Drawing.Font("Arial", 8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-		Me.BackColor = System.Drawing.SystemColors.Control
-		Me.ControlBox = True
-		Me.Enabled = True
-		Me.KeyPreview = False
-		Me.Cursor = System.Windows.Forms.Cursors.Default
-		Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-		Me.ShowInTaskbar = True
-		Me.HelpButton = False
-		Me.WindowState = System.Windows.Forms.FormWindowState.Normal
-		Me.Name = "frmGraph"
-		Me.ResumeLayout(False)
-		Me.PerformLayout()
-	End Sub
+        Me.components = New System.ComponentModel.Container
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmGraph))
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.zgcResults = New ZedGraph.ZedGraphControl
+        Me.SuspendLayout()
+        '
+        'zgcResults
+        '
+        Me.zgcResults.Dock = System.Windows.Forms.DockStyle.Top
+        Me.zgcResults.Location = New System.Drawing.Point(0, 0)
+        Me.zgcResults.Name = "zgcResults"
+        Me.zgcResults.ScrollGrace = 0
+        Me.zgcResults.ScrollMaxX = 0
+        Me.zgcResults.ScrollMaxY = 0
+        Me.zgcResults.ScrollMaxY2 = 0
+        Me.zgcResults.ScrollMinX = 0
+        Me.zgcResults.ScrollMinY = 0
+        Me.zgcResults.ScrollMinY2 = 0
+        Me.zgcResults.Size = New System.Drawing.Size(639, 480)
+        Me.zgcResults.TabIndex = 0
+        '
+        'frmGraph
+        '
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 14.0!)
+        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.BackColor = System.Drawing.SystemColors.Control
+        Me.ClientSize = New System.Drawing.Size(639, 480)
+        Me.Controls.Add(Me.zgcResults)
+        Me.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+        Me.Location = New System.Drawing.Point(3, 22)
+        Me.MaximizeBox = False
+        Me.MinimizeBox = False
+        Me.Name = "frmGraph"
+        Me.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Text = "PEAKFQ Graph"
+        Me.ResumeLayout(False)
+
+    End Sub
+    Friend WithEvents zgcResults As ZedGraph.ZedGraphControl
 #End Region 
 End Class

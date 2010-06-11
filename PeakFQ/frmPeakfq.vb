@@ -57,6 +57,7 @@ Friend Class frmPeakfq
 
         For i = 0 To lstGraphs.Items.Count - 1
             If lstGraphs.GetSelected(i) Then
+                GenGraph(i)
                 GraphName = VB6.GetItemString(lstGraphs, i) & ".BMP"
                 If FileExists(GraphName) Then
                     newform = New frmGraph
@@ -589,7 +590,7 @@ FileCancel:
             .CellValue(1, 2) = "Interval"
         End With
 
-        InitGraph()
+        InitGraph(zgcThresh, "T")
 
         sstPfq.SelectedIndex = 0
         sstPfq.TabPages.Item(0).Enabled = False
@@ -1228,11 +1229,11 @@ FileCancel:
 
     End Sub
 
-    Private Sub InitGraph()
+    Private Sub InitGraph(ByVal aZGC As ZedGraphControl, ByVal aType As String)
         Dim lPaneMain As New ZedGraph.GraphPane
-        FormatPaneWithDefaults(lPaneMain)
+        FormatPaneWithDefaults(lPaneMain, aType)
 
-        With zgcThresh
+        With aZGC
             .Visible = True
             .IsSynchronizeXAxes = True
             With .MasterPane
@@ -1248,7 +1249,7 @@ FileCancel:
 
     End Sub
 
-    Public Sub FormatPaneWithDefaults(ByVal aPane As ZedGraph.GraphPane)
+    Public Sub FormatPaneWithDefaults(ByVal aPane As ZedGraph.GraphPane, ByVal aType As String)
         With aPane
             .IsAlignGrids = True
             .IsFontsScaled = False
@@ -1265,7 +1266,6 @@ FileCancel:
                 .MinorTic.IsOutside = False
                 .MinorTic.IsInside = True
                 .MinorTic.IsOpposite = True
-                .Scale.Format = "0000"
                 With .MajorGrid
                     .Color = DefaultMajorGridColor
                     .DashOn = 0
@@ -1279,13 +1279,25 @@ FileCancel:
                     .IsVisible = True
                 End With
                 .Title.FontSpec.Size = 8
-                .Title.Text = "Water Year"
+                If aType = "T" Then
+                    .Title.Text = "Water Year"
+                    .Scale.Format = "0000"
+                Else
+                    .Title.Text = "Exceedance Probability"
+                    .Scale.Format = "0.####"
+                    .Scale.MaxAuto = False
+                    .Scale.Min = 0.01
+                    .Scale.Max = 0.99
+                    Dim lProbScale As ProbabilityScale = .Scale
+                    lProbScale.LabelStyle = ProbabilityScale.ProbabilityLabelStyle.Percent
+                    lProbScale.IsReverse = True
+                End If
             End With
             With .X2Axis
                 .IsVisible = False
             End With
-            SetYaxisDefaults(.YAxis)
-            SetYaxisDefaults(.Y2Axis)
+            SetYaxisDefaults(.YAxis, aType)
+            SetYaxisDefaults(.Y2Axis, aType)
             .YAxis.MinSpace = 80
             .Y2Axis.MinSpace = 20
             .Y2Axis.Scale.IsVisible = False 'Default to not labeling on Y2, will be turned on later if different from Y
@@ -1300,7 +1312,7 @@ FileCancel:
         End With
     End Sub
 
-    Private Sub SetYaxisDefaults(ByVal aYaxis As Axis)
+    Private Sub SetYaxisDefaults(ByVal aYaxis As Axis, ByVal aType As String)
         With aYaxis
             .Type = AxisType.Log
             .Title.IsOmitMag = True
@@ -1328,7 +1340,11 @@ FileCancel:
                 .IsVisible = True
             End With
             .Title.FontSpec.Size = 8
-            .Title.Text = "Discharge (cfs)"
+            If aType = "T" Then
+                .Title.Text = "Discharge (cfs)"
+            Else
+                .Title.Text = "Annual Peak Discharge (cfs)"
+            End If
         End With
     End Sub
 
@@ -1428,5 +1444,138 @@ FileCancel:
                 aScaleMin = aScaleMax / 10000000.0
             End If
         End If
+    End Sub
+
+    Public Sub GenGraph(ByVal aStnInd As Integer)
+        Dim newform As New frmGraph
+        Dim lZGC As ZedGraphControl = newform.zgcResults
+        Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
+        Dim lYAxis As Axis = lPane.YAxis
+        Dim lCurve As LineItem = Nothing
+        Dim lDataMin As Double = 10000
+        Dim lDataMax As Double = -10000
+        Dim i As Integer
+        Dim j As Integer
+        Dim lNPkPlt As Integer
+        Dim lPkLog(200) As Double
+        Dim lSysPP(200) As Double
+        Dim lWrcPP(200) As Double
+        Dim lWeiba As Double
+        Dim lNPlot As Integer
+        Dim lSysRFC(200) As Double
+        Dim lWrcFC(200) As Double
+        Dim lTxProb(200) As Double
+        Dim lHistFlg As Integer
+        Dim lNoCLim As Integer
+        Dim lCLimL(200) As Double
+        Dim lCLimU(200) As Double
+        Const lPP1 As Double = -2.577
+        Const lPP0 As Double = 2.879
+        Dim lNPlot1 As Integer
+        Dim lNPlot2 As Integer
+        Dim lNPlCL1 As Integer
+        Dim lNPlCL2 As Integer
+        Dim lPMin As Double = 1.0E+20
+        Dim lPMax As Double = -1.0E+20
+
+        newform.Height = VB6.TwipsToPixelsY(7600)
+        newform.Width = VB6.TwipsToPixelsX(9700)
+        InitGraph(lZGC, "R")
+
+        F90_GETDATA(aStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
+                    lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
+                    lNoCLim, lCLimL, lCLimU)
+        lNPlot1 = 1
+        lNPlot2 = lNPlot
+        For i = 1 To lNPlot
+            If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
+            j = lNPlot + 1 - i
+            If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
+        Next
+        'save start/end plot positions for CLs
+        lNPlCL1 = lNPlot1
+        lNPlCL2 = lNPlot2
+
+        'WRC frequency
+        Dim lYVals(lNPlot2 - lNPlot1) As Double
+        Dim lXVals(lNPlot2 - lNPlot1) As Double
+        For i = lNPlot1 To lNPlot2
+            j = i - lNPlot1
+            lYVals(j) = 10 ^ lWrcFC(i)
+            If lYVals(j) > lPMax Then lPMax = lYVals(j)
+            If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            lXVals(j) = lTxProb(i)
+        Next
+        lYAxis.IsVisible = True
+        lYAxis.Scale.IsVisible = True
+        lCurve = lPane.AddCurve("WRC Frequency", lXVals, lYVals, Color.Red, SymbolType.None)
+
+        'observed peaks
+        ReDim lYVals(lNPkPlt), lXVals(lNPkPlt)
+        For i = 0 To lNPkPlt - 1
+            lYVals(i) = 10 ^ lPkLog(i + 1)
+            If lYVals(i) > lPMax Then lPMax = lYVals(i)
+            If lYVals(i) < lPMin Then lPMin = lYVals(i)
+            lXVals(i) = lSysPP(i + 1)
+        Next
+        lCurve = lPane.AddCurve("Observed Peaks", lXVals, lYVals, Color.Black, SymbolType.Circle)
+        lCurve.Line.IsVisible = False
+
+        'Systematic record
+        lNPlot1 = 1
+        lNPlot2 = lNPlot
+        For i = 1 To lNPlot
+            If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
+            j = lNPlot + 1 - i
+            If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
+        Next
+        ReDim lYVals(lNPlot2 - lNPlot1)
+        ReDim lXVals(lNPlot2 - lNPlot1)
+        For i = lNPlot1 To lNPlot2
+            j = i - lNPlot1
+            lYVals(j) = 10 ^ lSysRFC(i)
+            If lYVals(j) > lPMax Then lPMax = lYVals(j)
+            If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            lXVals(j) = lTxProb(i)
+        Next
+        lCurve = lPane.AddCurve("Systematic Record", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve.Line.Style = Drawing2D.DashStyle.Dash
+
+        If lHistFlg = 0 Then 'include historical peaks
+            ReDim lYVals(lNPkPlt), lXVals(lNPkPlt)
+            For i = 0 To lNPkPlt - 1
+                lYVals(i) = 10 ^ lPkLog(i + 1)
+                If lYVals(i) > lPMax Then lPMax = lYVals(i)
+                If lYVals(i) < lPMin Then lPMin = lYVals(i)
+                lXVals(i) = lWrcPP(i + 1)
+            Next
+            lCurve = lPane.AddCurve("Historically Adjusted", lXVals, lYVals, Color.Black, SymbolType.XCross)
+            lCurve.Line.IsVisible = False
+        End If
+
+        'confidence limits
+        ReDim lYVals(lNPlot2 - lNPlot1)
+        ReDim lXVals(lNPlot2 - lNPlot1)
+        For i = lNPlCL1 To lNPlCL2
+            j = i - lNPlCL1
+            lYVals(j) = 10 ^ lCLimL(i)
+            If lYVals(j) > lPMax Then lPMax = lYVals(j)
+            If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            lXVals(j) = lTxProb(i)
+        Next
+        lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve.Line.Style = Drawing2D.DashStyle.Dot
+        For i = lNPlCL1 To lNPlCL2
+            j = i - lNPlCL1
+            lYVals(j) = 10 ^ lCLimU(i)
+            If lYVals(j) > lPMax Then lPMax = lYVals(j)
+            If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            lXVals(j) = lTxProb(i)
+        Next
+        lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve.Line.Style = Drawing2D.DashStyle.Dot
+
+        newform.Show()
+
     End Sub
 End Class
