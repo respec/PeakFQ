@@ -620,22 +620,27 @@ Friend Class pfqProject
             'gIPC.SendMonitorMessage("Starting " & pPFQExeFileName)
             Logger.Status("Caption PKFQWin Status")
             Logger.Status("Starting " & pPFQExeFileName)
-            Dim lProcess As New Process
-            With lProcess.StartInfo
-                .FileName = pPFQExeFileName
-                .WorkingDirectory = CurDir()
-                .Arguments = FilenameNoPath(pSpecFileName)
-                .CreateNoWindow = True
-                .UseShellExecute = False
-            End With
-            lProcess.Start()
+
+            Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
+            Call PeakFQ(pSpecFileName, pSpecFileName.Length)
+
+            'Dim lProcess As New Process
+            'With lProcess.StartInfo
+            '    .FileName = pPFQExeFileName
+            '    .WorkingDirectory = CurDir()
+            '    .Arguments = FilenameNoPath(pSpecFileName)
+            '    .CreateNoWindow = True
+            '    .UseShellExecute = False
+            'End With
+            'lProcess.Start()
 
             'If lProcess Is Nothing Then
             '    'gIPC.SendMonitorMessage("(Open)")
             '    'gIPC.SendMonitorMessage("(MSG1 Unable to start PeakFQ batch program.)")
             '    Logger.Status("Unable to start PeakFQ batch program.")
             'Else
-            lProcess.WaitForExit(60000)
+            'lProcess.WaitForExit(60000)
+
             If Not FileExists(PfqPrj.OutFile) Then
                 'gIPC.SendMonitorMessage("(Open)")
                 'gIPC.SendMonitorMessage("(MSG1 Problem running PeakFQ batch program.)")

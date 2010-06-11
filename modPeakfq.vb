@@ -2,7 +2,9 @@ Option Strict Off
 Option Explicit On
 Module modPeakfq
 	Public PfqPrj As New pfqProject
-	Public DefPfqPrj As New pfqProject
+    Public DefPfqPrj As New pfqProject
+
+    Friend Declare Sub PEAKFQ Lib "peakfq.dll" (ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
 
 	'UPGRADE_WARNING: Application will terminate when Sub Main() finishes. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="E08DDC71-66BA-424F-A612-80AF11498FF8"'
 	Public Sub Main()
