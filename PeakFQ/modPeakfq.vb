@@ -5,6 +5,13 @@ Module modPeakfq
     Public DefPfqPrj As New pfqProject
 
     Friend Declare Sub PEAKFQ Lib "peakfq.dll" (ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
+    Friend Declare Sub GETDATA Lib "peakfq.dll" (ByVal aStnInd As Integer, ByVal aNPkPlt As Integer, _
+                                                 ByVal aPkLog() As Single, ByVal aSysPP() As Single, _
+                                                 ByVal aWrcPP() As Single, ByVal aWeiba As Single, _
+                                                 ByVal aNPlot As Integer, ByVal aSysRfc() As Single, _
+                                                 ByVal aWrcFc() As Single, ByVal aTxProb() As Single, _
+                                                 ByVal aHistFlg As Integer, ByVal aNoCLim As Integer, _
+                                                 ByVal aCLimL() As Single, ByVal aCLimU() As Single)
 
 	'UPGRADE_WARNING: Application will terminate when Sub Main() finishes. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="E08DDC71-66BA-424F-A612-80AF11498FF8"'
 	Public Sub Main()
