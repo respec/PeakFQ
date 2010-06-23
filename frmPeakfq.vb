@@ -1457,18 +1457,18 @@ FileCancel:
         Dim i As Integer
         Dim j As Integer
         Dim lNPkPlt As Integer
-        Dim lPkLog(200) As Double
-        Dim lSysPP(200) As Double
-        Dim lWrcPP(200) As Double
-        Dim lWeiba As Double
+        Dim lPkLog(200) As Single
+        Dim lSysPP(200) As Single
+        Dim lWrcPP(200) As Single
+        Dim lWeiba As Single
         Dim lNPlot As Integer
-        Dim lSysRFC(200) As Double
-        Dim lWrcFC(200) As Double
-        Dim lTxProb(200) As Double
+        Dim lSysRFC(200) As Single
+        Dim lWrcFC(200) As Single
+        Dim lTxProb(200) As Single
         Dim lHistFlg As Integer
         Dim lNoCLim As Integer
-        Dim lCLimL(200) As Double
-        Dim lCLimU(200) As Double
+        Dim lCLimL(200) As Single
+        Dim lCLimU(200) As Single
         Const lPP1 As Double = -2.577
         Const lPP0 As Double = 2.879
         Dim lNPlot1 As Integer
@@ -1482,15 +1482,15 @@ FileCancel:
         newform.Width = VB6.TwipsToPixelsX(9700)
         InitGraph(lZGC, "R")
 
-        F90_GETDATA(aStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
+        Call GETDATA(aStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
                     lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                     lNoCLim, lCLimL, lCLimU)
         lNPlot1 = 1
         lNPlot2 = lNPlot
         For i = 1 To lNPlot
-            If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
+            'If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
             j = lNPlot + 1 - i
-            If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
+            'If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
         Next
         'save start/end plot positions for CLs
         lNPlCL1 = lNPlot1
@@ -1525,9 +1525,9 @@ FileCancel:
         lNPlot1 = 1
         lNPlot2 = lNPlot
         For i = 1 To lNPlot
-            If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
+            'If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
             j = lNPlot + 1 - i
-            If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
+            'If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
         Next
         ReDim lYVals(lNPlot2 - lNPlot1)
         ReDim lXVals(lNPlot2 - lNPlot1)
