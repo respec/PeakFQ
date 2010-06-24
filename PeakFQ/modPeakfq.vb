@@ -3,6 +3,7 @@ Option Explicit On
 Module modPeakfq
 	Public PfqPrj As New pfqProject
     Public DefPfqPrj As New pfqProject
+    Public PFQExePath As String = IO.Path.GetDirectoryName(Application.ExecutablePath)
 
     Friend Declare Sub PEAKFQ Lib "peakfq.dll" (ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
     Friend Declare Sub GETDATA Lib "peakfq.dll" (ByVal aStnInd As Integer, ByVal aNPkPlt As Integer, _
@@ -19,7 +20,7 @@ Module modPeakfq
         'TODO: locate the PKFQBat.exe, seems like a separate program?
         'ff.SetDialogProperties("Please locate the PKFQWin Batch Executable 'PKFQBat.EXE'", My.Application.Info.DirectoryPath & "\PKFQBat.exe")
         'ff.SetRegistryInfo("PKFQWin", "files", "PKFQBat.exe")
-        PfqPrj.PFQExeFileName = atcUtility.FindFile("Please locate the PKFQWin Batch Executable 'PKFQBat.EXE'", "PKFQBat.EXE")
+        'PfqPrj.PFQExeFileName = atcUtility.FindFile("Please locate the PKFQWin Batch Executable 'PKFQBat.EXE'", "PKFQBat.EXE")
 		
         'ff.SetDialogProperties("Please locate PKFQWin help file 'PeakFQ.chm'", My.Application.Info.DirectoryPath & "\PeakFQ.chm")
         'ff.SetRegistryInfo("PKFQWin", "files", "PeakFQ.chm")
