@@ -659,40 +659,6 @@ FileCancel:
         End
     End Sub
 
-    Private Sub grdSpecs_CommitChange(ByVal eventSender As System.Object, ByVal eventArgs As AxATCoCtl.__ATCoGrid_CommitChangeEvent)
-        If eventArgs.changeFromCol = 7 Then 'changed std skew err, update mean sqr err
-            With grdSpecs.Source
-                .CellValue(eventArgs.changeFromRow, 8) = CSng(.CellValue(eventArgs.changeFromRow, eventArgs.changeFromCol) ^ 2)
-                'grdSpecs.CellBackColor = grdSpecs.BackColorFixed
-                .CellColor(eventArgs.changeFromRow, 8) = SystemColors.ControlDark
-            End With
-        End If
-    End Sub
-
-    Private Sub grdSpecs_RowColChange(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs)
-        Dim lUniqueValues As New ArrayList
-        With grdSpecs.Source
-            If .Columns = 1 Or .Columns = 14 Then
-                lUniqueValues.Add("Yes")
-                lUniqueValues.Add("No")
-            ElseIf .Columns = 5 Then
-                lUniqueValues.Add("Station")
-                lUniqueValues.Add("Weighted")
-                lUniqueValues.Add("Generalized")
-            End If
-            'TODO: need to replicate this logic in the MouseDownCell event handler
-            'If grdSpecs.col = 1 Or grdSpecs.col = 14 Then
-            '    grdSpecs.addValue("Yes")
-            '    grdSpecs.addValue("No")
-            'ElseIf grdSpecs.col = 5 Then
-            '    grdSpecs.addValue("Station")
-            '    grdSpecs.addValue("Weighted")
-            '    grdSpecs.addValue("Generalized")
-            'End If
-        End With
-        grdSpecs.ValidValues = lUniqueValues
-    End Sub
-
     Private Sub lstGraphs_DoubleClick(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles lstGraphs.DoubleClick
         cmdGraph_Click(cmdGraph, New System.EventArgs())
     End Sub
@@ -955,6 +921,17 @@ FileCancel:
             newName = FilenameNoExt(newName) & "." & PfqPrj.GraphFormat
             Kill(newName)
             Rename(FilenameNoExt(oldName) & "." & PfqPrj.GraphFormat, newName)
+        End If
+
+    End Sub
+
+    Private Sub grdSpecs_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdSpecs.CellEdited
+        If aColumn = 7 Then 'changed std skew err, update mean sqr err
+            With grdSpecs.Source
+                .CellValue(aRow, 8) = CSng(.CellValue(aRow, aColumn) ^ 2)
+                'grdSpecs.CellBackColor = grdSpecs.BackColorFixed
+                .CellColor(aRow, 8) = SystemColors.ControlDark
+            End With
         End If
 
     End Sub
@@ -1230,8 +1207,6 @@ FileCancel:
     End Sub
 
     Private Sub InitGraph(ByVal aZGC As ZedGraphControl, ByVal aType As String)
-        Dim lPaneMain As New ZedGraph.GraphPane
-        FormatPaneWithDefaults(lPaneMain, aType)
 
         With aZGC
             .Visible = True
@@ -1243,6 +1218,8 @@ FileCancel:
                 .Margin.All = 2
                 .InnerPaneGap = 1
                 .IsCommonScaleFactor = True
+                Dim lPaneMain As New ZedGraph.GraphPane
+                FormatPaneWithDefaults(lPaneMain, aType)
                 .PaneList.Add(lPaneMain)
             End With
         End With
@@ -1280,9 +1257,15 @@ FileCancel:
                 End With
                 .Title.FontSpec.Size = 8
                 If aType = "T" Then
+                    If .Type <> AxisType.Linear Then
+                        .Type = AxisType.Linear
+                    End If
                     .Title.Text = "Water Year"
                     .Scale.Format = "0000"
                 Else
+                    If .Type <> AxisType.Probability Then
+                        .Type = AxisType.Probability
+                    End If
                     .Title.Text = "Exceedance Probability"
                     .Scale.Format = "0.####"
                     .Scale.MaxAuto = False
@@ -1457,18 +1440,18 @@ FileCancel:
         Dim i As Integer
         Dim j As Integer
         Dim lNPkPlt As Integer
-        Dim lPkLog(200) As Single
-        Dim lSysPP(200) As Single
-        Dim lWrcPP(200) As Single
+        Dim lPkLog(199) As Single
+        Dim lSysPP(199) As Single
+        Dim lWrcPP(199) As Single
         Dim lWeiba As Single
         Dim lNPlot As Integer
-        Dim lSysRFC(200) As Single
-        Dim lWrcFC(200) As Single
-        Dim lTxProb(200) As Single
+        Dim lSysRFC(31) As Single
+        Dim lWrcFC(31) As Single
+        Dim lTxProb(31) As Single
         Dim lHistFlg As Integer
         Dim lNoCLim As Integer
-        Dim lCLimL(200) As Single
-        Dim lCLimU(200) As Single
+        Dim lCLimL(31) As Single
+        Dim lCLimU(31) As Single
         Const lPP1 As Double = -2.577
         Const lPP0 As Double = 2.879
         Dim lNPlot1 As Integer
