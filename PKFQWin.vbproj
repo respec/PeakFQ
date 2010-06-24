@@ -48,14 +48,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\BASINS40\Bin\Plugins\BASINS\atcControls.dll</HintPath>
     </Reference>
-    <Reference Include="AxInterop.ATCoCtl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>obj\Debug\AxInterop.ATCoCtl.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.ATCoCtl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>obj\Debug\Interop.ATCoCtl.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.FColl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>obj\Debug\Interop.FColl.dll</HintPath>
