@@ -2,6 +2,7 @@ Option Strict Off
 Option Explicit On
 Imports VB = Microsoft.VisualBasic
 Imports atcUtility
+Imports atcControls
 Imports MapWinUtility
 Imports System.Drawing.SystemColors
 Imports ZedGraph
@@ -1465,7 +1466,8 @@ FileCancel:
         newform.Width = VB6.TwipsToPixelsX(9700)
         InitGraph(lZGC, "R")
 
-        Call GETDATA(aStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
+        Dim lStnInd As Integer = aStnInd + 1
+        Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
                     lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                     lNoCLim, lCLimL, lCLimU)
         lNPlot1 = 1
