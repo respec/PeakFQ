@@ -7,8 +7,7 @@ Imports MapWinUtility
 
 Friend Class pfqProject
 	
-	Private pPFQExeFileName As String
-	Private pSpecFileName As String
+    Private pSpecFileName As String
 	Private pDataFileName As String
 	Private pDataType As Integer '0 - ASCII(Watstore), 1 - WDM
     Private pStations As Generic.List(Of pfqStation)
@@ -38,16 +37,7 @@ Friend Class pfqProject
 	Private pCEMA As String
 	
 	Private FType(1) As String
-	
-	Public Property PFQExeFileName() As String
-		Get
-			PFQExeFileName = pPFQExeFileName
-		End Get
-		Set(ByVal Value As String)
-			pPFQExeFileName = Value
-		End Set
-	End Property
-	
+
 	Public Property SpecFileName() As String
 		Get
 			SpecFileName = pSpecFileName
@@ -605,87 +595,85 @@ Friend Class pfqProject
 		Dim oldlen, i, curlen As Integer
 		
 		On Error Resume Next
-		If Len(pPFQExeFileName) > 0 Then
-			If CurDir() <> PathNameOnly(pPFQExeFileName) Then
-				'copy support files for batch executable
-				FileCopy(PathNameOnly(pPFQExeFileName) & "\pkfqms.wdm", "pkfqms.wdm")
-				FileCopy(PathNameOnly(pPFQExeFileName) & "\interact.ini", "interact.ini")
-			End If
-			
-			If FileExists(PfqPrj.OutFile) Then 'delete old output file
-				Kill(PfqPrj.OutFile)
-			End If
-			
-            'gIPC.SendMonitorMessage("(Caption PKFQWin Status)")
-            'gIPC.SendMonitorMessage("Starting " & pPFQExeFileName)
-            Logger.Status("Caption PKFQWin Status")
-            Logger.Status("Starting " & pPFQExeFileName)
 
-            Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
-            Call PeakFQ(pSpecFileName, pSpecFileName.Length)
-
-            'Dim lProcess As New Process
-            'With lProcess.StartInfo
-            '    .FileName = pPFQExeFileName
-            '    .WorkingDirectory = CurDir()
-            '    .Arguments = FilenameNoPath(pSpecFileName)
-            '    .CreateNoWindow = True
-            '    .UseShellExecute = False
-            'End With
-            'lProcess.Start()
-
-            'If lProcess Is Nothing Then
-            '    'gIPC.SendMonitorMessage("(Open)")
-            '    'gIPC.SendMonitorMessage("(MSG1 Unable to start PeakFQ batch program.)")
-            '    Logger.Status("Unable to start PeakFQ batch program.")
-            'Else
-            'lProcess.WaitForExit(60000)
-
-            If Not FileExists(PfqPrj.OutFile) Then
-                'gIPC.SendMonitorMessage("(Open)")
-                'gIPC.SendMonitorMessage("(MSG1 Problem running PeakFQ batch program.)")
-                Logger.Status("Problem running PeakFQ batch program.")
-            End If
-            'End If
-
-            '    i = Shell(pPFQExeFileName & " " & FilenameNoPath(pSpecFileName) & " >PeakFQ.run")
-            '    oldlen = -1
-            '    curlen = 0
-            '    If i > 0 Then
-            '      'this while loop should be replaced with StatusMonitor
-            '      While oldlen <> curlen
-            '        If FileExists(PfqPrj.OutFile) Then
-            '          oldlen = FileLen(PfqPrj.OutFile)
-            '        Else
-            '          oldlen = 0
-            '        End If
-            '        Sleep 2000
-            '        If FileExists(PfqPrj.OutFile) Then
-            '          curlen = FileLen(PfqPrj.OutFile)
-            '        Else 'problem if still no output file
-            '          curlen = 0
-            '        End If
-            '      Wend
-            '    End If
-            '    If curlen = 0 Then
-            '      MsgBox "Problem running PeakFQ batch program." & vbCrLf & _
-            ''             "Check PeakFQ.RUN file for details", vbExclamation, "PKFQWin"
-            '    End If
-            If CurDir() <> PathNameOnly(pPFQExeFileName) Then
-                Kill("pkfqms.wdm")
-                Kill("interact.ini")
-            End If
-
-            '    this code works fine for first run,
-            '    but not when VERBOSE spec file already exists
-            '    s = WholeFileString(pSpecFileName)
-            '    While UCase(Left(s, 7)) <> "VERBOSE"
-            '      'when specfile has been written in Verbose mode the batch run has ended
-            '      Sleep 2000
-            '      s = WholeFileString(pSpecFileName)
-            '    Wend
+        If CurDir() <> PFQExePath Then
+            'copy support files for fortran dll
+            FileCopy(PFQExePath & "\pkfqms.wdm", "pkfqms.wdm")
+            FileCopy(PFQExePath & "\interact.ini", "interact.ini")
         End If
-		
+
+        If IO.File.Exists(PfqPrj.OutFile) Then 'delete old output file
+            IO.File.Delete(PfqPrj.OutFile)
+        End If
+
+        'gIPC.SendMonitorMessage("(Caption PKFQWin Status)")
+        'gIPC.SendMonitorMessage("Starting " & pPFQExeFileName)
+        Logger.Status("Caption PKFQWin Status")
+
+        Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
+        Call PEAKFQ(pSpecFileName, pSpecFileName.Length)
+
+        'Dim lProcess As New Process
+        'With lProcess.StartInfo
+        '    .FileName = pPFQExeFileName
+        '    .WorkingDirectory = CurDir()
+        '    .Arguments = FilenameNoPath(pSpecFileName)
+        '    .CreateNoWindow = True
+        '    .UseShellExecute = False
+        'End With
+        'lProcess.Start()
+
+        'If lProcess Is Nothing Then
+        '    'gIPC.SendMonitorMessage("(Open)")
+        '    'gIPC.SendMonitorMessage("(MSG1 Unable to start PeakFQ batch program.)")
+        '    Logger.Status("Unable to start PeakFQ batch program.")
+        'Else
+        'lProcess.WaitForExit(60000)
+
+        If Not FileExists(PfqPrj.OutFile) Then
+            'gIPC.SendMonitorMessage("(Open)")
+            'gIPC.SendMonitorMessage("(MSG1 Problem running PeakFQ batch program.)")
+            Logger.Status("Problem running PeakFQ batch program.")
+        End If
+        'End If
+
+        '    i = Shell(pPFQExeFileName & " " & FilenameNoPath(pSpecFileName) & " >PeakFQ.run")
+        '    oldlen = -1
+        '    curlen = 0
+        '    If i > 0 Then
+        '      'this while loop should be replaced with StatusMonitor
+        '      While oldlen <> curlen
+        '        If FileExists(PfqPrj.OutFile) Then
+        '          oldlen = FileLen(PfqPrj.OutFile)
+        '        Else
+        '          oldlen = 0
+        '        End If
+        '        Sleep 2000
+        '        If FileExists(PfqPrj.OutFile) Then
+        '          curlen = FileLen(PfqPrj.OutFile)
+        '        Else 'problem if still no output file
+        '          curlen = 0
+        '        End If
+        '      Wend
+        '    End If
+        '    If curlen = 0 Then
+        '      MsgBox "Problem running PeakFQ batch program." & vbCrLf & _
+        ''             "Check PeakFQ.RUN file for details", vbExclamation, "PKFQWin"
+        '    End If
+        If CurDir() <> PFQExePath Then
+            Kill("pkfqms.wdm")
+            Kill("interact.ini")
+        End If
+
+        '    this code works fine for first run,
+        '    but not when VERBOSE spec file already exists
+        '    s = WholeFileString(pSpecFileName)
+        '    While UCase(Left(s, 7)) <> "VERBOSE"
+        '      'when specfile has been written in Verbose mode the batch run has ended
+        '      Sleep 2000
+        '      s = WholeFileString(pSpecFileName)
+        '    Wend
+
 	End Sub
 	
 	Public Function Copy() As pfqProject
@@ -705,8 +693,7 @@ Friend Class pfqProject
 			.IntermediateResults = pIntermediateResults
 			.LinePrinter = pLinePrinter
 			.OutFile = pOutFile
-			.PFQExeFileName = pPFQExeFileName
-			.PlotPos = pPlotPos
+            .PlotPos = pPlotPos
 			.PrintPlotPos = pPrintPlotPos
 			.InputDir = pInputDir
 			.OutputDir = pOutputDir
@@ -1002,8 +989,7 @@ Friend Class pfqProject
 	
 	'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
 	Private Sub Class_Initialize_Renamed()
-		pPFQExeFileName = ""
-		pSpecFileName = ""
+        pSpecFileName = ""
 		pDataFileName = ""
         pStations = New Generic.List(Of pfqStation)
 		pAdditionalOutput = 0
