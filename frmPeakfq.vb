@@ -59,17 +59,17 @@ Friend Class frmPeakfq
         For i = 0 To lstGraphs.Items.Count - 1
             If lstGraphs.GetSelected(i) Then
                 GenGraph(i)
-                GraphName = VB6.GetItemString(lstGraphs, i) & ".BMP"
-                If FileExists(GraphName) Then
-                    newform = New frmGraph
-                    newform.Height = VB6.TwipsToPixelsY(7600)
-                    newform.Width = VB6.TwipsToPixelsX(9700)
-                    newform.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
-                    newform.BackgroundImage = System.Drawing.Image.FromFile(GraphName)
-                    newform.Show()
-                Else
-                    MsgBox("No graph available for station " & VB6.GetItemString(lstGraphs, i) & "." & vbCrLf & "This station was likely skipped due to faulty data - see PeakFQ output file for details.", MsgBoxStyle.Exclamation, "PeakFQ")
-                End If
+                'GraphName = VB6.GetItemString(lstGraphs, i) & ".BMP"
+                'If FileExists(GraphName) Then
+                '    newform = New frmGraph
+                '    newform.Height = VB6.TwipsToPixelsY(7600)
+                '    newform.Width = VB6.TwipsToPixelsX(9700)
+                '    newform.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
+                '    newform.BackgroundImage = System.Drawing.Image.FromFile(GraphName)
+                '    newform.Show()
+                'Else
+                '    MsgBox("No graph available for station " & VB6.GetItemString(lstGraphs, i) & "." & vbCrLf & "This station was likely skipped due to faulty data - see PeakFQ output file for details.", MsgBoxStyle.Exclamation, "PeakFQ")
+                'End If
             End If
         Next i
     End Sub
@@ -461,19 +461,19 @@ FileCancel:
                     Kill(VB6.GetItemString(lstGraphs, i - 1) & ".BMP")
                 Next i
             End If
-            If PfqPrj.Graphic Then
-                SetGraphNames()
-                cmdGraph.Enabled = True
-                If UCase(PfqPrj.GraphFormat) <> "BMP" Then
-                    RemoveBMPs = True
-                Else
-                    RemoveBMPs = False
-                End If
-            Else
-                lstGraphs.Items.Clear()
-                cmdGraph.Enabled = False
-                RemoveBMPs = False
-            End If
+            'If PfqPrj.Graphic Then
+            SetGraphNames()
+            cmdGraph.Enabled = True
+            '    If UCase(PfqPrj.GraphFormat) <> "BMP" Then
+            '        RemoveBMPs = True
+            '    Else
+            '        RemoveBMPs = False
+            '    End If
+            'Else
+            '    lstGraphs.Items.Clear()
+            '    cmdGraph.Enabled = False
+            '    RemoveBMPs = False
+            'End If
             Me.Cursor = System.Windows.Forms.Cursors.Default
             sstPfq.TabPages.Item(3).Enabled = True
             sstPfq.SelectedIndex = 3
@@ -647,15 +647,15 @@ FileCancel:
     End Sub
 
     Private Sub frmPeakfq_FormClosed(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
-        Dim i As Integer
+        'Dim i As Integer
 
-        On Error Resume Next
+        'On Error Resume Next
 
-        If RemoveBMPs Then 'remove BMP graphics
-            For i = 1 To lstGraphs.Items.Count
-                Kill(VB6.GetItemString(lstGraphs, i - 1) & ".BMP")
-            Next i
-        End If
+        'If RemoveBMPs Then 'remove BMP graphics
+        '    For i = 1 To lstGraphs.Items.Count
+        '        Kill(VB6.GetItemString(lstGraphs, i - 1) & ".BMP")
+        '    Next i
+        'End If
 
         End
     End Sub
@@ -884,7 +884,7 @@ FileCancel:
         For i = 1 To grdSpecs.Source.Rows
             If grdSpecs.Source.CellValue(i, 1) = "Yes" Then
                 j = j + 1
-                oldName = "PKFQ-" & j & ".BMP"
+                'oldName = "PKFQ-" & j & ".BMP"
                 newName = grdSpecs.Source.CellValue(i, 17)
                 If i > 1 Then 'look for repeating station IDs
                     ilen = Len(newName)
@@ -902,9 +902,10 @@ FileCancel:
                         End If
                     Next k
                 End If
-                newName = newName & ".BMP"
-                RenameGraph(oldName, newName)
-                lstGraphs.Items.Add(FilenameNoExt(newName))
+                'newName = newName & ".BMP"
+                'RenameGraph(oldName, newName)
+                'lstGraphs.Items.Add(FilenameNoExt(newName))
+                lstGraphs.Items.Add(newName)
             End If
         Next i
         CurGraphName = IO.Path.ChangeExtension(VB6.GetItemString(lstGraphs, 0), ".BMP")
@@ -1233,7 +1234,13 @@ FileCancel:
             .IsFontsScaled = False
             .IsPenWidthScaled = False
             With .XAxis
-                .Scale.FontSpec.Size = 8
+                If aType = "T" Then
+                    .Scale.FontSpec.Size = 8
+                    .Title.FontSpec.Size = 8
+                Else
+                    .Scale.FontSpec.Size = 12
+                    .Title.FontSpec.Size = 12
+                End If
                 .Scale.FontSpec.IsBold = True
                 .Scale.IsUseTenPower = False
                 .Title.IsOmitMag = True
@@ -1256,7 +1263,6 @@ FileCancel:
                     .DashOff = 0
                     .IsVisible = True
                 End With
-                .Title.FontSpec.Size = 8
                 If aType = "T" Then
                     If .Type <> AxisType.Linear Then
                         .Type = AxisType.Linear
@@ -1267,11 +1273,10 @@ FileCancel:
                     If .Type <> AxisType.Probability Then
                         .Type = AxisType.Probability
                     End If
-                    .Title.Text = "Exceedance Probability"
                     .Scale.Format = "0.####"
                     .Scale.MaxAuto = False
-                    .Scale.Min = 0.01
-                    .Scale.Max = 0.99
+                    .Scale.Min = 0.0015
+                    .Scale.Max = 0.996
                     Dim lProbScale As ProbabilityScale = .Scale
                     lProbScale.LabelStyle = ProbabilityScale.ProbabilityLabelStyle.Percent
                     lProbScale.IsReverse = True
@@ -1306,7 +1311,6 @@ FileCancel:
             .MinorTic.IsOutside = False
             .MinorTic.IsInside = True
             .Scale.IsUseTenPower = False
-            .Scale.FontSpec.Size = 8
             .Scale.FontSpec.IsBold = True
             .Scale.Mag = 0
             .Scale.Format = "#,##0.###"
@@ -1323,11 +1327,14 @@ FileCancel:
                 .DashOff = 0
                 .IsVisible = True
             End With
-            .Title.FontSpec.Size = 8
             If aType = "T" Then
                 .Title.Text = "Discharge (cfs)"
+                .Title.FontSpec.Size = 8
+                .Scale.FontSpec.Size = 8
             Else
                 .Title.Text = "Annual Peak Discharge (cfs)"
+                .Title.FontSpec.Size = 12
+                .Scale.FontSpec.Size = 12
             End If
         End With
     End Sub
@@ -1432,12 +1439,7 @@ FileCancel:
 
     Public Sub GenGraph(ByVal aStnInd As Integer)
         Dim newform As New frmGraph
-        Dim lZGC As ZedGraphControl = newform.zgcResults
-        Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
-        Dim lYAxis As Axis = lPane.YAxis
         Dim lCurve As LineItem = Nothing
-        Dim lDataMin As Double = 10000
-        Dim lDataMax As Double = -10000
         Dim i As Integer
         Dim j As Integer
         Dim lNPkPlt As Integer
@@ -1453,8 +1455,8 @@ FileCancel:
         Dim lNoCLim As Integer
         Dim lCLimL(31) As Single
         Dim lCLimU(31) As Single
-        Const lPP1 As Double = -2.577
-        Const lPP0 As Double = 2.879
+        Const lPP1 As Double = 0.995 '-2.577
+        Const lPP0 As Double = 0.002 '2.879
         Dim lNPlot1 As Integer
         Dim lNPlot2 As Integer
         Dim lNPlCL1 As Integer
@@ -1464,18 +1466,21 @@ FileCancel:
 
         newform.Height = VB6.TwipsToPixelsY(7600)
         newform.Width = VB6.TwipsToPixelsX(9700)
+        Dim lZGC As ZedGraphControl = newform.zgcResults
         InitGraph(lZGC, "R")
+        Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
+        Dim lYAxis As Axis = lPane.YAxis
 
         Dim lStnInd As Integer = aStnInd + 1
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
                     lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                     lNoCLim, lCLimL, lCLimU)
-        lNPlot1 = 1
-        lNPlot2 = lNPlot
-        For i = 1 To lNPlot
-            'If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
-            j = lNPlot + 1 - i
-            'If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
+        lNPlot1 = 0
+        lNPlot2 = lNPlot - 1
+        For i = 0 To lNPlot - 1
+            If lTxProb(i) < lPP0 Then lNPlot2 = i
+            j = lNPlot - i - 1 '+ 1 - i
+            If lTxProb(j) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
         Next
         'save start/end plot positions for CLs
         lNPlCL1 = lNPlot1
@@ -1493,26 +1498,26 @@ FileCancel:
         Next
         lYAxis.IsVisible = True
         lYAxis.Scale.IsVisible = True
-        lCurve = lPane.AddCurve("WRC Frequency", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve = lPane.AddCurve("Bull. 17-B frequency", lXVals, lYVals, Color.Red, SymbolType.None)
 
         'observed peaks
-        ReDim lYVals(lNPkPlt), lXVals(lNPkPlt)
+        ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
         For i = 0 To lNPkPlt - 1
-            lYVals(i) = 10 ^ lPkLog(i + 1)
+            lYVals(i) = 10 ^ lPkLog(i)
             If lYVals(i) > lPMax Then lPMax = lYVals(i)
             If lYVals(i) < lPMin Then lPMin = lYVals(i)
-            lXVals(i) = lSysPP(i + 1)
+            lXVals(i) = lSysPP(i)
         Next
-        lCurve = lPane.AddCurve("Observed Peaks", lXVals, lYVals, Color.Black, SymbolType.Circle)
+        lCurve = lPane.AddCurve("Systematic peaks", lXVals, lYVals, Color.Black, SymbolType.Circle)
         lCurve.Line.IsVisible = False
 
         'Systematic record
-        lNPlot1 = 1
-        lNPlot2 = lNPlot
-        For i = 1 To lNPlot
-            'If Gausex(lTxProb(i)) < lPP0 Then lNPlot2 = i
-            j = lNPlot + 1 - i
-            'If Gausex(lTxProb(i)) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
+        lNPlot1 = 0
+        lNPlot2 = lNPlot - 1
+        For i = 0 To lNPlot - 1
+            If lTxProb(i) < lPP0 Then lNPlot2 = i
+            j = lNPlot - i - 1 ' + 1 - i
+            If lTxProb(j) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
         Next
         ReDim lYVals(lNPlot2 - lNPlot1)
         ReDim lXVals(lNPlot2 - lNPlot1)
@@ -1523,18 +1528,18 @@ FileCancel:
             If lYVals(j) < lPMin Then lPMin = lYVals(j)
             lXVals(j) = lTxProb(i)
         Next
-        lCurve = lPane.AddCurve("Systematic Record", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve = lPane.AddCurve("Systematic frequency", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Line.Style = Drawing2D.DashStyle.Dash
 
         If lHistFlg = 0 Then 'include historical peaks
-            ReDim lYVals(lNPkPlt), lXVals(lNPkPlt)
+            ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
             For i = 0 To lNPkPlt - 1
-                lYVals(i) = 10 ^ lPkLog(i + 1)
+                lYVals(i) = 10 ^ lPkLog(i)
                 If lYVals(i) > lPMax Then lPMax = lYVals(i)
                 If lYVals(i) < lPMin Then lPMin = lYVals(i)
-                lXVals(i) = lWrcPP(i + 1)
+                lXVals(i) = lWrcPP(i)
             Next
-            lCurve = lPane.AddCurve("Historically Adjusted", lXVals, lYVals, Color.Black, SymbolType.XCross)
+            lCurve = lPane.AddCurve("Historical adjusted", lXVals, lYVals, Color.Black, SymbolType.XCross)
             lCurve.Line.IsVisible = False
         End If
 
@@ -1548,7 +1553,7 @@ FileCancel:
             If lYVals(j) < lPMin Then lPMin = lYVals(j)
             lXVals(j) = lTxProb(i)
         Next
-        lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Red, SymbolType.None)
         lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
             j = i - lNPlCL1
@@ -1558,8 +1563,31 @@ FileCancel:
             lXVals(j) = lTxProb(i)
         Next
         lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve.Label.IsVisible = False
         lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
+        'set y-axis range
+        Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
+
+        lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & "Station - "
+
+        Dim lWarning As String = "Peakfq 5 run " & System.DateTime.Now & vbCrLf & _
+                                 "NOTE - Preliminary computation" & vbCrLf & _
+                                 "User is responsible for" & vbCrLf & _
+                                 "assessment and interpretation."
+        Dim lText As New TextObj(lWarning, 0.5, 0.8, CoordType.AxisXYScale, AlignH.Right, AlignV.Bottom)
+        lText.Location.CoordinateFrame = CoordType.PaneFraction
+        lText.FontSpec.IsBold = True
+        lText.FontSpec.Size = 12
+        lText.FontSpec.Border.IsVisible = False
+        lText.FontSpec.Fill.IsVisible = False
+        lText.Location.AlignH = AlignH.Left
+        lText.Location.AlignV = AlignV.Top
+        lPane.GraphObjList.Add(lText)
+
+        lZGC.AxisChange()
+        lZGC.Invalidate()
+        lZGC.Refresh()
         newform.Show()
 
     End Sub

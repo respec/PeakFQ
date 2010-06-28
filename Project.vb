@@ -599,82 +599,26 @@ Friend Class pfqProject
         If CurDir() <> PFQExePath Then
             'copy support files for fortran dll
             FileCopy(PFQExePath & "\pkfqms.wdm", "pkfqms.wdm")
-            FileCopy(PFQExePath & "\interact.ini", "interact.ini")
         End If
 
         If IO.File.Exists(PfqPrj.OutFile) Then 'delete old output file
             IO.File.Delete(PfqPrj.OutFile)
         End If
 
-        'gIPC.SendMonitorMessage("(Caption PKFQWin Status)")
-        'gIPC.SendMonitorMessage("Starting " & pPFQExeFileName)
         Logger.Status("Caption PKFQWin Status")
 
         Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
         Call PEAKFQ(pSpecFileName, pSpecFileName.Length)
 
-        'Dim lProcess As New Process
-        'With lProcess.StartInfo
-        '    .FileName = pPFQExeFileName
-        '    .WorkingDirectory = CurDir()
-        '    .Arguments = FilenameNoPath(pSpecFileName)
-        '    .CreateNoWindow = True
-        '    .UseShellExecute = False
-        'End With
-        'lProcess.Start()
-
-        'If lProcess Is Nothing Then
-        '    'gIPC.SendMonitorMessage("(Open)")
-        '    'gIPC.SendMonitorMessage("(MSG1 Unable to start PeakFQ batch program.)")
-        '    Logger.Status("Unable to start PeakFQ batch program.")
-        'Else
-        'lProcess.WaitForExit(60000)
-
         If Not FileExists(PfqPrj.OutFile) Then
-            'gIPC.SendMonitorMessage("(Open)")
-            'gIPC.SendMonitorMessage("(MSG1 Problem running PeakFQ batch program.)")
             Logger.Status("Problem running PeakFQ batch program.")
         End If
-        'End If
 
-        '    i = Shell(pPFQExeFileName & " " & FilenameNoPath(pSpecFileName) & " >PeakFQ.run")
-        '    oldlen = -1
-        '    curlen = 0
-        '    If i > 0 Then
-        '      'this while loop should be replaced with StatusMonitor
-        '      While oldlen <> curlen
-        '        If FileExists(PfqPrj.OutFile) Then
-        '          oldlen = FileLen(PfqPrj.OutFile)
-        '        Else
-        '          oldlen = 0
-        '        End If
-        '        Sleep 2000
-        '        If FileExists(PfqPrj.OutFile) Then
-        '          curlen = FileLen(PfqPrj.OutFile)
-        '        Else 'problem if still no output file
-        '          curlen = 0
-        '        End If
-        '      Wend
-        '    End If
-        '    If curlen = 0 Then
-        '      MsgBox "Problem running PeakFQ batch program." & vbCrLf & _
-        ''             "Check PeakFQ.RUN file for details", vbExclamation, "PKFQWin"
-        '    End If
         If CurDir() <> PFQExePath Then
             Kill("pkfqms.wdm")
-            Kill("interact.ini")
         End If
 
-        '    this code works fine for first run,
-        '    but not when VERBOSE spec file already exists
-        '    s = WholeFileString(pSpecFileName)
-        '    While UCase(Left(s, 7)) <> "VERBOSE"
-        '      'when specfile has been written in Verbose mode the batch run has ended
-        '      Sleep 2000
-        '      s = WholeFileString(pSpecFileName)
-        '    Wend
-
-	End Sub
+    End Sub
 	
 	Public Function Copy() As pfqProject
         Dim oldStation As pfqStation = Nothing
