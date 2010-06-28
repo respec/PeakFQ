@@ -29,7 +29,7 @@
         '
         'zgcResults
         '
-        Me.zgcResults.Dock = System.Windows.Forms.DockStyle.Top
+        Me.zgcResults.Dock = System.Windows.Forms.DockStyle.Fill
         Me.zgcResults.Location = New System.Drawing.Point(0, 0)
         Me.zgcResults.Name = "zgcResults"
         Me.zgcResults.ScrollGrace = 0
@@ -51,11 +51,8 @@
         Me.Controls.Add(Me.zgcResults)
         Me.Cursor = System.Windows.Forms.Cursors.Default
         Me.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Location = New System.Drawing.Point(3, 22)
-        Me.MaximizeBox = False
-        Me.MinimizeBox = False
         Me.Name = "frmGraph"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.Text = "PEAKFQ Graph"
