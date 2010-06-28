@@ -1472,9 +1472,10 @@ FileCancel:
         Dim lYAxis As Axis = lPane.YAxis
 
         Dim lStnInd As Integer = aStnInd + 1
+        Dim lHeader As String = " ".PadLeft(80)
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
                     lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
-                    lNoCLim, lCLimL, lCLimU)
+                    lNoCLim, lCLimL, lCLimU, lHeader, lHeader.Length)
         lNPlot1 = 0
         lNPlot2 = lNPlot - 1
         For i = 0 To lNPlot - 1
