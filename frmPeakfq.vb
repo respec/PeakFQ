@@ -53,8 +53,8 @@ Friend Class frmPeakfq
 
     Private Sub cmdGraph_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdGraph.Click
         Dim i As Integer
-        Dim GraphName As String
-        Dim newform As frmGraph
+        'Dim GraphName As String
+        'Dim newform As frmGraph
 
         For i = 0 To lstGraphs.Items.Count - 1
             If lstGraphs.GetSelected(i) Then
@@ -1204,6 +1204,7 @@ FileCancel:
         lCurve.Line.IsVisible = False
 
         zgcThresh.AxisChange()
+        zgcThresh.Invalidate()
         zgcThresh.Refresh()
 
     End Sub
@@ -1438,7 +1439,7 @@ FileCancel:
     End Sub
 
     Public Sub GenGraph(ByVal aStnInd As Integer)
-        Dim newform As New frmGraph
+        Dim newform As New atcGraph.atcGraphForm
         Dim lCurve As LineItem = Nothing
         Dim i As Integer
         Dim j As Integer
@@ -1466,7 +1467,7 @@ FileCancel:
 
         newform.Height = VB6.TwipsToPixelsY(7600)
         newform.Width = VB6.TwipsToPixelsX(9700)
-        Dim lZGC As ZedGraphControl = newform.zgcResults
+        Dim lZGC As ZedGraphControl = newform.ZedGraphCtrl
         InitGraph(lZGC, "R")
         Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
@@ -1570,14 +1571,15 @@ FileCancel:
         'set y-axis range
         Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
 
-        lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & "Station - "
+        lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & "Station - " & lHeader
 
         Dim lWarning As String = "Peakfq 5 run " & System.DateTime.Now & vbCrLf & _
                                  "NOTE - Preliminary computation" & vbCrLf & _
                                  "User is responsible for" & vbCrLf & _
                                  "assessment and interpretation."
-        Dim lText As New TextObj(lWarning, 0.5, 0.8, CoordType.AxisXYScale, AlignH.Right, AlignV.Bottom)
+        Dim lText As New TextObj(lWarning, 0.5, 0.7)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
+        lText.FontSpec.StringAlignment = StringAlignment.Near
         lText.FontSpec.IsBold = True
         lText.FontSpec.Size = 12
         lText.FontSpec.Border.IsVisible = False

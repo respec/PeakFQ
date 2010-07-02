@@ -551,21 +551,20 @@ Friend Class pfqProject
 		End If
 		i = 0
 		For	Each vSta In pStations
-			i = i + 1
-			'UPGRADE_WARNING: Couldn't resolve default property of object vSta.Active. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-			If vSta.Active Then 'write station specs to string
-				If DefPrj Is Nothing Then 'write out all station specs
-					'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsVerbose. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					s = s & vSta.WriteSpecsVerbose
-				Else 'only write out non-default station specs
-					defsta = DefPrj.Stations(i)
-					'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsNonDefault. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-					s = s & vSta.WriteSpecsNonDefault(defsta)
-					'UPGRADE_NOTE: Object defsta may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-					defsta = Nothing
-				End If
-			End If
-		Next vSta
+            If vSta.Active Then 'write station specs to string
+                If DefPrj Is Nothing Then 'write out all station specs
+                    'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsVerbose. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                    s = s & vSta.WriteSpecsVerbose
+                Else 'only write out non-default station specs
+                    defsta = DefPrj.Stations(i)
+                    'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsNonDefault. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                    s = s & vSta.WriteSpecsNonDefault(defsta)
+                    'UPGRADE_NOTE: Object defsta may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+                    defsta = Nothing
+                End If
+            End If
+            i = i + 1
+        Next vSta
 		SaveAsString = s
 		
 	End Function
