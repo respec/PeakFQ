@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
@@ -48,9 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\BASINS40\Bin\Plugins\BASINS\atcControls.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.FColl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="atcGraph, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>obj\Debug\Interop.FColl.dll</HintPath>
+      <HintPath>..\BASINS40\Bin\Plugins\BASINS\atcGraph.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic.Compatibility">
       <Name>Microsoft.VisualBasic.Compatibility</Name>
@@ -88,13 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.vb" />
-    <Compile Include="frmGraph.Designer.vb">
-      <SubType>Code</SubType>
-      <DependentUpon>frmGraph.vb</DependentUpon>
-    </Compile>
-    <Compile Include="frmGraph.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="frmPeakfq.Designer.vb">
       <SubType>Code</SubType>
       <DependentUpon>frmPeakfq.vb</DependentUpon>
@@ -114,9 +107,6 @@
     <Compile Include="UtilShell.vb">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="frmGraph.resX">
-      <DependentUpon>frmGraph.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="frmPeakfq.resX">
       <DependentUpon>frmPeakfq.vb</DependentUpon>
     </EmbeddedResource>
