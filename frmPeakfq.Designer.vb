@@ -192,62 +192,63 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(885, 24)
+        Me.MainMenu1.Size = New System.Drawing.Size(757, 27)
         Me.MainMenu1.TabIndex = 30
         '
         'mnuFile
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOpen, Me.mnuSaveSpecs, Me.mnuExit})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(35, 20)
+        Me.mnuFile.Size = New System.Drawing.Size(45, 23)
         Me.mnuFile.Text = "&File"
         '
         'mnuOpen
         '
         Me.mnuOpen.Name = "mnuOpen"
-        Me.mnuOpen.Size = New System.Drawing.Size(140, 22)
+        Me.mnuOpen.Size = New System.Drawing.Size(172, 24)
         Me.mnuOpen.Text = "&Open"
         '
         'mnuSaveSpecs
         '
         Me.mnuSaveSpecs.Enabled = False
         Me.mnuSaveSpecs.Name = "mnuSaveSpecs"
-        Me.mnuSaveSpecs.Size = New System.Drawing.Size(140, 22)
+        Me.mnuSaveSpecs.Size = New System.Drawing.Size(172, 24)
         Me.mnuSaveSpecs.Text = "&Save Specs"
         '
         'mnuExit
         '
         Me.mnuExit.Name = "mnuExit"
-        Me.mnuExit.Size = New System.Drawing.Size(140, 22)
+        Me.mnuExit.Size = New System.Drawing.Size(172, 24)
         Me.mnuExit.Text = "E&xit"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAbout, Me.mnuFeedback, Me.mnuHelpMain})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(40, 20)
+        Me.mnuHelp.Size = New System.Drawing.Size(53, 23)
         Me.mnuHelp.Text = "&Help"
         '
         'mnuAbout
         '
         Me.mnuAbout.Name = "mnuAbout"
-        Me.mnuAbout.Size = New System.Drawing.Size(158, 22)
+        Me.mnuAbout.Size = New System.Drawing.Size(199, 24)
         Me.mnuAbout.Text = "&About"
         '
         'mnuFeedback
         '
         Me.mnuFeedback.Name = "mnuFeedback"
-        Me.mnuFeedback.Size = New System.Drawing.Size(158, 22)
+        Me.mnuFeedback.Size = New System.Drawing.Size(199, 24)
         Me.mnuFeedback.Text = "Send &Feedback"
         '
         'mnuHelpMain
         '
         Me.mnuHelpMain.Name = "mnuHelpMain"
-        Me.mnuHelpMain.Size = New System.Drawing.Size(158, 22)
+        Me.mnuHelpMain.Size = New System.Drawing.Size(199, 24)
         Me.mnuHelpMain.Text = "PKFQWin Help"
         '
         'fraButtons
         '
+        Me.fraButtons.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraButtons.BackColor = System.Drawing.SystemColors.Control
         Me.fraButtons.Controls.Add(Me.cmdRun)
         Me.fraButtons.Controls.Add(Me.cmdSave)
@@ -305,6 +306,9 @@
         '
         'sstPfq
         '
+        Me.sstPfq.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.sstPfq.Controls.Add(Me.tabStationSpecs)
         Me.sstPfq.Controls.Add(Me.tabThresholds)
         Me.sstPfq.Controls.Add(Me.tabOutput)
@@ -332,12 +336,13 @@
         Me.grdSpecs.AllowHorizontalScrolling = True
         Me.grdSpecs.AllowNewValidValues = False
         Me.grdSpecs.CellBackColor = System.Drawing.SystemColors.Window
+        Me.grdSpecs.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSpecs.Fixed3D = False
         Me.grdSpecs.LineColor = System.Drawing.SystemColors.Control
         Me.grdSpecs.LineWidth = 1.0!
-        Me.grdSpecs.Location = New System.Drawing.Point(0, 3)
+        Me.grdSpecs.Location = New System.Drawing.Point(0, 0)
         Me.grdSpecs.Name = "grdSpecs"
-        Me.grdSpecs.Size = New System.Drawing.Size(726, 217)
+        Me.grdSpecs.Size = New System.Drawing.Size(729, 223)
         Me.grdSpecs.Source = Nothing
         Me.grdSpecs.TabIndex = 2
         '
@@ -448,6 +453,8 @@
         '
         Me.grdInterval.AllowHorizontalScrolling = False
         Me.grdInterval.AllowNewValidValues = False
+        Me.grdInterval.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.grdInterval.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdInterval.Fixed3D = False
         Me.grdInterval.LineColor = System.Drawing.SystemColors.Control
@@ -462,6 +469,8 @@
         '
         Me.grdThresh.AllowHorizontalScrolling = False
         Me.grdThresh.AllowNewValidValues = False
+        Me.grdThresh.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.grdThresh.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdThresh.Fixed3D = False
         Me.grdThresh.LineColor = System.Drawing.SystemColors.Control
@@ -486,12 +495,14 @@
         '
         'fraOutFile
         '
+        Me.fraOutFile.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraOutFile.BackColor = System.Drawing.SystemColors.Control
         Me.fraOutFile.Controls.Add(Me._cmdOpenOut_0)
         Me.fraOutFile.Controls.Add(Me._lblOutFile_0)
         Me.fraOutFile.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraOutFile.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraOutFile.Location = New System.Drawing.Point(8, 32)
+        Me.fraOutFile.Location = New System.Drawing.Point(8, 8)
         Me.fraOutFile.Name = "fraOutFile"
         Me.fraOutFile.Padding = New System.Windows.Forms.Padding(0)
         Me.fraOutFile.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -510,13 +521,16 @@
         Me._cmdOpenOut_0.Location = New System.Drawing.Point(8, 16)
         Me._cmdOpenOut_0.Name = "_cmdOpenOut_0"
         Me._cmdOpenOut_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdOpenOut_0.Size = New System.Drawing.Size(57, 17)
+        Me._cmdOpenOut_0.Size = New System.Drawing.Size(57, 25)
         Me._cmdOpenOut_0.TabIndex = 3
         Me._cmdOpenOut_0.Text = "Select"
         Me._cmdOpenOut_0.UseVisualStyleBackColor = False
         '
         '_lblOutFile_0
         '
+        Me._lblOutFile_0.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFile_0.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFile_0.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFile_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -525,12 +539,15 @@
         Me._lblOutFile_0.Location = New System.Drawing.Point(72, 16)
         Me._lblOutFile_0.Name = "_lblOutFile_0"
         Me._lblOutFile_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._lblOutFile_0.Size = New System.Drawing.Size(393, 49)
+        Me._lblOutFile_0.Size = New System.Drawing.Size(430, 57)
         Me._lblOutFile_0.TabIndex = 4
         Me._lblOutFile_0.Text = "(none)"
         '
         'fraAddOut
         '
+        Me.fraAddOut.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraAddOut.BackColor = System.Drawing.SystemColors.Control
         Me.fraAddOut.Controls.Add(Me._optAddFormat_1)
         Me.fraAddOut.Controls.Add(Me._optAddFormat_0)
@@ -540,11 +557,11 @@
         Me.fraAddOut.Controls.Add(Me._lblOutFile_1)
         Me.fraAddOut.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraAddOut.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraAddOut.Location = New System.Drawing.Point(8, 120)
+        Me.fraAddOut.Location = New System.Drawing.Point(8, 95)
         Me.fraAddOut.Name = "fraAddOut"
         Me.fraAddOut.Padding = New System.Windows.Forms.Padding(0)
         Me.fraAddOut.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraAddOut.Size = New System.Drawing.Size(505, 105)
+        Me.fraAddOut.Size = New System.Drawing.Size(505, 115)
         Me.fraAddOut.TabIndex = 5
         Me.fraAddOut.TabStop = False
         Me.fraAddOut.Text = "Additional Output"
@@ -624,13 +641,16 @@
         Me._cmdOpenOut_1.Location = New System.Drawing.Point(8, 48)
         Me._cmdOpenOut_1.Name = "_cmdOpenOut_1"
         Me._cmdOpenOut_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdOpenOut_1.Size = New System.Drawing.Size(57, 17)
+        Me._cmdOpenOut_1.Size = New System.Drawing.Size(57, 25)
         Me._cmdOpenOut_1.TabIndex = 6
         Me._cmdOpenOut_1.Text = "Select"
         Me._cmdOpenOut_1.UseVisualStyleBackColor = False
         '
         '_lblOutFile_1
         '
+        Me._lblOutFile_1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFile_1.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFile_1.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFile_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -639,12 +659,13 @@
         Me._lblOutFile_1.Location = New System.Drawing.Point(72, 48)
         Me._lblOutFile_1.Name = "_lblOutFile_1"
         Me._lblOutFile_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._lblOutFile_1.Size = New System.Drawing.Size(393, 49)
+        Me._lblOutFile_1.Size = New System.Drawing.Size(430, 64)
         Me._lblOutFile_1.TabIndex = 9
         Me._lblOutFile_1.Text = "(none)"
         '
         'fraOutRight
         '
+        Me.fraOutRight.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraOutRight.BackColor = System.Drawing.SystemColors.Control
         Me.fraOutRight.Controls.Add(Me.txtCL)
         Me.fraOutRight.Controls.Add(Me.txtPlotPos)
@@ -662,7 +683,7 @@
         Me.fraOutRight.Cursor = System.Windows.Forms.Cursors.Default
         Me.fraOutRight.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraOutRight.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraOutRight.Location = New System.Drawing.Point(536, 40)
+        Me.fraOutRight.Location = New System.Drawing.Point(533, 12)
         Me.fraOutRight.Name = "fraOutRight"
         Me.fraOutRight.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.fraOutRight.Size = New System.Drawing.Size(193, 185)
@@ -716,6 +737,7 @@
         '
         '_optGraphFormat_4
         '
+        Me._optGraphFormat_4.AutoSize = True
         Me._optGraphFormat_4.BackColor = System.Drawing.SystemColors.Control
         Me._optGraphFormat_4.Cursor = System.Windows.Forms.Cursors.Default
         Me._optGraphFormat_4.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -724,7 +746,7 @@
         Me._optGraphFormat_4.Location = New System.Drawing.Point(80, 107)
         Me._optGraphFormat_4.Name = "_optGraphFormat_4"
         Me._optGraphFormat_4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_4.Size = New System.Drawing.Size(65, 17)
+        Me._optGraphFormat_4.Size = New System.Drawing.Size(49, 18)
         Me._optGraphFormat_4.TabIndex = 39
         Me._optGraphFormat_4.TabStop = True
         Me._optGraphFormat_4.Text = "WMF"
@@ -732,6 +754,7 @@
         '
         '_optGraphFormat_3
         '
+        Me._optGraphFormat_3.AutoSize = True
         Me._optGraphFormat_3.BackColor = System.Drawing.SystemColors.Control
         Me._optGraphFormat_3.Cursor = System.Windows.Forms.Cursors.Default
         Me._optGraphFormat_3.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -740,7 +763,7 @@
         Me._optGraphFormat_3.Location = New System.Drawing.Point(144, 88)
         Me._optGraphFormat_3.Name = "_optGraphFormat_3"
         Me._optGraphFormat_3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_3.Size = New System.Drawing.Size(49, 17)
+        Me._optGraphFormat_3.Size = New System.Drawing.Size(38, 18)
         Me._optGraphFormat_3.TabIndex = 38
         Me._optGraphFormat_3.TabStop = True
         Me._optGraphFormat_3.Text = "PS"
@@ -748,6 +771,7 @@
         '
         '_optGraphFormat_2
         '
+        Me._optGraphFormat_2.AutoSize = True
         Me._optGraphFormat_2.BackColor = System.Drawing.SystemColors.Control
         Me._optGraphFormat_2.Cursor = System.Windows.Forms.Cursors.Default
         Me._optGraphFormat_2.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -756,7 +780,7 @@
         Me._optGraphFormat_2.Location = New System.Drawing.Point(80, 88)
         Me._optGraphFormat_2.Name = "_optGraphFormat_2"
         Me._optGraphFormat_2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_2.Size = New System.Drawing.Size(65, 17)
+        Me._optGraphFormat_2.Size = New System.Drawing.Size(48, 18)
         Me._optGraphFormat_2.TabIndex = 37
         Me._optGraphFormat_2.TabStop = True
         Me._optGraphFormat_2.Text = "CGM"
@@ -764,6 +788,7 @@
         '
         '_optGraphFormat_1
         '
+        Me._optGraphFormat_1.AutoSize = True
         Me._optGraphFormat_1.BackColor = System.Drawing.SystemColors.Control
         Me._optGraphFormat_1.Cursor = System.Windows.Forms.Cursors.Default
         Me._optGraphFormat_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -772,7 +797,7 @@
         Me._optGraphFormat_1.Location = New System.Drawing.Point(16, 107)
         Me._optGraphFormat_1.Name = "_optGraphFormat_1"
         Me._optGraphFormat_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_1.Size = New System.Drawing.Size(65, 17)
+        Me._optGraphFormat_1.Size = New System.Drawing.Size(46, 18)
         Me._optGraphFormat_1.TabIndex = 36
         Me._optGraphFormat_1.TabStop = True
         Me._optGraphFormat_1.Text = "BMP"
@@ -780,6 +805,7 @@
         '
         '_optGraphFormat_0
         '
+        Me._optGraphFormat_0.AutoSize = True
         Me._optGraphFormat_0.BackColor = System.Drawing.SystemColors.Control
         Me._optGraphFormat_0.Cursor = System.Windows.Forms.Cursors.Default
         Me._optGraphFormat_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -788,7 +814,7 @@
         Me._optGraphFormat_0.Location = New System.Drawing.Point(16, 88)
         Me._optGraphFormat_0.Name = "_optGraphFormat_0"
         Me._optGraphFormat_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_0.Size = New System.Drawing.Size(65, 17)
+        Me._optGraphFormat_0.Size = New System.Drawing.Size(50, 18)
         Me._optGraphFormat_0.TabIndex = 35
         Me._optGraphFormat_0.TabStop = True
         Me._optGraphFormat_0.Text = "None"
@@ -796,6 +822,7 @@
         '
         'chkPlotPos
         '
+        Me.chkPlotPos.AutoSize = True
         Me.chkPlotPos.BackColor = System.Drawing.SystemColors.Control
         Me.chkPlotPos.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkPlotPos.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -803,13 +830,14 @@
         Me.chkPlotPos.Location = New System.Drawing.Point(0, 24)
         Me.chkPlotPos.Name = "chkPlotPos"
         Me.chkPlotPos.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkPlotPos.Size = New System.Drawing.Size(169, 17)
+        Me.chkPlotPos.Size = New System.Drawing.Size(130, 18)
         Me.chkPlotPos.TabIndex = 24
         Me.chkPlotPos.Text = "Print Plotting Positions"
         Me.chkPlotPos.UseVisualStyleBackColor = False
         '
         'chkLinePrinter
         '
+        Me.chkLinePrinter.AutoSize = True
         Me.chkLinePrinter.BackColor = System.Drawing.SystemColors.Control
         Me.chkLinePrinter.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkLinePrinter.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -817,13 +845,14 @@
         Me.chkLinePrinter.Location = New System.Drawing.Point(0, 48)
         Me.chkLinePrinter.Name = "chkLinePrinter"
         Me.chkLinePrinter.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkLinePrinter.Size = New System.Drawing.Size(185, 17)
+        Me.chkLinePrinter.Size = New System.Drawing.Size(106, 18)
         Me.chkLinePrinter.TabIndex = 23
         Me.chkLinePrinter.Text = "Line Printer Plots"
         Me.chkLinePrinter.UseVisualStyleBackColor = False
         '
         'chkIntRes
         '
+        Me.chkIntRes.AutoSize = True
         Me.chkIntRes.BackColor = System.Drawing.SystemColors.Control
         Me.chkIntRes.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkIntRes.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -831,7 +860,7 @@
         Me.chkIntRes.Location = New System.Drawing.Point(0, 0)
         Me.chkIntRes.Name = "chkIntRes"
         Me.chkIntRes.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkIntRes.Size = New System.Drawing.Size(193, 17)
+        Me.chkIntRes.Size = New System.Drawing.Size(158, 18)
         Me.chkIntRes.TabIndex = 22
         Me.chkIntRes.Text = "Output Intermediate Results"
         Me.chkIntRes.UseVisualStyleBackColor = False
@@ -851,6 +880,7 @@
         '
         'lblPlotPos
         '
+        Me.lblPlotPos.AutoSize = True
         Me.lblPlotPos.BackColor = System.Drawing.SystemColors.Control
         Me.lblPlotPos.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblPlotPos.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -858,12 +888,13 @@
         Me.lblPlotPos.Location = New System.Drawing.Point(0, 136)
         Me.lblPlotPos.Name = "lblPlotPos"
         Me.lblPlotPos.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblPlotPos.Size = New System.Drawing.Size(121, 17)
+        Me.lblPlotPos.Size = New System.Drawing.Size(84, 14)
         Me.lblPlotPos.TabIndex = 28
         Me.lblPlotPos.Text = "Plotting Position:"
         '
         'lblCL
         '
+        Me.lblCL.AutoSize = True
         Me.lblCL.BackColor = System.Drawing.SystemColors.Control
         Me.lblCL.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblCL.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -871,7 +902,7 @@
         Me.lblCL.Location = New System.Drawing.Point(0, 160)
         Me.lblCL.Name = "lblCL"
         Me.lblCL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCL.Size = New System.Drawing.Size(121, 17)
+        Me.lblCL.Size = New System.Drawing.Size(95, 14)
         Me.lblCL.TabIndex = 27
         Me.lblCL.Text = "Confidence Limits:"
         '
@@ -889,17 +920,20 @@
         '
         '_fraOutFileRes_1
         '
+        Me._fraOutFileRes_1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._fraOutFileRes_1.BackColor = System.Drawing.SystemColors.Control
         Me._fraOutFileRes_1.Controls.Add(Me._cmdOutFileView_1)
         Me._fraOutFileRes_1.Controls.Add(Me._lblOutFileView_1)
         Me._fraOutFileRes_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._fraOutFileRes_1.ForeColor = System.Drawing.SystemColors.ControlText
         Me.fraOutFileRes.SetIndex(Me._fraOutFileRes_1, CType(1, Short))
-        Me._fraOutFileRes_1.Location = New System.Drawing.Point(16, 144)
+        Me._fraOutFileRes_1.Location = New System.Drawing.Point(8, 95)
         Me._fraOutFileRes_1.Name = "_fraOutFileRes_1"
         Me._fraOutFileRes_1.Padding = New System.Windows.Forms.Padding(0)
         Me._fraOutFileRes_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._fraOutFileRes_1.Size = New System.Drawing.Size(497, 81)
+        Me._fraOutFileRes_1.Size = New System.Drawing.Size(505, 100)
         Me._fraOutFileRes_1.TabIndex = 10
         Me._fraOutFileRes_1.TabStop = False
         Me._fraOutFileRes_1.Text = "Additional Output"
@@ -911,85 +945,97 @@
         Me._cmdOutFileView_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._cmdOutFileView_1.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdOutFileView.SetIndex(Me._cmdOutFileView_1, CType(1, Short))
-        Me._cmdOutFileView_1.Location = New System.Drawing.Point(16, 24)
+        Me._cmdOutFileView_1.Location = New System.Drawing.Point(8, 16)
         Me._cmdOutFileView_1.Name = "_cmdOutFileView_1"
         Me._cmdOutFileView_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdOutFileView_1.Size = New System.Drawing.Size(57, 17)
+        Me._cmdOutFileView_1.Size = New System.Drawing.Size(57, 25)
         Me._cmdOutFileView_1.TabIndex = 11
         Me._cmdOutFileView_1.Text = "View"
         Me._cmdOutFileView_1.UseVisualStyleBackColor = False
         '
         '_lblOutFileView_1
         '
+        Me._lblOutFileView_1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFileView_1.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFileView_1.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFileView_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._lblOutFileView_1.ForeColor = System.Drawing.SystemColors.ControlText
         Me.lblOutFileView.SetIndex(Me._lblOutFileView_1, CType(1, Short))
-        Me._lblOutFileView_1.Location = New System.Drawing.Point(80, 24)
+        Me._lblOutFileView_1.Location = New System.Drawing.Point(72, 16)
         Me._lblOutFileView_1.Name = "_lblOutFileView_1"
         Me._lblOutFileView_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._lblOutFileView_1.Size = New System.Drawing.Size(409, 41)
+        Me._lblOutFileView_1.Size = New System.Drawing.Size(430, 75)
         Me._lblOutFileView_1.TabIndex = 12
         Me._lblOutFileView_1.Text = "(none)"
         '
         'fraGraphics
         '
+        Me.fraGraphics.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraGraphics.BackColor = System.Drawing.SystemColors.Control
         Me.fraGraphics.Controls.Add(Me.cmdGraph)
         Me.fraGraphics.Controls.Add(Me.lstGraphs)
         Me.fraGraphics.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraGraphics.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraGraphics.Location = New System.Drawing.Point(544, 40)
+        Me.fraGraphics.Location = New System.Drawing.Point(541, 8)
         Me.fraGraphics.Name = "fraGraphics"
         Me.fraGraphics.Padding = New System.Windows.Forms.Padding(0)
         Me.fraGraphics.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraGraphics.Size = New System.Drawing.Size(185, 185)
+        Me.fraGraphics.Size = New System.Drawing.Size(185, 212)
         Me.fraGraphics.TabIndex = 13
         Me.fraGraphics.TabStop = False
         Me.fraGraphics.Text = "Graphs"
         '
         'cmdGraph
         '
+        Me.cmdGraph.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.cmdGraph.BackColor = System.Drawing.SystemColors.Control
         Me.cmdGraph.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdGraph.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdGraph.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdGraph.Location = New System.Drawing.Point(72, 160)
+        Me.cmdGraph.Location = New System.Drawing.Point(120, 184)
         Me.cmdGraph.Name = "cmdGraph"
         Me.cmdGraph.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdGraph.Size = New System.Drawing.Size(57, 17)
+        Me.cmdGraph.Size = New System.Drawing.Size(57, 25)
         Me.cmdGraph.TabIndex = 40
         Me.cmdGraph.Text = "View"
         Me.cmdGraph.UseVisualStyleBackColor = False
         '
         'lstGraphs
         '
+        Me.lstGraphs.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lstGraphs.BackColor = System.Drawing.SystemColors.Window
         Me.lstGraphs.Cursor = System.Windows.Forms.Cursors.Default
         Me.lstGraphs.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lstGraphs.ForeColor = System.Drawing.SystemColors.WindowText
+        Me.lstGraphs.IntegralHeight = False
         Me.lstGraphs.ItemHeight = 14
         Me.lstGraphs.Location = New System.Drawing.Point(8, 16)
         Me.lstGraphs.Name = "lstGraphs"
         Me.lstGraphs.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lstGraphs.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple
-        Me.lstGraphs.Size = New System.Drawing.Size(169, 130)
+        Me.lstGraphs.Size = New System.Drawing.Size(169, 162)
         Me.lstGraphs.TabIndex = 14
         '
         '_fraOutFileRes_0
         '
+        Me._fraOutFileRes_0.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._fraOutFileRes_0.BackColor = System.Drawing.SystemColors.Control
         Me._fraOutFileRes_0.Controls.Add(Me._cmdOutFileView_0)
         Me._fraOutFileRes_0.Controls.Add(Me._lblOutFileView_0)
         Me._fraOutFileRes_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._fraOutFileRes_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.fraOutFileRes.SetIndex(Me._fraOutFileRes_0, CType(0, Short))
-        Me._fraOutFileRes_0.Location = New System.Drawing.Point(16, 40)
+        Me._fraOutFileRes_0.Location = New System.Drawing.Point(8, 8)
         Me._fraOutFileRes_0.Name = "_fraOutFileRes_0"
         Me._fraOutFileRes_0.Padding = New System.Windows.Forms.Padding(0)
         Me._fraOutFileRes_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._fraOutFileRes_0.Size = New System.Drawing.Size(497, 81)
+        Me._fraOutFileRes_0.Size = New System.Drawing.Size(505, 81)
         Me._fraOutFileRes_0.TabIndex = 15
         Me._fraOutFileRes_0.TabStop = False
         Me._fraOutFileRes_0.Text = "Output File"
@@ -1001,25 +1047,28 @@
         Me._cmdOutFileView_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._cmdOutFileView_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdOutFileView.SetIndex(Me._cmdOutFileView_0, CType(0, Short))
-        Me._cmdOutFileView_0.Location = New System.Drawing.Point(16, 24)
+        Me._cmdOutFileView_0.Location = New System.Drawing.Point(8, 16)
         Me._cmdOutFileView_0.Name = "_cmdOutFileView_0"
         Me._cmdOutFileView_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._cmdOutFileView_0.Size = New System.Drawing.Size(57, 17)
+        Me._cmdOutFileView_0.Size = New System.Drawing.Size(57, 25)
         Me._cmdOutFileView_0.TabIndex = 16
         Me._cmdOutFileView_0.Text = "View"
         Me._cmdOutFileView_0.UseVisualStyleBackColor = False
         '
         '_lblOutFileView_0
         '
+        Me._lblOutFileView_0.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFileView_0.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFileView_0.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFileView_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._lblOutFileView_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.lblOutFileView.SetIndex(Me._lblOutFileView_0, CType(0, Short))
-        Me._lblOutFileView_0.Location = New System.Drawing.Point(80, 24)
+        Me._lblOutFileView_0.Location = New System.Drawing.Point(72, 16)
         Me._lblOutFileView_0.Name = "_lblOutFileView_0"
         Me._lblOutFileView_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._lblOutFileView_0.Size = New System.Drawing.Size(409, 41)
+        Me._lblOutFileView_0.Size = New System.Drawing.Size(430, 57)
         Me._lblOutFileView_0.TabIndex = 17
         Me._lblOutFileView_0.Text = "(none)"
         '
@@ -1032,11 +1081,14 @@
         Me.lblInstruct.Location = New System.Drawing.Point(8, 32)
         Me.lblInstruct.Name = "lblInstruct"
         Me.lblInstruct.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblInstruct.Size = New System.Drawing.Size(305, 57)
+        Me.lblInstruct.Size = New System.Drawing.Size(322, 53)
         Me.lblInstruct.TabIndex = 20
         '
         'lblSpec
         '
+        Me.lblSpec.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblSpec.AutoSize = True
         Me.lblSpec.BackColor = System.Drawing.SystemColors.Control
         Me.lblSpec.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblSpec.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1044,12 +1096,15 @@
         Me.lblSpec.Location = New System.Drawing.Point(336, 56)
         Me.lblSpec.Name = "lblSpec"
         Me.lblSpec.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSpec.Size = New System.Drawing.Size(409, 17)
+        Me.lblSpec.Size = New System.Drawing.Size(102, 14)
         Me.lblSpec.TabIndex = 19
         Me.lblSpec.Text = "PKFQWin Spec File:"
         '
         'lblData
         '
+        Me.lblData.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblData.AutoSize = True
         Me.lblData.BackColor = System.Drawing.SystemColors.Control
         Me.lblData.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblData.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1057,7 +1112,7 @@
         Me.lblData.Location = New System.Drawing.Point(336, 32)
         Me.lblData.Name = "lblData"
         Me.lblData.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblData.Size = New System.Drawing.Size(409, 17)
+        Me.lblData.Size = New System.Drawing.Size(95, 14)
         Me.lblData.TabIndex = 18
         Me.lblData.Text = "PEAKFQ Data File:"
         '
@@ -1075,7 +1130,7 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(885, 386)
+        Me.ClientSize = New System.Drawing.Size(757, 386)
         Me.Controls.Add(Me.fraButtons)
         Me.Controls.Add(Me.sstPfq)
         Me.Controls.Add(Me.lblInstruct)
@@ -1100,6 +1155,7 @@
         Me.fraOutFile.ResumeLayout(False)
         Me.fraAddOut.ResumeLayout(False)
         Me.fraOutRight.ResumeLayout(False)
+        Me.fraOutRight.PerformLayout()
         Me.tabResults.ResumeLayout(False)
         Me._fraOutFileRes_1.ResumeLayout(False)
         Me.fraGraphics.ResumeLayout(False)
