@@ -29,7 +29,7 @@ Friend Class frmPeakfq
         If Index = 1 Then 'text file additional output
             If chkAddOut(1).CheckState = System.Windows.Forms.CheckState.Checked Then
                 'expand frame to show additional output file and button to edit it
-                fraAddOut.Height = VB6.TwipsToPixelsY(1575)
+                'fraAddOut.Height = VB6.TwipsToPixelsY(1575)
                 If Len(PfqPrj.AddOutFileName) = 0 Then 'set default
                     lblOutFile(1).Text = IO.Path.ChangeExtension(PfqPrj.OutFile, ".bcd")
                 End If
@@ -38,7 +38,7 @@ Friend Class frmPeakfq
                 optAddFormat(0).Visible = TriState.True
                 optAddFormat(1).Visible = TriState.True
             Else 'smaller frame is fine
-                fraAddOut.Height = VB6.TwipsToPixelsY(735)
+                'fraAddOut.Height = VB6.TwipsToPixelsY(735)
                 lblOutFile(1).Visible = TriState.False
                 cmdOpenOut(1).Visible = TriState.False
                 optAddFormat(0).Visible = TriState.False
@@ -285,7 +285,7 @@ Friend Class frmPeakfq
             Else 'tab-separated format
                 optAddFormat(1).Checked = TriState.True
             End If
-            fraAddOut.Height = VB6.TwipsToPixelsY(1575)
+            'fraAddOut.Height = VB6.TwipsToPixelsY(1575)
         Else
             chkAddOut(1).CheckState = System.Windows.Forms.CheckState.Unchecked
             lblOutFile(1).Text = "(none)"
@@ -293,7 +293,7 @@ Friend Class frmPeakfq
             cmdOpenOut(1).Visible = TriState.False
             optAddFormat(0).Visible = TriState.False
             optAddFormat(1).Visible = TriState.False
-            fraAddOut.Height = VB6.TwipsToPixelsY(735)
+            'fraAddOut.Height = VB6.TwipsToPixelsY(735)
         End If
         If PfqPrj.IntermediateResults Then
             chkIntRes.CheckState = System.Windows.Forms.CheckState.Checked
@@ -560,9 +560,7 @@ FileCancel:
 
         grdSpecs.SizeAllColumnsToContents()
 
-        With grdThresh
-            .Source = New atcControls.atcGridSource
-        End With
+        grdThresh.Source = New atcControls.atcGridSource
         With grdThresh.Source
             .FixedRows = 2
             .Rows = 1
@@ -576,10 +574,9 @@ FileCancel:
             .CellValue(0, 3) = "High"
             .CellValue(1, 3) = "Threshold"
         End With
+        grdThresh.SizeAllColumnsToContents(grdThresh.Width)
 
-        With grdInterval
-            .Source = New atcControls.atcGridSource
-        End With
+        grdInterval.Source = New atcControls.atcGridSource
         With grdInterval.Source
             .FixedRows = 2
             .Rows = 1
@@ -590,6 +587,7 @@ FileCancel:
             .CellValue(0, 2) = "High"
             .CellValue(1, 2) = "Interval"
         End With
+        grdInterval.SizeAllColumnsToContents(grdInterval.Width)
 
         InitGraph(zgcThresh, "T")
 
@@ -601,50 +599,49 @@ FileCancel:
         cmdRun.Enabled = False
         cmdSave.Enabled = False
         RemoveBMPs = False
-
     End Sub
 
     'UPGRADE_WARNING: Event frmPeakfq.Resize may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-    Private Sub frmPeakfq_Resize(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Resize
-        Dim w, h As Integer
-        w = VB6.PixelsToTwipsX(Me.ClientRectangle.Width)
-        h = VB6.PixelsToTwipsY(Me.ClientRectangle.Height)
-        If h < 5070 And h > 0 Then 'height too small
-            Me.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(Me.Height) - h + 5070)
-        End If
-        If w > 7300 Then
-            '    txtData.Width = w - txtData.Left - sstPfq.Left
-            '    txtSpec.Width = txtData.Width
-            lblData.Width = VB6.TwipsToPixelsX(w - VB6.PixelsToTwipsX(lblData.Left) - VB6.PixelsToTwipsX(sstPfq.Left))
-            lblSpec.Width = lblData.Width
-            sstPfq.Width = VB6.TwipsToPixelsX(w - (VB6.PixelsToTwipsX(sstPfq.Left) * 2))
-            fraButtons.Left = VB6.TwipsToPixelsX(w - VB6.PixelsToTwipsX(fraButtons.Width) - 120)
-            Select Case sstPfq.SelectedIndex
-                Case 0 : grdSpecs.Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - (VB6.PixelsToTwipsX(grdSpecs.Left) * 2))
-                Case 1
-                Case 2 : fraOutRight.Left = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - VB6.PixelsToTwipsX(fraOutRight.Width) - 120)
-                    fraOutFile.Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutRight.Left) - (VB6.PixelsToTwipsX(fraOutFile.Left) * 3))
-                    fraAddOut.Width = fraOutFile.Width
-                    lblOutFile(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutFile.Width) - VB6.PixelsToTwipsX(lblOutFile(0).Left) - 120)
-                    lblOutFile(1).Width = lblOutFile(0).Width
-                Case 3 : fraGraphics.Left = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - VB6.PixelsToTwipsX(fraGraphics.Width) - 120)
-                    fraOutFileRes(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraGraphics.Left) - (VB6.PixelsToTwipsX(fraOutFileRes(0).Left) * 3))
-                    fraOutFileRes(1).Width = fraOutFileRes(0).Width
-                    lblOutFileView(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutFileRes(0).Width) - VB6.PixelsToTwipsX(lblOutFileView(0).Left) - 120)
-                    lblOutFileView(1).Width = lblOutFileView(0).Width
-            End Select
-        End If
-        If h > 5070 Then
-            fraButtons.Top = VB6.TwipsToPixelsY(h - VB6.PixelsToTwipsY(fraButtons.Height) - 120)
-            sstPfq.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraButtons.Top) - VB6.PixelsToTwipsY(sstPfq.Top) - 120)
-            Select Case sstPfq.SelectedIndex
-                Case 0 : grdSpecs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(grdSpecs.Top) - 120)
-                Case 2 : fraGraphics.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(fraGraphics.Top) - 120)
-                    lstGraphs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraGraphics.Height) - VB6.PixelsToTwipsY(lstGraphs.Top) - VB6.PixelsToTwipsY(cmdGraph.Height) - 240)
-                    cmdGraph.Top = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(lstGraphs.Top) + VB6.PixelsToTwipsY(lstGraphs.Height) + 120)
-            End Select
-        End If
-    End Sub
+    'Private Sub frmPeakfq_Resize(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Resize
+    '    Dim w, h As Integer
+    '    w = VB6.PixelsToTwipsX(Me.ClientRectangle.Width)
+    '    h = VB6.PixelsToTwipsY(Me.ClientRectangle.Height)
+    '    If h < 5070 And h > 0 Then 'height too small
+    '        Me.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(Me.Height) - h + 5070)
+    '    End If
+    '    If w > 7300 Then
+    '        '    txtData.Width = w - txtData.Left - sstPfq.Left
+    '        '    txtSpec.Width = txtData.Width
+    '        lblData.Width = VB6.TwipsToPixelsX(w - VB6.PixelsToTwipsX(lblData.Left) - VB6.PixelsToTwipsX(sstPfq.Left))
+    '        lblSpec.Width = lblData.Width
+    '        sstPfq.Width = VB6.TwipsToPixelsX(w - (VB6.PixelsToTwipsX(sstPfq.Left) * 2))
+    '        fraButtons.Left = VB6.TwipsToPixelsX(w - VB6.PixelsToTwipsX(fraButtons.Width) - 120)
+    '        Select Case sstPfq.SelectedIndex
+    '            Case 0 : grdSpecs.Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - (VB6.PixelsToTwipsX(grdSpecs.Left) * 2))
+    '            Case 1
+    '            Case 2 : fraOutRight.Left = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - VB6.PixelsToTwipsX(fraOutRight.Width) - 120)
+    '                fraOutFile.Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutRight.Left) - (VB6.PixelsToTwipsX(fraOutFile.Left) * 3))
+    '                fraAddOut.Width = fraOutFile.Width
+    '                lblOutFile(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutFile.Width) - VB6.PixelsToTwipsX(lblOutFile(0).Left) - 120)
+    '                lblOutFile(1).Width = lblOutFile(0).Width
+    '            Case 3 : fraGraphics.Left = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - VB6.PixelsToTwipsX(fraGraphics.Width) - 120)
+    '                fraOutFileRes(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraGraphics.Left) - (VB6.PixelsToTwipsX(fraOutFileRes(0).Left) * 3))
+    '                fraOutFileRes(1).Width = fraOutFileRes(0).Width
+    '                lblOutFileView(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutFileRes(0).Width) - VB6.PixelsToTwipsX(lblOutFileView(0).Left) - 120)
+    '                lblOutFileView(1).Width = lblOutFileView(0).Width
+    '        End Select
+    '    End If
+    '    If h > 5070 Then
+    '        fraButtons.Top = VB6.TwipsToPixelsY(h - VB6.PixelsToTwipsY(fraButtons.Height) - 120)
+    '        sstPfq.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraButtons.Top) - VB6.PixelsToTwipsY(sstPfq.Top) - 120)
+    '        Select Case sstPfq.SelectedIndex
+    '            Case 0 : grdSpecs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(grdSpecs.Top) - 120)
+    '            Case 2 : fraGraphics.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(fraGraphics.Top) - 120)
+    '                lstGraphs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraGraphics.Height) - VB6.PixelsToTwipsY(lstGraphs.Top) - VB6.PixelsToTwipsY(cmdGraph.Height) - 240)
+    '                cmdGraph.Top = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(lstGraphs.Top) + VB6.PixelsToTwipsY(lstGraphs.Height) + 120)
+    '        End Select
+    '    End If
+    'End Sub
 
     Private Sub frmPeakfq_FormClosed(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
         'Dim i As Integer
@@ -868,7 +865,7 @@ FileCancel:
 
     Private Sub sstPfq_SelectedIndexChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles sstPfq.SelectedIndexChanged
         Static PreviousTab As Short = sstPfq.SelectedIndex()
-        frmPeakfq_Resize(Me, New System.EventArgs())
+        'frmPeakfq_Resize(Me, New System.EventArgs())
         PreviousTab = sstPfq.SelectedIndex()
         sstPfq.SelectedTab.Focus()
     End Sub
@@ -1213,7 +1210,6 @@ FileCancel:
 
         With aZGC
             .Visible = True
-            .IsSynchronizeXAxes = True
             With .MasterPane
                 .PaneList.Clear() 'remove default GraphPane
                 .Border.IsVisible = False
@@ -1593,5 +1589,9 @@ FileCancel:
         lZGC.Refresh()
         newform.Show()
 
+    End Sub
+
+    Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles zgcThresh.Paint
+        zgcThresh.MasterPane.ReSize(e.Graphics)
     End Sub
 End Class
