@@ -551,7 +551,7 @@ Friend Class pfqProject
 		End If
 		i = 0
 		For	Each vSta In pStations
-            If vSta.Active Then 'write station specs to string
+            If vSta.AnalysisOption <> "Skip" Then 'write station specs to string
                 If DefPrj Is Nothing Then 'write out all station specs
                     'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsVerbose. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                     s = s & vSta.WriteSpecsVerbose
@@ -606,11 +606,14 @@ Friend Class pfqProject
 
         Logger.Status("Caption PKFQWin Status")
 
-        Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
+        'Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
+        Logger.Status("Running PeakFQ from " & CurDir() & " using spec file " & pSpecFileName, True)
         Call PEAKFQ(pSpecFileName, pSpecFileName.Length)
 
         If Not FileExists(PfqPrj.OutFile) Then
-            Logger.Status("Problem running PeakFQ batch program.")
+            Logger.Status("Problem running PeakFQ batch program.", True)
+        Else
+            Logger.Status("PeakFQ run successfully.", True)
         End If
 
         If CurDir() <> PFQExePath Then
@@ -659,7 +662,7 @@ Friend Class pfqProject
             For Each oldStation In Stations
                 newStation = New pfqStation
                 With newStation
-                    .Active = oldStation.Active
+                    .AnalysisOption = oldStation.AnalysisOption
                     .Thresholds = oldStation.Thresholds
                     .Intervals = oldStation.Intervals
                     .BegYear = oldStation.BegYear
