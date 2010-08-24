@@ -32,7 +32,7 @@ Friend Class pfqStation
 
     Private pID As String
     Private pName As String
-    Private pActive As Boolean
+    Private pAnalysisOption As String 'Skip, B17B, EMA
     Private pBegYear As Integer
     Private pEndYear As Integer
     Private pSkewOpt As Integer '0 - Station, 1 - Weighted, 2 - Generalized
@@ -54,6 +54,7 @@ Friend Class pfqStation
     Private pPeaks As Generic.List(Of PeakType)
     'the following are for storing comments for various specification records
     Private pComment As String
+    Private pCAnalysisOption As String
     Private pCGenSkew As String
     Private pCSESkew As String
     Private pCBegYear As String
@@ -92,12 +93,12 @@ Friend Class pfqStation
         End Set
     End Property
 
-    Public Property Active() As Boolean
+    Public Property AnalysisOption() As String
         Get
-            Active = pActive
+            AnalysisOption = pAnalysisOption
         End Get
-        Set(ByVal Value As Boolean)
-            pActive = Value
+        Set(ByVal Value As String)
+            pAnalysisOption = Value
         End Set
     End Property
 
@@ -284,6 +285,15 @@ Friend Class pfqStation
         End Set
     End Property
 
+    Public Property CAnalysisOption() As String
+        Get
+            CAnalysisOption = pCAnalysisOption
+        End Get
+        Set(ByVal Value As String)
+            pCAnalysisOption = Value
+        End Set
+    End Property
+
     Public Property CGenSkew() As String
         Get
             CGenSkew = pCGenSkew
@@ -429,9 +439,14 @@ Friend Class pfqStation
         Else
             s = "Station " & pID & vbCrLf
         End If
+        If Len(pCAnalysisOption) > 0 Then
+            s = s & pad & pCAnalysisOption & vbCrLf & pad & "Analyze " & pAnalysisOption & vbCrLf
+        Else
+            s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
+        End If
         If pThresholds.Count > 0 Then 'using perception threshholds, not beg/end years and hist. period
             For Each vPT As ThresholdType In pThresholds
-                s = s & "PCPT_THRESH " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
+                s = s & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
             Next
         Else 'using beg/end years and hist. period
             If Len(pCBegYear) > 0 Then s = s & pad & pCBegYear & vbCrLf
@@ -443,7 +458,7 @@ Friend Class pfqStation
         End If
         If pIntervals.Count > 0 Then 'using perception threshholds
             For Each vInt As IntervalType In pIntervals
-                s = s & "INTERVAL " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
+                s = s & "Interval " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
             Next
         End If
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
@@ -484,14 +499,16 @@ Friend Class pfqStation
         Else
             s = "Station " & pID & vbCrLf
         End If
+        If Len(defsta.CAnalysisOption) > 0 Then s = s & pad & defsta.CAnalysisOption & vbCrLf
+        If pAnalysisOption <> defsta.AnalysisOption Then s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
         If pThresholds.Count > 0 Then 'using perception threshholds
             For Each vPT As ThresholdType In pThresholds
-                s = s & "PCPT_THRESH " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
+                s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
             Next
         End If
         If pIntervals.Count > 0 Then 'using perception threshholds
             For Each vInt As IntervalType In pIntervals
-                s = s & "INTERVAL " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
+                s = s & pad & "Interval " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
             Next
         End If
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
@@ -527,7 +544,7 @@ Friend Class pfqStation
     'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
     Private Sub Class_Initialize_Renamed()
 
-        pActive = True 'init all stations to be analyzed
+        pAnalysisOption = "EMA" 'init all stations to use EMA analysis
         'pSkewOpt = 0 'Weighted skew option (middle of -1, 0, 1)
         pSkewOpt = 1  'TODO: Need to determine if this should be assigned differently (middle of 0, 1, 2)
         pUrbanRegPeaks = False

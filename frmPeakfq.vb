@@ -107,11 +107,7 @@ Friend Class frmPeakfq
                 End While
                 cboStation.Items.Add(lName)
 
-                If vSta.Active Then
-                    .CellValue(.Rows - 1, 1) = "Yes"
-                Else
-                    .CellValue(.Rows - 1, 1) = "No"
-                End If
+                .CellValue(.Rows - 1, 1) = vSta.AnalysisOption
                 .CellEditable(.Rows - 1, 1) = True
 
                 .CellValue(.Rows - 1, 2) = vSta.BegYear
@@ -228,11 +224,7 @@ Friend Class frmPeakfq
             For i = .FixedRows To .Rows - 1
                 curSta = PfqPrj.Stations.Item(i - .FixedRows) ' New pfqStation
                 curSta.id = .CellValue(i, 0)
-                If .CellValue(i, 1) = "Yes" Then
-                    curSta.Active = True
-                Else
-                    curSta.Active = False
-                End If
+                curSta.AnalysisOption = .CellValue(i, 1)
                 If IsNumeric(.CellValue(i, 2)) Then curSta.BegYear = CInt(.CellValue(i, 2))
                 If IsNumeric(.CellValue(i, 3)) Then curSta.EndYear = CInt(.CellValue(i, 3))
                 If IsNumeric(.CellValue(i, 4)) Then curSta.HistoricPeriod = CSng(.CellValue(i, 4))
@@ -493,7 +485,8 @@ FileCancel:
 
         Dim i As Integer
 
-        lblInstruct.Text = "Use File menu to Open PeakFQ data or PKFQWin spec file." & vbLf & "Update Station and Output specifications as desired." & vbLf & "Click Run PeakFQ button to generate results."
+        Logger.StartToFile("PeakFQ.log", , False)
+        lblInstruct.Text = "Use File menu to Open PeakFQ data or PKFQWin spec file." & vbLf & "Update Station, Threshold and Output specifications as desired." & vbLf & "Click Run PeakFQ button to generate results."
         With grdSpecs
             .Source = New atcControls.atcGridSource
         End With
@@ -507,8 +500,8 @@ FileCancel:
             'Next i
             .CellValue(1, 0) = "Station ID"
             'grdSpecs.set_ColType(0, ATCoCtl.ATCoDataType.ATCoTxt)
-            .CellValue(0, 1) = "Include in"
-            .CellValue(1, 1) = "Analysis?"
+            .CellValue(0, 1) = "Analysis"
+            .CellValue(1, 1) = "Option"
             'grdSpecs.set_ColType(1, ATCoCtl.ATCoDataType.ATCoTxt)
             .CellValue(0, 2) = "Beginning"
             .CellValue(1, 2) = "Year"
@@ -636,7 +629,7 @@ FileCancel:
     '        sstPfq.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraButtons.Top) - VB6.PixelsToTwipsY(sstPfq.Top) - 120)
     '        Select Case sstPfq.SelectedIndex
     '            Case 0 : grdSpecs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(grdSpecs.Top) - 120)
-    '            Case 2 : fraGraphics.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(fraGraphics.Top) - 120)
+    '            Case 3 : fraGraphics.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(fraGraphics.Top) - 120)
     '                lstGraphs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraGraphics.Height) - VB6.PixelsToTwipsY(lstGraphs.Top) - VB6.PixelsToTwipsY(cmdGraph.Height) - 240)
     '                cmdGraph.Top = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(lstGraphs.Top) + VB6.PixelsToTwipsY(lstGraphs.Height) + 120)
     '        End Select
@@ -653,6 +646,7 @@ FileCancel:
         '        Kill(VB6.GetItemString(lstGraphs, i - 1) & ".BMP")
         '    Next i
         'End If
+        Logger.Flush()
 
         End
     End Sub
@@ -763,6 +757,8 @@ FileCancel:
         FName = cdlOpenOpen.FileName
         PfqPrj.InputDir = PathNameOnly(FName)
         PfqPrj.OutputDir = PathNameOnly(FName) 'default output directory to same as input
+        'set to current directory
+        ChDriveDir(PfqPrj.InputDir)
         sstPfq.SelectedIndex = 0
         sstPfq.TabPages.Item(3).Enabled = False
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
@@ -938,7 +934,12 @@ FileCancel:
     Private Sub grdSpecs_MouseDownCell(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdSpecs.MouseDownCell
         Dim lUniqueValues As New ArrayList
         pLastClickedRow = aRow
-        If aColumn = 5 Then ' The Skew option column
+        If aColumn = 1 Then 'analysis type
+            lUniqueValues.Add("Skip")
+            lUniqueValues.Add("B17B")
+            lUniqueValues.Add("EMA")
+            aGrid.AllowNewValidValues = True
+        ElseIf aColumn = 5 Then ' The Skew option column
             'With aGrid.Source
             '    For lRow As Integer = .FixedRows To .Rows - 1
             '        Dim lRowValue As String = .CellValue(lRow, aColumn)
@@ -951,7 +952,7 @@ FileCancel:
             lUniqueValues.Add("Weighted")
             lUniqueValues.Add("Generalized")
             aGrid.AllowNewValidValues = True
-        ElseIf aColumn = 1 Or aColumn = 14 Then ' The Urban/Reg Peaks column
+        ElseIf aColumn = 14 Then 'Urban/Reg Peaks column
             lUniqueValues.Add("Yes")
             lUniqueValues.Add("No")
             aGrid.AllowNewValidValues = True
@@ -1593,5 +1594,16 @@ FileCancel:
 
     Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles zgcThresh.Paint
         zgcThresh.MasterPane.ReSize(e.Graphics)
+    End Sub
+
+    Private Sub cboAnalysisOption_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboAnalysisOption.SelectedIndexChanged
+        Dim lstr As String = cboAnalysisOption.Text
+        With grdSpecs.Source
+            For i As Integer = .FixedRows To .Rows - 1
+                .CellValue(i, 1) = lstr
+            Next
+        End With
+        'post population settings
+        grdSpecs.Refresh()
     End Sub
 End Class

@@ -104,6 +104,7 @@
         Me.cmdExit = New System.Windows.Forms.Button
         Me.sstPfq = New System.Windows.Forms.TabControl
         Me.tabStationSpecs = New System.Windows.Forms.TabPage
+        Me.lblGlobalAnalysis = New System.Windows.Forms.Label
         Me.grdSpecs = New atcControls.atcGrid
         Me.tabThresholds = New System.Windows.Forms.TabPage
         Me.cmdUpdateGraph = New System.Windows.Forms.Button
@@ -164,6 +165,8 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
+        Me.cboAnalysisOption = New System.Windows.Forms.ComboBox
+        Me.Label1 = New System.Windows.Forms.Label
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -192,58 +195,58 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(757, 27)
+        Me.MainMenu1.Size = New System.Drawing.Size(757, 24)
         Me.MainMenu1.TabIndex = 30
         '
         'mnuFile
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOpen, Me.mnuSaveSpecs, Me.mnuExit})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(45, 23)
+        Me.mnuFile.Size = New System.Drawing.Size(35, 20)
         Me.mnuFile.Text = "&File"
         '
         'mnuOpen
         '
         Me.mnuOpen.Name = "mnuOpen"
-        Me.mnuOpen.Size = New System.Drawing.Size(172, 24)
+        Me.mnuOpen.Size = New System.Drawing.Size(140, 22)
         Me.mnuOpen.Text = "&Open"
         '
         'mnuSaveSpecs
         '
         Me.mnuSaveSpecs.Enabled = False
         Me.mnuSaveSpecs.Name = "mnuSaveSpecs"
-        Me.mnuSaveSpecs.Size = New System.Drawing.Size(172, 24)
+        Me.mnuSaveSpecs.Size = New System.Drawing.Size(140, 22)
         Me.mnuSaveSpecs.Text = "&Save Specs"
         '
         'mnuExit
         '
         Me.mnuExit.Name = "mnuExit"
-        Me.mnuExit.Size = New System.Drawing.Size(172, 24)
+        Me.mnuExit.Size = New System.Drawing.Size(140, 22)
         Me.mnuExit.Text = "E&xit"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAbout, Me.mnuFeedback, Me.mnuHelpMain})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(53, 23)
+        Me.mnuHelp.Size = New System.Drawing.Size(40, 20)
         Me.mnuHelp.Text = "&Help"
         '
         'mnuAbout
         '
         Me.mnuAbout.Name = "mnuAbout"
-        Me.mnuAbout.Size = New System.Drawing.Size(199, 24)
+        Me.mnuAbout.Size = New System.Drawing.Size(158, 22)
         Me.mnuAbout.Text = "&About"
         '
         'mnuFeedback
         '
         Me.mnuFeedback.Name = "mnuFeedback"
-        Me.mnuFeedback.Size = New System.Drawing.Size(199, 24)
+        Me.mnuFeedback.Size = New System.Drawing.Size(158, 22)
         Me.mnuFeedback.Text = "Send &Feedback"
         '
         'mnuHelpMain
         '
         Me.mnuHelpMain.Name = "mnuHelpMain"
-        Me.mnuHelpMain.Size = New System.Drawing.Size(199, 24)
+        Me.mnuHelpMain.Size = New System.Drawing.Size(158, 22)
         Me.mnuHelpMain.Text = "PKFQWin Help"
         '
         'fraButtons
@@ -323,6 +326,9 @@
         '
         'tabStationSpecs
         '
+        Me.tabStationSpecs.Controls.Add(Me.Label1)
+        Me.tabStationSpecs.Controls.Add(Me.cboAnalysisOption)
+        Me.tabStationSpecs.Controls.Add(Me.lblGlobalAnalysis)
         Me.tabStationSpecs.Controls.Add(Me.grdSpecs)
         Me.tabStationSpecs.Location = New System.Drawing.Point(4, 22)
         Me.tabStationSpecs.Name = "tabStationSpecs"
@@ -331,18 +337,27 @@
         Me.tabStationSpecs.Text = "Station Specifications"
         Me.tabStationSpecs.UseVisualStyleBackColor = True
         '
+        'lblGlobalAnalysis
+        '
+        Me.lblGlobalAnalysis.AutoSize = True
+        Me.lblGlobalAnalysis.Location = New System.Drawing.Point(3, 0)
+        Me.lblGlobalAnalysis.Name = "lblGlobalAnalysis"
+        Me.lblGlobalAnalysis.Size = New System.Drawing.Size(52, 42)
+        Me.lblGlobalAnalysis.TabIndex = 3
+        Me.lblGlobalAnalysis.Text = "Global " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Analysis " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Option:"
+        '
         'grdSpecs
         '
         Me.grdSpecs.AllowHorizontalScrolling = True
         Me.grdSpecs.AllowNewValidValues = False
+        Me.grdSpecs.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.grdSpecs.CellBackColor = System.Drawing.SystemColors.Window
-        Me.grdSpecs.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSpecs.Fixed3D = False
         Me.grdSpecs.LineColor = System.Drawing.SystemColors.Control
         Me.grdSpecs.LineWidth = 1.0!
-        Me.grdSpecs.Location = New System.Drawing.Point(0, 0)
+        Me.grdSpecs.Location = New System.Drawing.Point(0, 44)
         Me.grdSpecs.Name = "grdSpecs"
-        Me.grdSpecs.Size = New System.Drawing.Size(729, 223)
+        Me.grdSpecs.Size = New System.Drawing.Size(729, 176)
         Me.grdSpecs.Source = Nothing
         Me.grdSpecs.TabIndex = 2
         '
@@ -1125,6 +1140,25 @@
         'cmdOutFileView
         '
         '
+        'cboAnalysisOption
+        '
+        Me.cboAnalysisOption.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboAnalysisOption.FormattingEnabled = True
+        Me.cboAnalysisOption.Items.AddRange(New Object() {"Skip", "B17B", "EMA"})
+        Me.cboAnalysisOption.Location = New System.Drawing.Point(61, 20)
+        Me.cboAnalysisOption.Name = "cboAnalysisOption"
+        Me.cboAnalysisOption.Size = New System.Drawing.Size(69, 22)
+        Me.cboAnalysisOption.TabIndex = 5
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(136, 20)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(273, 14)
+        Me.Label1.TabIndex = 6
+        Me.Label1.Text = "(Select here to set Analysis Option field for all stations)"
+        '
         'frmPeakfq
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1149,6 +1183,7 @@
         Me.fraButtons.ResumeLayout(False)
         Me.sstPfq.ResumeLayout(False)
         Me.tabStationSpecs.ResumeLayout(False)
+        Me.tabStationSpecs.PerformLayout()
         Me.tabThresholds.ResumeLayout(False)
         Me.tabThresholds.PerformLayout()
         Me.tabOutput.ResumeLayout(False)
@@ -1183,5 +1218,8 @@
     Friend WithEvents lblIntervals As System.Windows.Forms.Label
     Friend WithEvents cmdUpdateGraph As System.Windows.Forms.Button
     Friend WithEvents zgcThresh As ZedGraph.ZedGraphControl
+    Friend WithEvents lblGlobalAnalysis As System.Windows.Forms.Label
+    Friend WithEvents cboAnalysisOption As System.Windows.Forms.ComboBox
+    Friend WithEvents Label1 As System.Windows.Forms.Label
 #End Region
 End Class
