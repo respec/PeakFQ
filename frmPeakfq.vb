@@ -15,8 +15,8 @@ Friend Class frmPeakfq
 
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
+    Friend ThreshColors() As System.Drawing.Color = {Color.LightBlue, Color.LightGreen, Color.LightYellow, Color.LightCoral, Color.LightSlateGray, Color.LightCyan}
     Dim CurGraphName As String
-    Dim RemoveBMPs As Boolean
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
     Dim CurIntervalRow As Integer = 0
@@ -448,23 +448,12 @@ FileCancel:
             System.Windows.Forms.Application.DoEvents()
             PfqPrj.RunBatchModel()
             System.Windows.Forms.Application.DoEvents()
-            If RemoveBMPs Then
-                For i = 1 To lstGraphs.Items.Count
-                    Kill(VB6.GetItemString(lstGraphs, i - 1) & ".BMP")
-                Next i
-            End If
             'If PfqPrj.Graphic Then
             SetGraphNames()
             cmdGraph.Enabled = True
-            '    If UCase(PfqPrj.GraphFormat) <> "BMP" Then
-            '        RemoveBMPs = True
-            '    Else
-            '        RemoveBMPs = False
-            '    End If
             'Else
             '    lstGraphs.Items.Clear()
             '    cmdGraph.Enabled = False
-            '    RemoveBMPs = False
             'End If
             Me.Cursor = System.Windows.Forms.Cursors.Default
             sstPfq.TabPages.Item(3).Enabled = True
@@ -591,7 +580,6 @@ FileCancel:
         sstPfq.TabPages.Item(3).Enabled = False
         cmdRun.Enabled = False
         cmdSave.Enabled = False
-        RemoveBMPs = False
     End Sub
 
     'UPGRADE_WARNING: Event frmPeakfq.Resize may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
@@ -641,11 +629,6 @@ FileCancel:
 
         'On Error Resume Next
 
-        'If RemoveBMPs Then 'remove BMP graphics
-        '    For i = 1 To lstGraphs.Items.Count
-        '        Kill(VB6.GetItemString(lstGraphs, i - 1) & ".BMP")
-        '    Next i
-        'End If
         Logger.Flush()
 
         End
@@ -875,7 +858,7 @@ FileCancel:
 
         lstGraphs.Items.Clear()
         For i = 1 To grdSpecs.Source.Rows
-            If grdSpecs.Source.CellValue(i, 1) = "Yes" Then
+            If grdSpecs.Source.CellValue(i, 1) <> "Skip" Then
                 j = j + 1
                 'oldName = "PKFQ-" & j & ".BMP"
                 newName = grdSpecs.Source.CellValue(i, 17)
@@ -1152,6 +1135,7 @@ FileCancel:
         Dim lPane As GraphPane = zgcThresh.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
         Dim lCurve As LineItem = Nothing
+        Dim i As Integer = 0
 
         'clear previous curves
         lPane.CurveList.Clear()
@@ -1166,9 +1150,11 @@ FileCancel:
             lThrshVals(1) = vThresh.LowerLimit
             If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
             If lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
-            lCurve = lPane.AddCurve("Thresholds", lThrshDates, lThrshVals, Color.Blue, SymbolType.None)
-            lCurve.Line.Fill = New Fill(Color.Blue, Color.Blue, 45)
+            i += 1
+            lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+            lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
         Next
+        i = 0
         For Each vInterval As pfqStation.IntervalType In lStn.Intervals
             lThrshDates(0) = vInterval.Year
             lThrshDates(1) = vInterval.Year
@@ -1179,10 +1165,14 @@ FileCancel:
             If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
             If lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
             lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
+            If i > 0 Then
+                lCurve.Label.IsVisible = False
+            End If
+            i += 1
         Next
         If lStn.Peaks(0).Year < lYearMin Then lYearMin = lStn.Peaks(0).Year
         If lStn.Peaks(lStn.Peaks.Count - 1).Year > lYearMax Then lYearMax = lStn.Peaks(lStn.Peaks.Count - 1).Year
-        For i As Integer = 0 To lStn.Peaks.Count - 1
+        For i = 0 To lStn.Peaks.Count - 1
             If lStn.Peaks(i).Code <> "H" Or lStn.HistoricPeriod > 0 Then
                 lPkVals(i) = Math.Abs(lStn.Peaks(i).Value)
                 lDateVals(i) = Math.Abs(lStn.Peaks(i).Year)
@@ -1568,7 +1558,7 @@ FileCancel:
         'set y-axis range
         Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
 
-        lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & "Station - " & lHeader
+        lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
         Dim lWarning As String = "Peakfq 5 run " & System.DateTime.Now & vbCrLf & _
                                  "NOTE - Preliminary computation" & vbCrLf & _
@@ -1605,5 +1595,64 @@ FileCancel:
         End With
         'post population settings
         grdSpecs.Refresh()
+    End Sub
+
+    Private Sub grdThresh_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdThresh.CellEdited
+        With aGrid.Source
+            Dim lVal As String = .CellValue(aRow, aColumn)
+            Dim lGoodRow As Boolean = True
+            If IsNumeric(lVal) Then 'set to this threshold's color
+                .CellColor(aRow, aColumn) = ThreshColors(aRow - .FixedRows)
+            Else 'reminder that values should be numeric
+                MessageBox.Show("All values for Perception Thresholds must be numeric.", "Perception Threshold Problem")
+                .CellColor(aRow, aColumn) = Color.White
+            End If
+            For i As Integer = 0 To .Columns - 1
+                If Not IsNumeric(.CellValue(aRow, i)) Then
+                    lGoodRow = False
+                    Exit For
+                End If
+            Next
+            If lGoodRow Then
+                If aRow = .Rows - 1 Then 'add another blank row
+                    AddRow(aGrid)
+                End If
+            End If
+            ProcessThresholds()
+            UpdateGraph()
+        End With
+    End Sub
+
+    Private Sub grdInterval_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdInterval.CellEdited
+        With aGrid.Source
+            Dim lVal As String = .CellValue(aRow, aColumn)
+            Dim lGoodRow As Boolean = True
+            If Not IsNumeric(lVal) Then 'reminder that values should be numeric
+                MessageBox.Show("All values for Intervals must be numeric.", "Interval Problem")
+            End If
+            For i As Integer = 0 To .Columns - 1
+                If Not IsNumeric(.CellValue(aRow, i)) Then
+                    lGoodRow = False
+                    Exit For
+                End If
+            Next
+            If lGoodRow Then
+                If aRow = .Rows - 1 Then 'add another blank row
+                    AddRow(aGrid)
+                End If
+            End If
+            ProcessThresholds()
+            UpdateGraph()
+        End With
+    End Sub
+
+    Private Sub AddRow(ByVal aGrid As atcControls.atcGrid)
+        With aGrid.Source
+            .Rows += 1
+            For i As Integer = 0 To .Columns - 1
+                .CellEditable(.Rows - 1, i) = True
+                .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+            Next
+        End With
     End Sub
 End Class
