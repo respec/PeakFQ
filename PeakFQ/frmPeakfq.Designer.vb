@@ -104,6 +104,8 @@
         Me.cmdExit = New System.Windows.Forms.Button
         Me.sstPfq = New System.Windows.Forms.TabControl
         Me.tabStationSpecs = New System.Windows.Forms.TabPage
+        Me.Label1 = New System.Windows.Forms.Label
+        Me.cboAnalysisOption = New System.Windows.Forms.ComboBox
         Me.lblGlobalAnalysis = New System.Windows.Forms.Label
         Me.grdSpecs = New atcControls.atcGrid
         Me.tabThresholds = New System.Windows.Forms.TabPage
@@ -165,8 +167,6 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
-        Me.cboAnalysisOption = New System.Windows.Forms.ComboBox
-        Me.Label1 = New System.Windows.Forms.Label
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -316,7 +316,7 @@
         Me.sstPfq.Controls.Add(Me.tabThresholds)
         Me.sstPfq.Controls.Add(Me.tabOutput)
         Me.sstPfq.Controls.Add(Me.tabResults)
-        Me.sstPfq.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.sstPfq.Font = New System.Drawing.Font("Arial", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.sstPfq.ItemSize = New System.Drawing.Size(42, 18)
         Me.sstPfq.Location = New System.Drawing.Point(8, 88)
         Me.sstPfq.Name = "sstPfq"
@@ -330,6 +330,7 @@
         Me.tabStationSpecs.Controls.Add(Me.cboAnalysisOption)
         Me.tabStationSpecs.Controls.Add(Me.lblGlobalAnalysis)
         Me.tabStationSpecs.Controls.Add(Me.grdSpecs)
+        Me.tabStationSpecs.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabStationSpecs.Location = New System.Drawing.Point(4, 22)
         Me.tabStationSpecs.Name = "tabStationSpecs"
         Me.tabStationSpecs.Size = New System.Drawing.Size(729, 223)
@@ -337,12 +338,34 @@
         Me.tabStationSpecs.Text = "Station Specifications"
         Me.tabStationSpecs.UseVisualStyleBackColor = True
         '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Location = New System.Drawing.Point(136, 20)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(260, 13)
+        Me.Label1.TabIndex = 6
+        Me.Label1.Text = "(Select here to set Analysis Option field for all stations)"
+        '
+        'cboAnalysisOption
+        '
+        Me.cboAnalysisOption.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboAnalysisOption.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cboAnalysisOption.FormattingEnabled = True
+        Me.cboAnalysisOption.Items.AddRange(New Object() {"Skip", "B17B", "EMA"})
+        Me.cboAnalysisOption.Location = New System.Drawing.Point(61, 20)
+        Me.cboAnalysisOption.Name = "cboAnalysisOption"
+        Me.cboAnalysisOption.Size = New System.Drawing.Size(69, 21)
+        Me.cboAnalysisOption.TabIndex = 5
+        '
         'lblGlobalAnalysis
         '
         Me.lblGlobalAnalysis.AutoSize = True
+        Me.lblGlobalAnalysis.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblGlobalAnalysis.Location = New System.Drawing.Point(3, 0)
         Me.lblGlobalAnalysis.Name = "lblGlobalAnalysis"
-        Me.lblGlobalAnalysis.Size = New System.Drawing.Size(52, 42)
+        Me.lblGlobalAnalysis.Size = New System.Drawing.Size(48, 39)
         Me.lblGlobalAnalysis.TabIndex = 3
         Me.lblGlobalAnalysis.Text = "Global " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Analysis " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Option:"
         '
@@ -353,6 +376,7 @@
         Me.grdSpecs.Anchor = System.Windows.Forms.AnchorStyles.Left
         Me.grdSpecs.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdSpecs.Fixed3D = False
+        Me.grdSpecs.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSpecs.LineColor = System.Drawing.SystemColors.Control
         Me.grdSpecs.LineWidth = 1.0!
         Me.grdSpecs.Location = New System.Drawing.Point(0, 44)
@@ -373,6 +397,7 @@
         Me.tabThresholds.Controls.Add(Me.cboStation)
         Me.tabThresholds.Controls.Add(Me.grdInterval)
         Me.tabThresholds.Controls.Add(Me.grdThresh)
+        Me.tabThresholds.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabThresholds.Location = New System.Drawing.Point(4, 22)
         Me.tabThresholds.Name = "tabThresholds"
         Me.tabThresholds.Padding = New System.Windows.Forms.Padding(3)
@@ -419,11 +444,11 @@
         'lblThresholds
         '
         Me.lblThresholds.AutoSize = True
-        Me.lblThresholds.Location = New System.Drawing.Point(91, 45)
+        Me.lblThresholds.Location = New System.Drawing.Point(71, 45)
         Me.lblThresholds.Name = "lblThresholds"
-        Me.lblThresholds.Size = New System.Drawing.Size(61, 14)
+        Me.lblThresholds.Size = New System.Drawing.Size(115, 14)
         Me.lblThresholds.TabIndex = 10
-        Me.lblThresholds.Text = "Thresholds"
+        Me.lblThresholds.Text = "Perception Thresholds"
         '
         'cmdAddInt
         '
@@ -501,6 +526,7 @@
         Me.tabOutput.Controls.Add(Me.fraOutFile)
         Me.tabOutput.Controls.Add(Me.fraAddOut)
         Me.tabOutput.Controls.Add(Me.fraOutRight)
+        Me.tabOutput.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabOutput.Location = New System.Drawing.Point(4, 22)
         Me.tabOutput.Name = "tabOutput"
         Me.tabOutput.Size = New System.Drawing.Size(729, 223)
@@ -926,6 +952,7 @@
         Me.tabResults.Controls.Add(Me._fraOutFileRes_1)
         Me.tabResults.Controls.Add(Me.fraGraphics)
         Me.tabResults.Controls.Add(Me._fraOutFileRes_0)
+        Me.tabResults.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabResults.Location = New System.Drawing.Point(4, 22)
         Me.tabResults.Name = "tabResults"
         Me.tabResults.Size = New System.Drawing.Size(729, 223)
@@ -1139,25 +1166,6 @@
         '
         'cmdOutFileView
         '
-        '
-        'cboAnalysisOption
-        '
-        Me.cboAnalysisOption.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboAnalysisOption.FormattingEnabled = True
-        Me.cboAnalysisOption.Items.AddRange(New Object() {"Skip", "B17B", "EMA"})
-        Me.cboAnalysisOption.Location = New System.Drawing.Point(61, 20)
-        Me.cboAnalysisOption.Name = "cboAnalysisOption"
-        Me.cboAnalysisOption.Size = New System.Drawing.Size(69, 22)
-        Me.cboAnalysisOption.TabIndex = 5
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(136, 20)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(273, 14)
-        Me.Label1.TabIndex = 6
-        Me.Label1.Text = "(Select here to set Analysis Option field for all stations)"
         '
         'frmPeakfq
         '
