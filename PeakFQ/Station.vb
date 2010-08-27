@@ -544,7 +544,7 @@ Friend Class pfqStation
     'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
     Private Sub Class_Initialize_Renamed()
 
-        pAnalysisOption = "EMA" 'init all stations to use EMA analysis
+        pAnalysisOption = "B17B" 'init all stations to use EMA analysis
         'pSkewOpt = 0 'Weighted skew option (middle of -1, 0, 1)
         pSkewOpt = 1  'TODO: Need to determine if this should be assigned differently (middle of 0, 1, 2)
         pUrbanRegPeaks = False

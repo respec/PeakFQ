@@ -857,33 +857,35 @@ FileCancel:
         On Error Resume Next
 
         lstGraphs.Items.Clear()
-        For i = 1 To grdSpecs.Source.Rows
-            If grdSpecs.Source.CellValue(i, 1) <> "Skip" Then
-                j = j + 1
-                'oldName = "PKFQ-" & j & ".BMP"
-                newName = grdSpecs.Source.CellValue(i, 17)
-                If i > 1 Then 'look for repeating station IDs
-                    ilen = Len(newName)
-                    For k = i - 1 To 1 Step -1
-                        GraphName = VB6.GetItemString(lstGraphs, k)
-                        If VB.Left(GraphName, ilen) = newName Then
-                            'same station ID, add index number
-                            If Len(GraphName) > ilen Then 'add one to this index
-                                ipos = InStrRev(GraphName, "-")
-                                Ind = CInt(VB.Right(GraphName, ipos - 1))
-                                newName = newName & CStr(Ind + 1)
-                            Else 'just add "-1"
-                                newName = newName & "-1"
+        With grdSpecs.Source
+            For i = 1 To .Rows - .FixedRows
+                If .CellValue(i, 1) <> "Skip" Then
+                    j = j + 1
+                    'oldName = "PKFQ-" & j & ".BMP"
+                    newName = .CellValue(i + 1, 17)
+                    If i > 1 Then 'look for repeating station IDs
+                        ilen = Len(newName)
+                        For k = i - 1 To 1 Step -1
+                            GraphName = VB6.GetItemString(lstGraphs, k)
+                            If VB.Left(GraphName, ilen) = newName Then
+                                'same station ID, add index number
+                                If Len(GraphName) > ilen Then 'add one to this index
+                                    ipos = InStrRev(GraphName, "-")
+                                    Ind = CInt(VB.Right(GraphName, ipos - 1))
+                                    newName = newName & CStr(Ind + 1)
+                                Else 'just add "-1"
+                                    newName = newName & "-1"
+                                End If
                             End If
-                        End If
-                    Next k
+                        Next k
+                    End If
+                    'newName = newName & ".BMP"
+                    'RenameGraph(oldName, newName)
+                    'lstGraphs.Items.Add(FilenameNoExt(newName))
+                    lstGraphs.Items.Add(newName)
                 End If
-                'newName = newName & ".BMP"
-                'RenameGraph(oldName, newName)
-                'lstGraphs.Items.Add(FilenameNoExt(newName))
-                lstGraphs.Items.Add(newName)
-            End If
-        Next i
+            Next i
+        End With
         CurGraphName = IO.Path.ChangeExtension(VB6.GetItemString(lstGraphs, 0), ".BMP")
 
     End Sub
@@ -987,9 +989,10 @@ FileCancel:
                 Next
             Else 'add one blank row
                 .Rows += 1
-                For i As Integer = 0 To 3
+                For i As Integer = 0 To .Columns - 1
                     .CellEditable(.Rows - 1, i) = True
                     .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                    If i = .Columns - 1 Then .CellValue(.Rows - 1, i) = "1.0e20"
                 Next
             End If
         End With
@@ -1024,7 +1027,7 @@ FileCancel:
                 Next
             Else 'add one blank row
                 .Rows += 1
-                For i As Integer = 0 To 2
+                For i As Integer = 0 To .Columns - 1
                     .CellEditable(.Rows - 1, i) = True
                     .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
                 Next
@@ -1146,13 +1149,29 @@ FileCancel:
             lThrshDates(1) = vThresh.EYear
             If lThrshDates(0) < lYearMin Then lYearMin = lThrshDates(0)
             If lThrshDates(1) > lYearMax Then lYearMax = lThrshDates(1)
+            i += 1
             lThrshVals(0) = vThresh.LowerLimit
             lThrshVals(1) = vThresh.LowerLimit
             If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
-            If lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
-            i += 1
+            If lThrshVals(1) < 1.0E+19 AndAlso lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
             lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
             lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+            If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
+                '2nd curve fills gap between threshold limits with white fill
+                lThrshVals(0) = vThresh.UpperLimit
+                lThrshVals(1) = vThresh.UpperLimit
+                If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
+                If lThrshVals(0) > lDataMax Then lDataMax = lThrshVals(1)
+                lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                lCurve.Line.Fill = New Fill(Color.White, Color.White)
+                lCurve.Label.IsVisible = False
+                '3rd curve shows upper limit to top of graph
+                lThrshVals(0) = 1.0E+20
+                lThrshVals(1) = 1.0E+20
+                lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                lCurve.Label.IsVisible = False
+            End If
         Next
         i = 0
         For Each vInterval As pfqStation.IntervalType In lStn.Intervals
@@ -1163,7 +1182,7 @@ FileCancel:
             lThrshVals(0) = vInterval.LowerLimit
             lThrshVals(1) = vInterval.UpperLimit
             If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
-            If lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
+            If lThrshVals(1) < 1.0E+19 AndAlso lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
             lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
             If i > 0 Then
                 lCurve.Label.IsVisible = False
@@ -1181,7 +1200,8 @@ FileCancel:
             End If
         Next
         'set y-axis range
-        Scalit(lDataMin, lDataMax, lLogFlag, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
+        lYAxis.Scale.MaxAuto = False
+        Scalit(lDataMin, lDataMax, lLogFlag, lYAxis.Scale.Min, lYAxis.Scale.Max)
         'set x-axis range
         lPane.X2Axis.Scale.Min = lYearMin
         lPane.X2Axis.Scale.Max = lYearMax
@@ -1443,8 +1463,8 @@ FileCancel:
         Dim lNoCLim As Integer
         Dim lCLimL(31) As Single
         Dim lCLimU(31) As Single
-        Const lPP1 As Double = 0.995 '-2.577
-        Const lPP0 As Double = 0.002 '2.879
+        Const lPP1 As Double = 0.002 '0.995 '-2.577
+        Const lPP0 As Double = 0.995 '0.002 '2.879
         Dim lNPlot1 As Integer
         Dim lNPlot2 As Integer
         Dim lNPlCL1 As Integer
@@ -1621,6 +1641,8 @@ FileCancel:
             ProcessThresholds()
             UpdateGraph()
         End With
+        aGrid.SizeAllColumnsToContents(aGrid.Width)
+        aGrid.Refresh()
     End Sub
 
     Private Sub grdInterval_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdInterval.CellEdited
@@ -1644,6 +1666,8 @@ FileCancel:
             ProcessThresholds()
             UpdateGraph()
         End With
+        aGrid.SizeAllColumnsToContents(aGrid.Width)
+        aGrid.Refresh()
     End Sub
 
     Private Sub AddRow(ByVal aGrid As atcControls.atcGrid)
@@ -1652,7 +1676,10 @@ FileCancel:
             For i As Integer = 0 To .Columns - 1
                 .CellEditable(.Rows - 1, i) = True
                 .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                If i = 3 Then .CellValue(.Rows - 1, i) = "1.0e20" 'default high threshold value
             Next
         End With
+        aGrid.SizeAllColumnsToContents(grdThresh.Width, True)
+        aGrid.Refresh()
     End Sub
 End Class
