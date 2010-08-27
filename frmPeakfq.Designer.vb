@@ -403,7 +403,7 @@
         Me.tabThresholds.Padding = New System.Windows.Forms.Padding(3)
         Me.tabThresholds.Size = New System.Drawing.Size(729, 223)
         Me.tabThresholds.TabIndex = 3
-        Me.tabThresholds.Text = "Threshholds"
+        Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
         '
         'cmdUpdateGraph
@@ -501,7 +501,7 @@
         Me.grdInterval.LineWidth = 1.0!
         Me.grdInterval.Location = New System.Drawing.Point(248, 62)
         Me.grdInterval.Name = "grdInterval"
-        Me.grdInterval.Size = New System.Drawing.Size(200, 132)
+        Me.grdInterval.Size = New System.Drawing.Size(178, 132)
         Me.grdInterval.Source = Nothing
         Me.grdInterval.TabIndex = 4
         '
