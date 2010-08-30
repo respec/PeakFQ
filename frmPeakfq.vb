@@ -992,7 +992,10 @@ FileCancel:
                 For i As Integer = 0 To .Columns - 1
                     .CellEditable(.Rows - 1, i) = True
                     .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
-                    If i = .Columns - 1 Then .CellValue(.Rows - 1, i) = "1.0e20"
+                    If i = .Columns - 1 Then
+                        .CellValue(.Rows - 1, i) = "1.0e20"
+                        .CellColor(.Rows - 1, i) = ThreshColors(.Rows - .FixedRows - 1)
+                    End If
                 Next
             End If
         End With
@@ -1130,6 +1133,8 @@ FileCancel:
         Dim lYearMax As Double = -10000
         Dim lPkVals(lStn.Peaks.Count - 1) As Double
         Dim lDateVals(lStn.Peaks.Count - 1) As Double
+        Dim lHistVals(lStn.Peaks.Count - 1) As Double
+        Dim lHistDates(lStn.Peaks.Count - 1) As Double
         Dim lThrshVals(1) As Double
         Dim lThrshDates(1) As Double
         Dim lDataMin As Double = 10000
@@ -1138,30 +1143,73 @@ FileCancel:
         Dim lPane As GraphPane = zgcThresh.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
         Dim lCurve As LineItem = Nothing
-        Dim i As Integer = 0
+        Dim i As Integer = -1
+        Dim j As Integer = -1
 
         'clear previous curves
         lPane.CurveList.Clear()
 
         'find ranges for axes
         For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+            If vThresh.SYear < lYearMin Then lYearMin = vThresh.SYear
+            If vThresh.EYear > lYearMax Then lYearMax = vThresh.EYear
+            If vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
+            If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
+        Next
+        For Each vInterval As pfqStation.IntervalType In lStn.Intervals
+            If vInterval.Year < lYearMin Then lYearMin = vInterval.Year
+            If vInterval.Year > lYearMax Then lYearMax = vInterval.Year
+            If vInterval.LowerLimit < lDataMin Then lDataMin = vInterval.LowerLimit
+            If vInterval.UpperLimit < 1.0E+19 AndAlso vInterval.UpperLimit > lDataMax Then lDataMax = vInterval.UpperLimit
+        Next
+        If lStn.Peaks(0).Year < lYearMin Then lYearMin = lStn.Peaks(0).Year
+        If lStn.Peaks(lStn.Peaks.Count - 1).Year > lYearMax Then lYearMax = lStn.Peaks(lStn.Peaks.Count - 1).Year
+        For Each lPeak As pfqStation.PeakType In lStn.Peaks
+            If lPeak.Code <> "H" Then
+                i += 1
+                lPkVals(i) = lPeak.Value
+                lDateVals(i) = lPeak.Year
+                If lPkVals(i) > 0 AndAlso lPkVals(i) < lDataMin Then lDataMin = lPkVals(i)
+                If lPkVals(i) > lDataMax Then lDataMax = lPkVals(i)
+            ElseIf lStn.HistoricPeriod > 0 Then 'historic peak and we're including them
+                j += 1
+                lHistVals(j) = Math.Abs(lPeak.Value)
+                lHistDates(j) = Math.Abs(lPeak.Year)
+                If lHistVals(j) > 0 AndAlso lHistVals(j) < lDataMin Then lDataMin = lHistVals(j)
+                If lHistVals(j) > lDataMax Then lDataMax = lHistVals(j)
+            End If
+        Next
+        'set y-axis range
+        lYAxis.Scale.MaxAuto = False
+        Scalit(lDataMin, lDataMax, lLogFlag, lYAxis.Scale.Min, lYAxis.Scale.Max)
+        'set x-axis range
+        lPane.X2Axis.Scale.Min = lYearMin
+        lPane.X2Axis.Scale.Max = lYearMax
+
+        'now draw curves
+        lYAxis.IsVisible = True
+        lYAxis.Scale.IsVisible = True
+        lCurve = lPane.AddCurve("Peaks", lDateVals, lPkVals, Color.Red, SymbolType.Plus)
+        lCurve.Line.IsVisible = False
+        If j > 0 Then 'use separate curve for historic peaks
+            lCurve = lPane.AddCurve("Historic Peaks", lHistDates, lHistVals, Color.Blue, SymbolType.Plus)
+            lCurve.Line.IsVisible = False
+        End If
+
+        i = 0
+        For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
             lThrshDates(0) = vThresh.SYear
             lThrshDates(1) = vThresh.EYear
-            If lThrshDates(0) < lYearMin Then lYearMin = lThrshDates(0)
-            If lThrshDates(1) > lYearMax Then lYearMax = lThrshDates(1)
             i += 1
+            '1st curve is lower limit down to bottom of graph
             lThrshVals(0) = vThresh.LowerLimit
             lThrshVals(1) = vThresh.LowerLimit
-            If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
-            If lThrshVals(1) < 1.0E+19 AndAlso lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
             lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
             lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
             If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
                 '2nd curve fills gap between threshold limits with white fill
                 lThrshVals(0) = vThresh.UpperLimit
                 lThrshVals(1) = vThresh.UpperLimit
-                If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
-                If lThrshVals(0) > lDataMax Then lDataMax = lThrshVals(1)
                 lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
                 lCurve.Line.Fill = New Fill(Color.White, Color.White)
                 lCurve.Label.IsVisible = False
@@ -1177,39 +1225,14 @@ FileCancel:
         For Each vInterval As pfqStation.IntervalType In lStn.Intervals
             lThrshDates(0) = vInterval.Year
             lThrshDates(1) = vInterval.Year
-            If lThrshDates(0) < lYearMin Then lYearMin = lThrshDates(0)
-            If lThrshDates(0) > lYearMax Then lYearMax = lThrshDates(0)
             lThrshVals(0) = vInterval.LowerLimit
             lThrshVals(1) = vInterval.UpperLimit
-            If lThrshVals(0) < lDataMin Then lDataMin = lThrshVals(0)
-            If lThrshVals(1) < 1.0E+19 AndAlso lThrshVals(1) > lDataMax Then lDataMax = lThrshVals(1)
             lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
             If i > 0 Then
                 lCurve.Label.IsVisible = False
             End If
             i += 1
         Next
-        If lStn.Peaks(0).Year < lYearMin Then lYearMin = lStn.Peaks(0).Year
-        If lStn.Peaks(lStn.Peaks.Count - 1).Year > lYearMax Then lYearMax = lStn.Peaks(lStn.Peaks.Count - 1).Year
-        For i = 0 To lStn.Peaks.Count - 1
-            If lStn.Peaks(i).Code <> "H" Or lStn.HistoricPeriod > 0 Then
-                lPkVals(i) = Math.Abs(lStn.Peaks(i).Value)
-                lDateVals(i) = Math.Abs(lStn.Peaks(i).Year)
-                If lPkVals(i) > 0 AndAlso lPkVals(i) < lDataMin Then lDataMin = lPkVals(i)
-                If lPkVals(i) > lDataMax Then lDataMax = lPkVals(i)
-            End If
-        Next
-        'set y-axis range
-        lYAxis.Scale.MaxAuto = False
-        Scalit(lDataMin, lDataMax, lLogFlag, lYAxis.Scale.Min, lYAxis.Scale.Max)
-        'set x-axis range
-        lPane.X2Axis.Scale.Min = lYearMin
-        lPane.X2Axis.Scale.Max = lYearMax
-
-        lYAxis.IsVisible = True
-        lYAxis.Scale.IsVisible = True
-        lCurve = lPane.AddCurve("Peaks", lDateVals, lPkVals, Color.Red, SymbolType.Plus)
-        lCurve.Line.IsVisible = False
 
         zgcThresh.AxisChange()
         zgcThresh.Invalidate()
@@ -1676,7 +1699,10 @@ FileCancel:
             For i As Integer = 0 To .Columns - 1
                 .CellEditable(.Rows - 1, i) = True
                 .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
-                If i = 3 Then .CellValue(.Rows - 1, i) = "1.0e20" 'default high threshold value
+                If i = 3 Then 'default high threshold value and assign threshold color
+                    .CellValue(.Rows - 1, i) = "1.0e20"
+                    .CellColor(.Rows - 1, i) = ThreshColors(.Rows - .FixedRows - 1)
+                End If
             Next
         End With
         aGrid.SizeAllColumnsToContents(grdThresh.Width, True)
