@@ -414,6 +414,7 @@
         Me.cmdUpdateGraph.TabIndex = 13
         Me.cmdUpdateGraph.Text = "Update Graph"
         Me.cmdUpdateGraph.UseVisualStyleBackColor = True
+        Me.cmdUpdateGraph.Visible = False
         '
         'zgcThresh
         '
@@ -459,6 +460,7 @@
         Me.cmdAddInt.TabIndex = 9
         Me.cmdAddInt.Text = "Add"
         Me.cmdAddInt.UseVisualStyleBackColor = True
+        Me.cmdAddInt.Visible = False
         '
         'cmdAddThr
         '
@@ -469,6 +471,7 @@
         Me.cmdAddThr.TabIndex = 7
         Me.cmdAddThr.Text = "Add"
         Me.cmdAddThr.UseVisualStyleBackColor = True
+        Me.cmdAddThr.Visible = False
         '
         'lblStation
         '
