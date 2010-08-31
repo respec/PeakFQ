@@ -1549,7 +1549,7 @@ FileCancel:
         For i = 0 To lNPlot - 1
             If lTxProb(i) < lPP0 Then lNPlot2 = i
             j = lNPlot - i - 1 ' + 1 - i
-            If lTxProb(j) > lPP1 AndAlso lWrcFC(j) > -1.0 Then lNPlot1 = j
+            If lTxProb(j) > lPP1 AndAlso lSysRFC(j) > -1.0 Then lNPlot1 = j
         Next
         ReDim lYVals(lNPlot2 - lNPlot1)
         ReDim lXVals(lNPlot2 - lNPlot1)
