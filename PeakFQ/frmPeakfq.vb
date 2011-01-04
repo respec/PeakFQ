@@ -298,17 +298,21 @@ Friend Class frmPeakfq
             chkLinePrinter.CheckState = System.Windows.Forms.CheckState.Unchecked
         End If
         If PfqPrj.Graphic Then
-            If UCase(PfqPrj.GraphFormat) = "CGM" Then
-                optGraphFormat(2).Checked = True
-            ElseIf UCase(PfqPrj.GraphFormat) = "PS" Then
-                optGraphFormat(3).Checked = True
-            ElseIf UCase(PfqPrj.GraphFormat) = "WMF" Then
-                optGraphFormat(4).Checked = True
+            If UCase(PfqPrj.GraphFormat) = "EMF" Then
+                cboGraphFormat.SelectedIndex = 1
+            ElseIf UCase(PfqPrj.GraphFormat) = "PNG" Then
+                cboGraphFormat.SelectedIndex = 2
+            ElseIf UCase(PfqPrj.GraphFormat) = "GIF" Then
+                cboGraphFormat.SelectedIndex = 3
+            ElseIf UCase(PfqPrj.GraphFormat) = "JPG" Then
+                cboGraphFormat.SelectedIndex = 4
+            ElseIf UCase(PfqPrj.GraphFormat) = "TIF" Then
+                cboGraphFormat.SelectedIndex = 5
             Else 'use BMP
-                optGraphFormat(1).Checked = True
+                cboGraphFormat.SelectedIndex = 6
             End If
         Else
-            optGraphFormat(0).Checked = True
+            cboGraphFormat.SelectedIndex = 0
         End If
         If PfqPrj.PrintPlotPos Then
             chkPlotPos.CheckState = System.Windows.Forms.CheckState.Checked
@@ -354,16 +358,11 @@ Friend Class frmPeakfq
         Else
             PfqPrj.LinePrinter = False
         End If
-        If optGraphFormat(0).Checked Then 'no graphics
+        If cboGraphFormat.SelectedIndex = 0 Then 'no graphics
             PfqPrj.Graphic = False
         Else 'get graphic format
             PfqPrj.Graphic = True
-            For i = 1 To 4
-                If optGraphFormat(i).Checked Then
-                    PfqPrj.GraphFormat = optGraphFormat(i).Text
-                    Exit For
-                End If
-            Next
+            PfqPrj.GraphFormat = StrRetRem(cboGraphFormat.Text)
         End If
         If chkPlotPos.CheckState = System.Windows.Forms.CheckState.Checked Then
             PfqPrj.PrintPlotPos = True
@@ -883,6 +882,9 @@ FileCancel:
                     'RenameGraph(oldName, newName)
                     'lstGraphs.Items.Add(FilenameNoExt(newName))
                     lstGraphs.Items.Add(newName)
+                    If PfqPrj.Graphic Then 'save graph to file
+                        GenGraph(lstGraphs.Items.Count - 1, True)
+                    End If
                 End If
             Next i
         End With
@@ -1468,7 +1470,7 @@ FileCancel:
         End If
     End Sub
 
-    Public Sub GenGraph(ByVal aStnInd As Integer)
+    Public Sub GenGraph(ByVal aStnInd As Integer, Optional ByVal aToFile As Boolean = False)
         Dim newform As New atcGraph.atcGraphForm
         Dim lCurve As LineItem = Nothing
         Dim i As Integer
@@ -1495,8 +1497,8 @@ FileCancel:
         Dim lPMin As Double = 1.0E+20
         Dim lPMax As Double = -1.0E+20
 
-        newform.Height = VB6.TwipsToPixelsY(7600)
-        newform.Width = VB6.TwipsToPixelsX(9700)
+        newform.Height = VB6.TwipsToPixelsY(6300)
+        newform.Width = VB6.TwipsToPixelsX(8800)
         Dim lZGC As ZedGraphControl = newform.ZedGraphCtrl
         InitGraph(lZGC, "R")
         Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
@@ -1607,7 +1609,7 @@ FileCancel:
                                  "NOTE - Preliminary computation" & vbCrLf & _
                                  "User is responsible for" & vbCrLf & _
                                  "assessment and interpretation."
-        Dim lText As New TextObj(lWarning, 0.5, 0.7)
+        Dim lText As New TextObj(lWarning, 0.5, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
         lText.FontSpec.IsBold = True
@@ -1621,7 +1623,11 @@ FileCancel:
         lZGC.AxisChange()
         lZGC.Invalidate()
         lZGC.Refresh()
-        newform.Show()
+        If aToFile Then 'save plot to file
+            lZGC.SaveIn(PfqPrj.OutputDir & "\" & lstGraphs.Items(aStnInd) & "." & PfqPrj.GraphFormat)
+        Else 'display plot on form
+            newform.Show()
+        End If
 
     End Sub
 

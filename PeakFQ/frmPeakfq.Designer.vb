@@ -41,11 +41,6 @@
     Public WithEvents _cmdOpenOut_1 As System.Windows.Forms.Button
     Public WithEvents _lblOutFile_1 As System.Windows.Forms.Label
     Public WithEvents fraAddOut As System.Windows.Forms.GroupBox
-    Public WithEvents _optGraphFormat_4 As System.Windows.Forms.RadioButton
-    Public WithEvents _optGraphFormat_3 As System.Windows.Forms.RadioButton
-    Public WithEvents _optGraphFormat_2 As System.Windows.Forms.RadioButton
-    Public WithEvents _optGraphFormat_1 As System.Windows.Forms.RadioButton
-    Public WithEvents _optGraphFormat_0 As System.Windows.Forms.RadioButton
     Public WithEvents chkPlotPos As System.Windows.Forms.CheckBox
     Public WithEvents chkLinePrinter As System.Windows.Forms.CheckBox
     Public WithEvents chkIntRes As System.Windows.Forms.CheckBox
@@ -131,13 +126,9 @@
         Me._cmdOpenOut_1 = New System.Windows.Forms.Button
         Me._lblOutFile_1 = New System.Windows.Forms.Label
         Me.fraOutRight = New System.Windows.Forms.Panel
+        Me.cboGraphFormat = New System.Windows.Forms.ComboBox
         Me.txtCL = New atcControls.atcText
         Me.txtPlotPos = New atcControls.atcText
-        Me._optGraphFormat_4 = New System.Windows.Forms.RadioButton
-        Me._optGraphFormat_3 = New System.Windows.Forms.RadioButton
-        Me._optGraphFormat_2 = New System.Windows.Forms.RadioButton
-        Me._optGraphFormat_1 = New System.Windows.Forms.RadioButton
-        Me._optGraphFormat_0 = New System.Windows.Forms.RadioButton
         Me.chkPlotPos = New System.Windows.Forms.CheckBox
         Me.chkLinePrinter = New System.Windows.Forms.CheckBox
         Me.chkIntRes = New System.Windows.Forms.CheckBox
@@ -373,7 +364,9 @@
         '
         Me.grdSpecs.AllowHorizontalScrolling = True
         Me.grdSpecs.AllowNewValidValues = False
-        Me.grdSpecs.Anchor = System.Windows.Forms.AnchorStyles.Left
+        Me.grdSpecs.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.grdSpecs.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdSpecs.Fixed3D = False
         Me.grdSpecs.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -711,13 +704,9 @@
         '
         Me.fraOutRight.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraOutRight.BackColor = System.Drawing.SystemColors.Control
+        Me.fraOutRight.Controls.Add(Me.cboGraphFormat)
         Me.fraOutRight.Controls.Add(Me.txtCL)
         Me.fraOutRight.Controls.Add(Me.txtPlotPos)
-        Me.fraOutRight.Controls.Add(Me._optGraphFormat_4)
-        Me.fraOutRight.Controls.Add(Me._optGraphFormat_3)
-        Me.fraOutRight.Controls.Add(Me._optGraphFormat_2)
-        Me.fraOutRight.Controls.Add(Me._optGraphFormat_1)
-        Me.fraOutRight.Controls.Add(Me._optGraphFormat_0)
         Me.fraOutRight.Controls.Add(Me.chkPlotPos)
         Me.fraOutRight.Controls.Add(Me.chkLinePrinter)
         Me.fraOutRight.Controls.Add(Me.chkIntRes)
@@ -732,6 +721,16 @@
         Me.fraOutRight.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.fraOutRight.Size = New System.Drawing.Size(193, 185)
         Me.fraOutRight.TabIndex = 21
+        '
+        'cboGraphFormat
+        '
+        Me.cboGraphFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboGraphFormat.FormattingEnabled = True
+        Me.cboGraphFormat.Items.AddRange(New Object() {"None", "EMF - Enhanced Windows Metafile", "PNG - Portable Network Graphics", "GIF - Graphic Interchange Format", "JPEG", "TIFF", "BMP - Bitmap"})
+        Me.cboGraphFormat.Location = New System.Drawing.Point(3, 94)
+        Me.cboGraphFormat.Name = "cboGraphFormat"
+        Me.cboGraphFormat.Size = New System.Drawing.Size(187, 22)
+        Me.cboGraphFormat.TabIndex = 42
         '
         'txtCL
         '
@@ -778,91 +777,6 @@
         Me.txtPlotPos.TabIndex = 40
         Me.txtPlotPos.ValueDouble = 0
         Me.txtPlotPos.ValueInteger = 0
-        '
-        '_optGraphFormat_4
-        '
-        Me._optGraphFormat_4.AutoSize = True
-        Me._optGraphFormat_4.BackColor = System.Drawing.SystemColors.Control
-        Me._optGraphFormat_4.Cursor = System.Windows.Forms.Cursors.Default
-        Me._optGraphFormat_4.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._optGraphFormat_4.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.optGraphFormat.SetIndex(Me._optGraphFormat_4, CType(4, Short))
-        Me._optGraphFormat_4.Location = New System.Drawing.Point(80, 107)
-        Me._optGraphFormat_4.Name = "_optGraphFormat_4"
-        Me._optGraphFormat_4.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_4.Size = New System.Drawing.Size(49, 18)
-        Me._optGraphFormat_4.TabIndex = 39
-        Me._optGraphFormat_4.TabStop = True
-        Me._optGraphFormat_4.Text = "WMF"
-        Me._optGraphFormat_4.UseVisualStyleBackColor = False
-        '
-        '_optGraphFormat_3
-        '
-        Me._optGraphFormat_3.AutoSize = True
-        Me._optGraphFormat_3.BackColor = System.Drawing.SystemColors.Control
-        Me._optGraphFormat_3.Cursor = System.Windows.Forms.Cursors.Default
-        Me._optGraphFormat_3.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._optGraphFormat_3.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.optGraphFormat.SetIndex(Me._optGraphFormat_3, CType(3, Short))
-        Me._optGraphFormat_3.Location = New System.Drawing.Point(144, 88)
-        Me._optGraphFormat_3.Name = "_optGraphFormat_3"
-        Me._optGraphFormat_3.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_3.Size = New System.Drawing.Size(38, 18)
-        Me._optGraphFormat_3.TabIndex = 38
-        Me._optGraphFormat_3.TabStop = True
-        Me._optGraphFormat_3.Text = "PS"
-        Me._optGraphFormat_3.UseVisualStyleBackColor = False
-        '
-        '_optGraphFormat_2
-        '
-        Me._optGraphFormat_2.AutoSize = True
-        Me._optGraphFormat_2.BackColor = System.Drawing.SystemColors.Control
-        Me._optGraphFormat_2.Cursor = System.Windows.Forms.Cursors.Default
-        Me._optGraphFormat_2.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._optGraphFormat_2.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.optGraphFormat.SetIndex(Me._optGraphFormat_2, CType(2, Short))
-        Me._optGraphFormat_2.Location = New System.Drawing.Point(80, 88)
-        Me._optGraphFormat_2.Name = "_optGraphFormat_2"
-        Me._optGraphFormat_2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_2.Size = New System.Drawing.Size(48, 18)
-        Me._optGraphFormat_2.TabIndex = 37
-        Me._optGraphFormat_2.TabStop = True
-        Me._optGraphFormat_2.Text = "CGM"
-        Me._optGraphFormat_2.UseVisualStyleBackColor = False
-        '
-        '_optGraphFormat_1
-        '
-        Me._optGraphFormat_1.AutoSize = True
-        Me._optGraphFormat_1.BackColor = System.Drawing.SystemColors.Control
-        Me._optGraphFormat_1.Cursor = System.Windows.Forms.Cursors.Default
-        Me._optGraphFormat_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._optGraphFormat_1.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.optGraphFormat.SetIndex(Me._optGraphFormat_1, CType(1, Short))
-        Me._optGraphFormat_1.Location = New System.Drawing.Point(16, 107)
-        Me._optGraphFormat_1.Name = "_optGraphFormat_1"
-        Me._optGraphFormat_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_1.Size = New System.Drawing.Size(46, 18)
-        Me._optGraphFormat_1.TabIndex = 36
-        Me._optGraphFormat_1.TabStop = True
-        Me._optGraphFormat_1.Text = "BMP"
-        Me._optGraphFormat_1.UseVisualStyleBackColor = False
-        '
-        '_optGraphFormat_0
-        '
-        Me._optGraphFormat_0.AutoSize = True
-        Me._optGraphFormat_0.BackColor = System.Drawing.SystemColors.Control
-        Me._optGraphFormat_0.Cursor = System.Windows.Forms.Cursors.Default
-        Me._optGraphFormat_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me._optGraphFormat_0.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.optGraphFormat.SetIndex(Me._optGraphFormat_0, CType(0, Short))
-        Me._optGraphFormat_0.Location = New System.Drawing.Point(16, 88)
-        Me._optGraphFormat_0.Name = "_optGraphFormat_0"
-        Me._optGraphFormat_0.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._optGraphFormat_0.Size = New System.Drawing.Size(50, 18)
-        Me._optGraphFormat_0.TabIndex = 35
-        Me._optGraphFormat_0.TabStop = True
-        Me._optGraphFormat_0.Text = "None"
-        Me._optGraphFormat_0.UseVisualStyleBackColor = False
         '
         'chkPlotPos
         '
@@ -915,7 +829,7 @@
         Me.lblGraphics.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblGraphics.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblGraphics.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblGraphics.Location = New System.Drawing.Point(0, 72)
+        Me.lblGraphics.Location = New System.Drawing.Point(3, 74)
         Me.lblGraphics.Name = "lblGraphics"
         Me.lblGraphics.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblGraphics.Size = New System.Drawing.Size(137, 17)
@@ -929,7 +843,7 @@
         Me.lblPlotPos.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblPlotPos.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblPlotPos.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblPlotPos.Location = New System.Drawing.Point(0, 136)
+        Me.lblPlotPos.Location = New System.Drawing.Point(3, 136)
         Me.lblPlotPos.Name = "lblPlotPos"
         Me.lblPlotPos.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblPlotPos.Size = New System.Drawing.Size(84, 14)
@@ -943,12 +857,12 @@
         Me.lblCL.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblCL.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCL.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblCL.Location = New System.Drawing.Point(0, 160)
+        Me.lblCL.Location = New System.Drawing.Point(3, 157)
         Me.lblCL.Name = "lblCL"
         Me.lblCL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCL.Size = New System.Drawing.Size(95, 14)
+        Me.lblCL.Size = New System.Drawing.Size(109, 14)
         Me.lblCL.TabIndex = 27
-        Me.lblCL.Text = "Confidence Limits:"
+        Me.lblCL.Text = "Confidence Intervals:"
         '
         'tabResults
         '
@@ -1232,5 +1146,6 @@
     Friend WithEvents lblGlobalAnalysis As System.Windows.Forms.Label
     Friend WithEvents cboAnalysisOption As System.Windows.Forms.ComboBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents cboGraphFormat As System.Windows.Forms.ComboBox
 #End Region
 End Class
