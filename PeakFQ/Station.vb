@@ -10,20 +10,18 @@ Friend Class pfqStation
         Dim EYear As Integer
         Dim LowerLimit As Single
         Dim UpperLimit As Single
+        Dim Comment As String
     End Structure
 
-    Public Structure IntervalType
-        Dim Year As Integer
-        Dim LowerLimit As Single
-        Dim UpperLimit As Single
-    End Structure
-
-    Public Class PeakType
+    Public Class PeakDataType
         Implements IComparable
 
         Public Year As Integer
         Public Value As Double
         Public Code As String
+        Public LowerLimit As Single
+        Public UpperLimit As Single
+        Public Comment As String
 
         Public Function CompareTo(ByVal obj As Object) As Integer Implements System.IComparable.CompareTo
             Return Year.CompareTo(obj.Year)
@@ -50,8 +48,7 @@ Friend Class pfqStation
     Private pPlotName As String
     Private pPlotMade As Boolean
     Private pThresholds As Generic.List(Of ThresholdType)
-    Private pIntervals As Generic.List(Of IntervalType)
-    Private pPeaks As Generic.List(Of PeakType)
+    Private pPeakData As Generic.List(Of PeakDataType)
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCAnalysisOption As String
@@ -256,23 +253,13 @@ Friend Class pfqStation
         End Set
     End Property
 
-    Public Property Intervals() As Generic.List(Of pfqStation.IntervalType)
+    Public Property PeakData() As Generic.List(Of pfqStation.PeakDataType)
         Get
-            If pIntervals Is Nothing Then pIntervals = New Generic.List(Of pfqStation.IntervalType)
-            Intervals = pIntervals
+            If pPeakData Is Nothing Then pPeakData = New Generic.List(Of pfqStation.PeakDataType)
+            PeakData = pPeakData
         End Get
-        Set(ByVal Value As Generic.List(Of pfqStation.IntervalType))
-            pIntervals = Value
-        End Set
-    End Property
-
-    Public Property Peaks() As Generic.List(Of pfqStation.PeakType)
-        Get
-            If pPeaks Is Nothing Then pPeaks = New Generic.List(Of pfqStation.PeakType)
-            Peaks = pPeaks
-        End Get
-        Set(ByVal Value As Generic.List(Of pfqStation.PeakType))
-            pPeaks = Value
+        Set(ByVal Value As Generic.List(Of pfqStation.PeakDataType))
+            pPeakData = Value
         End Set
     End Property
 
@@ -456,9 +443,9 @@ Friend Class pfqStation
             If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
             If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
         End If
-        If pIntervals.Count > 0 Then 'using perception threshholds
-            For Each vInt As IntervalType In pIntervals
-                s = s & "Interval " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
+        If pPeakData.Count > 0 Then 'using perception threshholds
+            For Each vData As PeakDataType In pPeakData
+                s = s & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & vbCrLf
             Next
         End If
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
@@ -506,9 +493,9 @@ Friend Class pfqStation
                 s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
             Next
         End If
-        If pIntervals.Count > 0 Then 'using perception threshholds
-            For Each vInt As IntervalType In pIntervals
-                s = s & pad & "Interval " & vInt.Year & " " & vInt.LowerLimit & " " & vInt.UpperLimit & vbCrLf
+        If pPeakData.Count > 0 Then 'using perception threshholds
+            For Each vData As PeakDataType In pPeakData
+                s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & vbCrLf
             Next
         End If
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
@@ -566,8 +553,7 @@ Friend Class pfqStation
         SOText(2) = "Generalized"
 
         pThresholds = New Generic.List(Of ThresholdType)
-        pIntervals = New Generic.List(Of IntervalType)
-        pPeaks = New Generic.List(Of PeakType)
+        pPeakData = New Generic.List(Of PeakDataType)
 
     End Sub
     Public Sub New()

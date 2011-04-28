@@ -4,6 +4,7 @@ Imports VB = Microsoft.VisualBasic
 Imports atcUtility
 Imports atcControls
 Imports MapWinUtility
+Imports MapWinUtility.Strings
 Imports System.Drawing.SystemColors
 Imports ZedGraph
 
@@ -15,7 +16,7 @@ Friend Class frmPeakfq
 
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
-    Friend ThreshColors() As System.Drawing.Color = {Color.LightBlue, Color.LightGreen, Color.LightYellow, Color.LightCoral, Color.LightSlateGray, Color.LightCyan}
+    Friend ThreshColors() As System.Drawing.Color = {Color.LightBlue, Color.LightGreen, Color.Yellow, Color.LightCoral, Color.LightSlateGray, Color.LightCyan}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -957,98 +958,124 @@ FileCancel:
         CurStationIndex = cboStation.SelectedIndex '+ 1
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = lStn.Thresholds
-        Dim lIntColl As Generic.List(Of pfqStation.IntervalType) = lStn.Intervals
+        Dim lDataColl As Generic.List(Of pfqStation.PeakDataType) = lStn.PeakData
         Dim lNewSource As New atcControls.atcGridSource
+        Dim j As Integer
 
         With lNewSource
-            .FixedRows = 2
+            .FixedRows = 1
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            .Columns = 4 'start/end year followed by low/high thresholds
-            .CellValue(0, 0) = "Start"
-            .CellValue(1, 0) = "Year"
-            .CellValue(0, 1) = "End"
-            .CellValue(1, 1) = "Year"
-            .CellValue(0, 2) = "Low"
-            .CellValue(1, 2) = "Threshold"
-            .CellValue(0, 3) = "High"
-            .CellValue(1, 3) = "Threshold"
+            .Columns = 5 'start/end year followed by low/high thresholds
+            .CellValue(0, 0) = "Start Year"
+            .CellValue(0, 1) = "End Year"
+            .CellValue(0, 2) = "Low Threshold"
+            .CellValue(0, 3) = "High Threshold"
+            .CellValue(0, 4) = "Comment"
             .ColorCells = True
             If lThrColl.Count > 0 Then
+                j = 0
                 For Each lThresh As pfqStation.ThresholdType In lThrColl
-                    .Rows += 1
-                    .CellValue(.Rows - 1, 0) = lThresh.SYear
-                    .CellEditable(.Rows - 1, 0) = True
-                    .Alignment(.Rows - 1, 0) = atcAlignment.HAlignRight
-                    .CellValue(.Rows - 1, 1) = lThresh.EYear
-                    .CellEditable(.Rows - 1, 1) = True
-                    .Alignment(.Rows - 1, 1) = atcAlignment.HAlignRight
-                    .CellValue(.Rows - 1, 2) = lThresh.LowerLimit
-                    .CellEditable(.Rows - 1, 2) = True
-                    .Alignment(.Rows - 1, 2) = atcAlignment.HAlignRight
-                    .CellValue(.Rows - 1, 3) = lThresh.UpperLimit
-                    .CellEditable(.Rows - 1, 3) = True
-                    .Alignment(.Rows - 1, 3) = atcAlignment.HAlignRight
+                    j += 1
+                    .CellValue(j, 0) = lThresh.SYear
+                    .CellEditable(j, 0) = True
+                    .Alignment(j, 0) = atcAlignment.HAlignRight
+                    .CellColor(j, 0) = ThreshColors(j - 1)
+                    .CellValue(j, 1) = lThresh.EYear
+                    .CellEditable(j, 1) = True
+                    .Alignment(j, 1) = atcAlignment.HAlignRight
+                    .CellColor(j, 1) = ThreshColors(j - 1)
+                    .CellValue(j, 2) = lThresh.LowerLimit
+                    .CellEditable(j, 2) = True
+                    .Alignment(j, 2) = atcAlignment.HAlignRight
+                    .CellColor(j, 2) = ThreshColors(j - 1)
+                    .CellValue(j, 3) = lThresh.UpperLimit
+                    .CellEditable(j, 3) = True
+                    .Alignment(j, 3) = atcAlignment.HAlignRight
+                    .CellColor(j, 3) = ThreshColors(j - 1)
+                    .CellValue(j, 4) = lThresh.Comment
+                    .CellEditable(j, 4) = True
+                    .Alignment(j, 4) = atcAlignment.HAlignLeft
+                    .CellColor(j, 4) = ThreshColors(j - 1)
                 Next
-            Else 'add one blank row
-                .Rows += 1
-                For i As Integer = 0 To .Columns - 1
-                    .CellEditable(.Rows - 1, i) = True
-                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
-                    If i = .Columns - 1 Then
-                        .CellValue(.Rows - 1, i) = "1.0e20"
-                        .CellColor(.Rows - 1, i) = ThreshColors(.Rows - .FixedRows - 1)
-                    End If
-                Next
+                'Else 'add one blank row
+                '    For i As Integer = 0 To .Columns - 1
+                '        .CellEditable(1, i) = True
+                '        If i = .Columns - 1 Then
+                '            .Alignment(1, i) = atcAlignment.HAlignLeft
+                '        Else
+                '            .Alignment(1, i) = atcAlignment.HAlignRight
+                '        End If
+                '        If i = .Columns - 2 Then
+                '            .CellValue(1, i) = "1.0e20"
+                '            .CellColor(1, i) = ThreshColors(0)
+                '        End If
+                '    Next
+                '    '.Rows += 1
             End If
         End With
         grdThresh.Initialize(lNewSource)
         grdThresh.Visible = True
-        grdThresh.SizeAllColumnsToContents(grdThresh.Width, True)
-        grdThresh.Refresh()
+        AddThreshRow()
+        'grdThresh.SizeAllColumnsToContents(grdThresh.Width, True)
+        'grdThresh.Refresh()
 
         lNewSource = New atcControls.atcGridSource
         With lNewSource
-            .FixedRows = 2
+            .FixedRows = 1
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            .Columns = 3 'year followed by low/high thresholds
-            .CellValue(1, 0) = "Year"
-            .CellValue(0, 1) = "Low"
-            .CellValue(1, 1) = "Interval"
-            .CellValue(0, 2) = "High"
-            .CellValue(1, 2) = "Interval"
+            .Columns = 6 'year, peak, remark, followed by low/high intervals and comment
+            .CellValue(0, 0) = "Year"
+            .CellValue(0, 1) = "Peak"
+            .CellValue(0, 2) = "Remark Codes"
+            .CellValue(0, 3) = "Low Value"
+            .CellValue(0, 4) = "High Value"
+            .CellValue(0, 5) = "Comment"
             .ColorCells = True
-            If lIntColl.Count > 0 Then
-                For Each lInterval As pfqStation.IntervalType In lIntColl
-                    .Rows += 1
-                    .CellValue(.Rows - 1, 0) = lInterval.Year
-                    .CellEditable(.Rows - 1, 0) = True
-                    .Alignment(.Rows - 1, 0) = atcAlignment.HAlignRight
-                    .CellValue(.Rows - 1, 1) = lInterval.LowerLimit
-                    .CellEditable(.Rows - 1, 1) = True
-                    .Alignment(.Rows - 1, 1) = atcAlignment.HAlignRight
-                    .CellValue(.Rows - 1, 2) = lInterval.UpperLimit
-                    .CellEditable(.Rows - 1, 2) = True
-                    .Alignment(.Rows - 1, 2) = atcAlignment.HAlignRight
+            If lDataColl.Count > 0 Then
+                j = 0
+                For Each lData As pfqStation.PeakDataType In lDataColl
+                    j += 1
+                    .CellValue(j, 0) = lData.Year
+                    .CellEditable(j, 0) = True
+                    .Alignment(j, 0) = atcAlignment.HAlignRight
+                    .CellValue(j, 1) = lData.Value
+                    .CellEditable(j, 1) = True
+                    .Alignment(j, 1) = atcAlignment.HAlignRight
+                    .CellValue(j, 2) = lData.Code
+                    .CellEditable(j, 2) = True
+                    .Alignment(j, 2) = atcAlignment.HAlignLeft
+                    .CellValue(j, 3) = lData.LowerLimit
+                    .CellEditable(j, 3) = True
+                    .Alignment(j, 3) = atcAlignment.HAlignRight
+                    .CellValue(j, 4) = lData.UpperLimit
+                    .CellEditable(j, 4) = True
+                    .Alignment(j, 4) = atcAlignment.HAlignRight
+                    .CellValue(j, 5) = lData.Comment
+                    .CellEditable(j, 5) = True
+                    .Alignment(j, 5) = atcAlignment.HAlignLeft
                 Next
-            Else 'add one blank row
-                .Rows += 1
-                For i As Integer = 0 To .Columns - 1
-                    .CellEditable(.Rows - 1, i) = True
-                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
-                Next
+                'Else 'add one blank row
+                '    For i As Integer = 0 To .Columns - 1
+                '        .CellEditable(1, i) = True
+                '        If i = 2 Or i = 5 Then
+                '            .Alignment(1, i) = atcAlignment.HAlignLeft
+                '        Else
+                '            .Alignment(1, i) = atcAlignment.HAlignRight
+                '        End If
+                '    Next
+                '    '.Rows += 1
             End If
         End With
         grdInterval.Initialize(lNewSource)
         grdInterval.Visible = True
-        grdInterval.SizeAllColumnsToContents(grdInterval.Width, True)
-        grdInterval.Refresh()
+        AddIntervalRow()
 
         UpdateGraph()
     End Sub
 
     Private Sub ProcessThresholds()
         Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = Nothing
-        Dim lIntColl As Generic.List(Of pfqStation.IntervalType) = Nothing
+        Dim lDataColl As Generic.List(Of pfqStation.PeakDataType) = Nothing
         'Dim lThresh As pfqStation.ThresholdType
         'Dim lInterval As pfqStation.IntervalType
         Dim i As Integer
@@ -1063,26 +1090,29 @@ FileCancel:
                     lThresh.EYear = CInt(.CellValue(i, 1))
                     lThresh.LowerLimit = CSng(.CellValue(i, 2))
                     lThresh.UpperLimit = CSng(.CellValue(i, 3))
+                    lThresh.Comment = .CellValue(i, 4)
                     lThrColl.Add(lThresh)
                 End If
             Next
         End With
         With grdInterval.Source
-            lIntColl = New Generic.List(Of pfqStation.IntervalType)
+            lDataColl = New Generic.List(Of pfqStation.PeakDataType)
             For i = .FixedRows To .Rows - 1
-                If IsNumeric(.CellValue(i, 0)) AndAlso IsNumeric(.CellValue(i, 1)) AndAlso _
-                   IsNumeric(.CellValue(i, 2)) Then
-                    Dim lInterval As New pfqStation.IntervalType
-                    lInterval.Year = CInt(.CellValue(i, 0))
-                    lInterval.LowerLimit = CSng(.CellValue(i, 1))
-                    lInterval.UpperLimit = CSng(.CellValue(i, 2))
-                    lIntColl.Add(lInterval)
+                If IsNumeric(.CellValue(i, 0)) Then
+                    Dim lData As New pfqStation.PeakDataType
+                    lData.Year = CInt(.CellValue(i, 0))
+                    lData.Value = CSng(.CellValue(i, 1))
+                    lData.Code = .CellValue(i, 2)
+                    lData.LowerLimit = CSng(.CellValue(i, 3))
+                    lData.UpperLimit = CSng(.CellValue(i, 4))
+                    lData.Comment = .CellValue(i, 5)
+                    lDataColl.Add(lData)
                 End If
             Next
         End With
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         lStn.Thresholds = lThrColl
-        lStn.Intervals = lIntColl
+        lStn.PeakData = lDataColl
     End Sub
 
     Private Sub tabThresholds_GotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles tabThresholds.GotFocus
@@ -1107,9 +1137,13 @@ FileCancel:
     Private Sub cmdAddInt_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdAddInt.Click
         With grdInterval.Source
             .Rows += 1
-            For i As Integer = 0 To 2
+            For i As Integer = 0 To 5
                 .CellEditable(.Rows - 1, i) = True
-                .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                If i = 2 Or i = 5 Then
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignLeft
+                Else
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                End If
             Next
         End With
     End Sub
@@ -1117,9 +1151,13 @@ FileCancel:
     Private Sub cmdAddThr_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdAddThr.Click
         With grdThresh.Source
             .Rows += 1
-            For i As Integer = 0 To 3
+            For i As Integer = 0 To 4
                 .CellEditable(.Rows - 1, i) = True
-                .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                If i = 4 Then
+                    .Alignment(.Rows, i) = atcAlignment.HAlignLeft
+                Else
+                    .Alignment(.Rows, i) = atcAlignment.HAlignRight
+                End If
             Next
         End With
     End Sub
@@ -1133,10 +1171,10 @@ FileCancel:
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         Dim lYearMin As Double = 10000
         Dim lYearMax As Double = -10000
-        Dim lPkVals(lStn.Peaks.Count - 1) As Double
-        Dim lDateVals(lStn.Peaks.Count - 1) As Double
-        Dim lHistVals(lStn.Peaks.Count - 1) As Double
-        Dim lHistDates(lStn.Peaks.Count - 1) As Double
+        Dim lPkVals(lStn.PeakData.Count - 1) As Double
+        Dim lDateVals(lStn.PeakData.Count - 1) As Double
+        Dim lHistVals(lStn.PeakData.Count - 1) As Double
+        Dim lHistDates(lStn.PeakData.Count - 1) As Double
         Dim lThrshVals(1) As Double
         Dim lThrshDates(1) As Double
         Dim lDataMin As Double = 10000
@@ -1145,8 +1183,17 @@ FileCancel:
         Dim lPane As GraphPane = zgcThresh.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
         Dim lCurve As LineItem = Nothing
-        Dim i As Integer = -1
-        Dim j As Integer = -1
+        Dim lThresh As Integer
+        Dim lColor As System.Drawing.Color
+        Dim lCurves As atcCollection
+        Dim lX(0) As Double
+        Dim lY(0) As Double
+        Dim i As Integer
+        Dim j As Integer
+        Dim lPkCnt As Integer = -1
+        Dim lHistCnt As Integer = -1
+        Dim lInd As Integer
+        Dim lThrInd As Integer
 
         'clear previous curves
         lPane.CurveList.Clear()
@@ -1158,27 +1205,21 @@ FileCancel:
             If vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
             If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
         Next
-        For Each vInterval As pfqStation.IntervalType In lStn.Intervals
-            If vInterval.Year < lYearMin Then lYearMin = vInterval.Year
-            If vInterval.Year > lYearMax Then lYearMax = vInterval.Year
-            If vInterval.LowerLimit < lDataMin Then lDataMin = vInterval.LowerLimit
-            If vInterval.UpperLimit < 1.0E+19 AndAlso vInterval.UpperLimit > lDataMax Then lDataMax = vInterval.UpperLimit
-        Next
-        If lStn.Peaks(0).Year < lYearMin Then lYearMin = lStn.Peaks(0).Year
-        If lStn.Peaks(lStn.Peaks.Count - 1).Year > lYearMax Then lYearMax = lStn.Peaks(lStn.Peaks.Count - 1).Year
-        For Each lPeak As pfqStation.PeakType In lStn.Peaks
+        For Each lPeak As pfqStation.PeakDataType In lStn.PeakData
+            If lPeak.Year < lYearMin Then lYearMin = lPeak.Year
+            If lPeak.Year > lYearMax Then lYearMax = lPeak.Year
             If lPeak.Code <> "H" Then
-                i += 1
-                lPkVals(i) = lPeak.Value
-                lDateVals(i) = lPeak.Year
-                If lPkVals(i) > 0 AndAlso lPkVals(i) < lDataMin Then lDataMin = lPkVals(i)
-                If lPkVals(i) > lDataMax Then lDataMax = lPkVals(i)
+                lPkCnt += 1
+                lPkVals(lPkCnt) = lPeak.Value
+                lDateVals(lPkCnt) = lPeak.Year
+                If lPkVals(lPkCnt) > 0 AndAlso lPkVals(lPkCnt) < lDataMin Then lDataMin = lPkVals(lPkCnt)
+                If lPkVals(lPkCnt) > lDataMax Then lDataMax = lPkVals(lPkCnt)
             ElseIf lStn.HistoricPeriod > 0 Then 'historic peak and we're including them
-                j += 1
-                lHistVals(j) = Math.Abs(lPeak.Value)
-                lHistDates(j) = Math.Abs(lPeak.Year)
-                If lHistVals(j) > 0 AndAlso lHistVals(j) < lDataMin Then lDataMin = lHistVals(j)
-                If lHistVals(j) > lDataMax Then lDataMax = lHistVals(j)
+                lHistCnt += 1
+                lHistVals(lHistCnt) = Math.Abs(lPeak.Value)
+                lHistDates(lHistCnt) = Math.Abs(lPeak.Year)
+                If lHistVals(lHistCnt) > 0 AndAlso lHistVals(lHistCnt) < lDataMin Then lDataMin = lHistVals(lHistCnt)
+                If lHistVals(lHistCnt) > lDataMax Then lDataMax = lHistVals(lHistCnt)
             End If
         Next
         'set y-axis range
@@ -1191,13 +1232,88 @@ FileCancel:
         'now draw curves
         lYAxis.IsVisible = True
         lYAxis.Scale.IsVisible = True
-        lCurve = lPane.AddCurve("Peaks", lDateVals, lPkVals, Color.Red, SymbolType.Plus)
-        lCurve.Line.IsVisible = False
-        If j > 0 Then 'use separate curve for historic peaks
-            lCurve = lPane.AddCurve("Historic Peaks", lHistDates, lHistVals, Color.Blue, SymbolType.Plus)
-            lCurve.Line.IsVisible = False
+
+        If lPkCnt >= 0 Then 'systematic peaks
+            lCurves = New atcCollection
+            For lInd = 0 To lPkCnt
+                lThresh = 0
+                lThrInd = 0
+                lColor = Color.Red
+                For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+                    If lDateVals(lInd) >= vThresh.SYear AndAlso lDateVals(lInd) <= vThresh.EYear Then
+                        lThresh = vThresh.SYear
+                        lColor = ThreshColors(lThrInd)
+                        Exit For
+                    End If
+                    lThrInd += 1
+                Next
+                If lCurves.Keys.Contains(lThresh) Then 'add point to this curve
+                    lCurve = lCurves.ItemByKey(lThresh)
+                    lCurve.AddPoint(lDateVals(lInd), lPkVals(lInd))
+                Else 'new curve needed for another threshold span
+                    lX(0) = lDateVals(lInd)
+                    lY(0) = lPkVals(lInd)
+                    lCurve = lPane.AddCurve("Peaks", lX, lY, lColor, SymbolType.Circle)
+                    lCurve.Line.IsVisible = False
+                    If lCurves.Count = 0 Then
+                        lCurve.Label.IsVisible = True
+                    Else
+                        lCurve.Label.IsVisible = False
+                    End If
+                    lCurves.Add(lThresh, lCurve)
+                End If
+            Next
         End If
 
+        If lHistCnt >= 0 Then 'use separate curve for historic peaks
+            lCurves = New atcCollection
+            For lInd = 0 To lHistCnt
+                lThresh = 0
+                lThrInd = 0
+                lColor = Color.Blue
+                For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+                    If lHistDates(lInd) >= vThresh.SYear AndAlso lHistDates(lInd) <= vThresh.EYear Then
+                        lThresh = vThresh.SYear
+                        lColor = ThreshColors(lThrInd)
+                        Exit For
+                    End If
+                    lThrInd += 1
+                Next
+                If lCurves.Keys.Contains(lThresh) Then 'add point to this curve
+                    lCurve = lCurves.ItemByKey(lThresh)
+                    lCurve.AddPoint(lHistDates(lInd), lHistVals(lInd))
+                Else 'new curve needed for another threshold span
+                    lX(0) = lHistDates(lInd)
+                    lY(0) = lHistVals(lInd)
+                    lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Circle)
+                    lCurve.Line.IsVisible = False
+                    If lCurves.Count = 0 Then
+                        lCurve.Label.IsVisible = True
+                    Else
+                        lCurve.Label.IsVisible = False
+                    End If
+                    lCurves.Add(lThresh, lCurve)
+                End If
+            Next
+        End If
+
+        'plot any interval data
+        i = 0
+        For Each vData As pfqStation.PeakDataType In lStn.PeakData
+            If vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+                lThrshDates(0) = vData.Year
+                lThrshDates(1) = vData.Year
+                lThrshVals(0) = vData.LowerLimit
+                lThrshVals(1) = vData.UpperLimit
+                lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
+                If i > 0 Then
+                    lCurve.Label.IsVisible = False
+                End If
+                i += 1
+            End If
+        Next
+
+        'thresholds
         i = 0
         For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
             lThrshDates(0) = vThresh.SYear
@@ -1222,18 +1338,6 @@ FileCancel:
                 lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
                 lCurve.Label.IsVisible = False
             End If
-        Next
-        i = 0
-        For Each vInterval As pfqStation.IntervalType In lStn.Intervals
-            lThrshDates(0) = vInterval.Year
-            lThrshDates(1) = vInterval.Year
-            lThrshVals(0) = vInterval.LowerLimit
-            lThrshVals(1) = vInterval.UpperLimit
-            lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
-            If i > 0 Then
-                lCurve.Label.IsVisible = False
-            End If
-            i += 1
         Next
 
         zgcThresh.AxisChange()
@@ -1441,7 +1545,7 @@ FileCancel:
         Else 'logarithmic scale
             Dim lLogMin As Integer
             If aDataMin > 0.000000001 Then
-                lLogMin = Fix(Log10(aDataMin))
+                lLogMin = Fix(Math.Log10(aDataMin))
             Else
                 'too small or neg value, set to -9
                 lLogMin = -9
@@ -1453,7 +1557,7 @@ FileCancel:
 
             Dim lLogMax As Integer
             If aDataMax > 0.000000001 Then
-                lLogMax = Fix(Log10(aDataMax))
+                lLogMax = Fix(Math.Log10(aDataMax))
             Else
                 'too small or neg value, set to -8
                 lLogMax = -8
@@ -1650,21 +1754,31 @@ FileCancel:
         With aGrid.Source
             Dim lVal As String = .CellValue(aRow, aColumn)
             Dim lGoodRow As Boolean = True
-            If IsNumeric(lVal) Then 'set to this threshold's color
-                .CellColor(aRow, aColumn) = ThreshColors(aRow - .FixedRows)
-            Else 'reminder that values should be numeric
-                MessageBox.Show("All values for Perception Thresholds must be numeric.", "Perception Threshold Problem")
-                .CellColor(aRow, aColumn) = Color.White
+            If aColumn < .Columns - 1 Then
+                If IsNumeric(lVal) Then 'set to this threshold's color
+                    .CellColor(aRow, aColumn) = ThreshColors(aRow - .FixedRows)
+                Else 'reminder that values should be numeric
+                    MessageBox.Show("All fields (except Comment) for Perception Thresholds must be numeric.", "Perception Threshold Problem")
+                    .CellColor(aRow, aColumn) = Color.White
+                End If
+            Else 'check for text entry in last column
+                If lVal.Length > 0 Then 'set to this threshold's color
+                    .CellColor(aRow, aColumn) = ThreshColors(aRow - .FixedRows)
+                Else 'reminder that comment entry needs to be made
+                    MessageBox.Show("Comment field must be entered for Perception Thresholds.", "Perception Threshold Problem")
+                    .CellColor(aRow, aColumn) = Color.White
+                End If
             End If
-            For i As Integer = 0 To .Columns - 1
+            For i As Integer = 0 To .Columns - 2
                 If Not IsNumeric(.CellValue(aRow, i)) Then
                     lGoodRow = False
                     Exit For
                 End If
             Next
+            If IsNothing(.CellValue(aRow, .Columns - 1)) OrElse .CellValue(aRow, .Columns - 1).Length = 0 Then lGoodRow = False
             If lGoodRow Then
                 If aRow = .Rows - 1 Then 'add another blank row
-                    AddRow(aGrid)
+                    AddThreshRow()
                 End If
             End If
             ProcessThresholds()
@@ -1677,20 +1791,32 @@ FileCancel:
     Private Sub grdInterval_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdInterval.CellEdited
         With aGrid.Source
             Dim lVal As String = .CellValue(aRow, aColumn)
-            Dim lGoodRow As Boolean = True
-            If Not IsNumeric(lVal) Then 'reminder that values should be numeric
-                MessageBox.Show("All values for Intervals must be numeric.", "Interval Problem")
+            Dim lGoodRow As Boolean = False
+            If aColumn = .Columns - 1 AndAlso lVal.Length = 0 Then
+                MessageBox.Show("Comment field must be entered for new Data elements.", "Data Problem")
+            ElseIf aColumn < .Columns - 1 And aColumn <> 2 Then
+                If Not IsNumeric(lVal) Then 'reminder that values should be numeric
+                    MessageBox.Show("All values for Peaks/Intervals must be numeric.", "Data Problem")
+                End If
             End If
-            For i As Integer = 0 To .Columns - 1
-                If Not IsNumeric(.CellValue(aRow, i)) Then
-                    lGoodRow = False
-                    Exit For
-                End If
-            Next
-            If lGoodRow Then
-                If aRow = .Rows - 1 Then 'add another blank row
-                    AddRow(aGrid)
-                End If
+            If IsNumeric(.CellValue(aRow, 0)) AndAlso _
+               IsNumeric(.CellValue(aRow, 1)) Then 'valid peak value entry
+                lGoodRow = True
+                For i As Integer = 0 To .Columns - 1
+                    'set text color to red
+
+                Next
+            End If
+            If IsNumeric(.CellValue(aRow, 0)) AndAlso _
+               IsNumeric(.CellValue(aRow, 3)) AndAlso _
+               IsNumeric(.CellValue(aRow, 4)) Then 'valid interval value entry
+                lGoodRow = True
+                For i As Integer = 0 To .Columns - 1
+                    'set text color to green
+                Next
+            End If
+            If lGoodRow AndAlso aRow = .Rows - 1 Then
+                AddIntervalRow()
             End If
             ProcessThresholds()
             UpdateGraph()
@@ -1699,19 +1825,39 @@ FileCancel:
         aGrid.Refresh()
     End Sub
 
-    Private Sub AddRow(ByVal aGrid As atcControls.atcGrid)
-        With aGrid.Source
+    Private Sub AddThreshRow()
+        With grdThresh.Source
             .Rows += 1
             For i As Integer = 0 To .Columns - 1
                 .CellEditable(.Rows - 1, i) = True
-                .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                If i = .Columns - 1 Then
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignLeft
+                Else
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                End If
                 If i = 3 Then 'default high threshold value and assign threshold color
                     .CellValue(.Rows - 1, i) = "1.0e20"
                     .CellColor(.Rows - 1, i) = ThreshColors(.Rows - .FixedRows - 1)
                 End If
             Next
         End With
-        aGrid.SizeAllColumnsToContents(grdThresh.Width, True)
-        aGrid.Refresh()
+        grdThresh.SizeAllColumnsToContents(grdThresh.Width, True)
+        grdThresh.Refresh()
+    End Sub
+
+    Private Sub AddIntervalRow()
+        With grdInterval.Source
+            .Rows += 1
+            For i As Integer = 0 To .Columns - 1
+                .CellEditable(.Rows - 1, i) = True
+                If i = 2 Or i = .Columns - 1 Then
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignLeft
+                Else
+                    .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
+                End If
+            Next
+        End With
+        grdInterval.SizeAllColumnsToContents(grdThresh.Width, True)
+        grdInterval.Refresh()
     End Sub
 End Class

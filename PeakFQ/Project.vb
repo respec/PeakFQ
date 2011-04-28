@@ -3,6 +3,7 @@ Option Explicit On
 
 Imports atcUtility
 Imports MapWinUtility
+Imports MapWinUtility.Strings
 
 
 Friend Class pfqProject
@@ -307,7 +308,7 @@ Friend Class pfqProject
 		Dim CommentPending As Boolean
         Dim CurStation As pfqStation = Nothing
         Dim lThresh As pfqStation.ThresholdType = Nothing
-        Dim lInterval As pfqStation.IntervalType = Nothing
+        Dim lData As pfqStation.PeakDataType = Nothing
 		
 		CommentPending = False
         pStations = New Generic.List(Of pfqStation)
@@ -474,11 +475,11 @@ Friend Class pfqProject
                         CurStation.Thresholds.Add(lThresh)
                         If CommentPending Then CurStation.CThresholds = lCom
                     Case "INTERVAL"
-                        lInterval = New pfqStation.IntervalType
-                        lInterval.Year = CSng(StrRetRem(Rec))
-                        lInterval.LowerLimit = CSng(StrRetRem(Rec))
-                        lInterval.UpperLimit = CSng(StrRetRem(Rec))
-                        CurStation.Intervals.Add(lInterval)
+                        lData = New pfqStation.PeakDataType
+                        lData.Year = CSng(StrRetRem(Rec))
+                        lData.LowerLimit = CSng(StrRetRem(Rec))
+                        lData.UpperLimit = CSng(StrRetRem(Rec))
+                        CurStation.PeakData.Add(lData)
                         If CommentPending Then CurStation.CIntervals = lCom
                 End Select
 				CommentPending = False 'assume any pending comment was stored with a specification
@@ -585,7 +586,7 @@ Friend Class pfqProject
         pOutFile = IO.Path.ChangeExtension(pDataFileName, ".prt") '".out"
 		s = s & "O File " & FilenameNoPath(pOutFile) & vbCrLf
 		s = s & "Update"
-		SaveFileString(pSpecFileName, s)
+        SaveFileString(PathNameOnly(pDataFileName) & "\" & pSpecFileName, s)
 		
 	End Sub
 	
@@ -664,7 +665,7 @@ Friend Class pfqProject
                 With newStation
                     .AnalysisOption = oldStation.AnalysisOption
                     .Thresholds = oldStation.Thresholds
-                    .Intervals = oldStation.Intervals
+                    .PeakData = oldStation.PeakData
                     .BegYear = oldStation.BegYear
                     .EndYear = oldStation.EndYear
                     .GageBaseDischarge = oldStation.GageBaseDischarge
@@ -891,8 +892,8 @@ Friend Class pfqProject
         Dim lStr As String
         Dim lValStr As String
         Dim lInd As Integer = 0
-        Dim lPeak As pfqStation.PeakType
-        Dim lPeaks As Generic.List(Of pfqStation.PeakType)
+        Dim lPeak As pfqStation.PeakDataType
+        Dim lPeaks As Generic.List(Of pfqStation.PeakDataType)
 
         'find heading for peak values
         lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")
@@ -900,20 +901,20 @@ Friend Class pfqProject
             lStr = StrSplit(lOutStr, vbCrLf, "") 'skip blank line
             lStr = StrSplit(lOutStr, vbCrLf, "")
             lStr = StrSplit(lOutStr, vbCrLf, "") 'read first line of values
-            lPeaks = New Generic.List(Of pfqStation.PeakType)
+            lPeaks = New Generic.List(Of pfqStation.PeakDataType)
             While lStr.Length > 0 'read records until blank line is reached
-                lPeak = New pfqStation.PeakType
+                lPeak = New pfqStation.PeakDataType
                 Do 'read values on this record
                     lPeak.Year = CInt(StrRetRem(lStr))
                     lPeak.Value = CDbl(StrRetRem(lStr))
                     lValStr = StrRetRem(lStr)
-                    If Not IsNumeric(lValStr) Then 'Code exists for this value
+                    If lValStr.Length > 0 AndAlso (Not IsNumeric(lValStr) OrElse lValStr < 1800) Then 'not a date, code exists for this value
                         lPeak.Code = lValStr
                         lValStr = StrRetRem(lStr)
                     End If
                     lPeaks.Add(lPeak)
                     If lValStr.Length > 0 Then 'second set of values on this record
-                        lPeak = New pfqStation.PeakType
+                        lPeak = New pfqStation.PeakDataType
                         lPeak.Year = CInt(lValStr)
                         lPeak.Value = CDbl(StrRetRem(lStr))
                         lValStr = StrRetRem(lStr)
@@ -925,9 +926,10 @@ Friend Class pfqProject
                     End If
                 Loop While lValStr.Length > 0
                 lStr = StrSplit(lOutStr, vbCrLf, "") 'read next line of values
+                If lStr.StartsWith("Explanation") Then lStr = ""
             End While
             lPeaks.Sort()
-            PfqPrj.Stations(lInd).Peaks = lPeaks
+            PfqPrj.Stations(lInd).PeakData = lPeaks
             lInd += 1
             lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")
         End While

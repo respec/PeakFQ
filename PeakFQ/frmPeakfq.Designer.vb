@@ -81,75 +81,75 @@
     'It can be modified using the Windows Form Designer.
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmPeakfq))
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.MainMenu1 = New System.Windows.Forms.MenuStrip
-        Me.mnuFile = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuOpen = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuSaveSpecs = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuExit = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuHelp = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuAbout = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuFeedback = New System.Windows.Forms.ToolStripMenuItem
-        Me.mnuHelpMain = New System.Windows.Forms.ToolStripMenuItem
-        Me.fraButtons = New System.Windows.Forms.Panel
-        Me.cmdRun = New System.Windows.Forms.Button
-        Me.cmdSave = New System.Windows.Forms.Button
-        Me.cmdExit = New System.Windows.Forms.Button
-        Me.sstPfq = New System.Windows.Forms.TabControl
-        Me.tabStationSpecs = New System.Windows.Forms.TabPage
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.cboAnalysisOption = New System.Windows.Forms.ComboBox
-        Me.lblGlobalAnalysis = New System.Windows.Forms.Label
-        Me.grdSpecs = New atcControls.atcGrid
-        Me.tabThresholds = New System.Windows.Forms.TabPage
-        Me.cmdUpdateGraph = New System.Windows.Forms.Button
-        Me.zgcThresh = New ZedGraph.ZedGraphControl
-        Me.lblIntervals = New System.Windows.Forms.Label
-        Me.lblThresholds = New System.Windows.Forms.Label
-        Me.cmdAddInt = New System.Windows.Forms.Button
-        Me.cmdAddThr = New System.Windows.Forms.Button
-        Me.lblStation = New System.Windows.Forms.Label
-        Me.cboStation = New System.Windows.Forms.ComboBox
-        Me.grdInterval = New atcControls.atcGrid
-        Me.grdThresh = New atcControls.atcGrid
-        Me.tabOutput = New System.Windows.Forms.TabPage
-        Me.fraOutFile = New System.Windows.Forms.GroupBox
-        Me._cmdOpenOut_0 = New System.Windows.Forms.Button
-        Me._lblOutFile_0 = New System.Windows.Forms.Label
-        Me.fraAddOut = New System.Windows.Forms.GroupBox
-        Me._optAddFormat_1 = New System.Windows.Forms.RadioButton
-        Me._optAddFormat_0 = New System.Windows.Forms.RadioButton
-        Me._chkAddOut_0 = New System.Windows.Forms.CheckBox
-        Me._chkAddOut_1 = New System.Windows.Forms.CheckBox
-        Me._cmdOpenOut_1 = New System.Windows.Forms.Button
-        Me._lblOutFile_1 = New System.Windows.Forms.Label
-        Me.fraOutRight = New System.Windows.Forms.Panel
-        Me.cboGraphFormat = New System.Windows.Forms.ComboBox
-        Me.txtCL = New atcControls.atcText
-        Me.txtPlotPos = New atcControls.atcText
-        Me.chkPlotPos = New System.Windows.Forms.CheckBox
-        Me.chkLinePrinter = New System.Windows.Forms.CheckBox
-        Me.chkIntRes = New System.Windows.Forms.CheckBox
-        Me.lblGraphics = New System.Windows.Forms.Label
-        Me.lblPlotPos = New System.Windows.Forms.Label
-        Me.lblCL = New System.Windows.Forms.Label
-        Me.tabResults = New System.Windows.Forms.TabPage
-        Me._fraOutFileRes_1 = New System.Windows.Forms.GroupBox
-        Me._cmdOutFileView_1 = New System.Windows.Forms.Button
-        Me._lblOutFileView_1 = New System.Windows.Forms.Label
-        Me.fraGraphics = New System.Windows.Forms.GroupBox
-        Me.cmdGraph = New System.Windows.Forms.Button
-        Me.lstGraphs = New System.Windows.Forms.ListBox
-        Me._fraOutFileRes_0 = New System.Windows.Forms.GroupBox
-        Me._cmdOutFileView_0 = New System.Windows.Forms.Button
-        Me._lblOutFileView_0 = New System.Windows.Forms.Label
-        Me.cdlOpenOpen = New System.Windows.Forms.OpenFileDialog
-        Me.cdlOpenSave = New System.Windows.Forms.SaveFileDialog
-        Me.lblInstruct = New System.Windows.Forms.Label
-        Me.lblSpec = New System.Windows.Forms.Label
-        Me.lblData = New System.Windows.Forms.Label
+        Me.MainMenu1 = New System.Windows.Forms.MenuStrip()
+        Me.mnuFile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuOpen = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuSaveSpecs = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuExit = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuHelp = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuAbout = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuFeedback = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuHelpMain = New System.Windows.Forms.ToolStripMenuItem()
+        Me.fraButtons = New System.Windows.Forms.Panel()
+        Me.cmdRun = New System.Windows.Forms.Button()
+        Me.cmdSave = New System.Windows.Forms.Button()
+        Me.cmdExit = New System.Windows.Forms.Button()
+        Me.sstPfq = New System.Windows.Forms.TabControl()
+        Me.tabStationSpecs = New System.Windows.Forms.TabPage()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.cboAnalysisOption = New System.Windows.Forms.ComboBox()
+        Me.lblGlobalAnalysis = New System.Windows.Forms.Label()
+        Me.grdSpecs = New atcControls.atcGrid()
+        Me.tabThresholds = New System.Windows.Forms.TabPage()
+        Me.cmdUpdateGraph = New System.Windows.Forms.Button()
+        Me.zgcThresh = New ZedGraph.ZedGraphControl()
+        Me.lblIntervals = New System.Windows.Forms.Label()
+        Me.lblThresholds = New System.Windows.Forms.Label()
+        Me.cmdAddInt = New System.Windows.Forms.Button()
+        Me.cmdAddThr = New System.Windows.Forms.Button()
+        Me.lblStation = New System.Windows.Forms.Label()
+        Me.cboStation = New System.Windows.Forms.ComboBox()
+        Me.grdInterval = New atcControls.atcGrid()
+        Me.grdThresh = New atcControls.atcGrid()
+        Me.tabOutput = New System.Windows.Forms.TabPage()
+        Me.fraOutFile = New System.Windows.Forms.GroupBox()
+        Me._cmdOpenOut_0 = New System.Windows.Forms.Button()
+        Me._lblOutFile_0 = New System.Windows.Forms.Label()
+        Me.fraAddOut = New System.Windows.Forms.GroupBox()
+        Me._optAddFormat_1 = New System.Windows.Forms.RadioButton()
+        Me._optAddFormat_0 = New System.Windows.Forms.RadioButton()
+        Me._chkAddOut_0 = New System.Windows.Forms.CheckBox()
+        Me._chkAddOut_1 = New System.Windows.Forms.CheckBox()
+        Me._cmdOpenOut_1 = New System.Windows.Forms.Button()
+        Me._lblOutFile_1 = New System.Windows.Forms.Label()
+        Me.fraOutRight = New System.Windows.Forms.Panel()
+        Me.cboGraphFormat = New System.Windows.Forms.ComboBox()
+        Me.txtCL = New atcControls.atcText()
+        Me.txtPlotPos = New atcControls.atcText()
+        Me.chkPlotPos = New System.Windows.Forms.CheckBox()
+        Me.chkLinePrinter = New System.Windows.Forms.CheckBox()
+        Me.chkIntRes = New System.Windows.Forms.CheckBox()
+        Me.lblGraphics = New System.Windows.Forms.Label()
+        Me.lblPlotPos = New System.Windows.Forms.Label()
+        Me.lblCL = New System.Windows.Forms.Label()
+        Me.tabResults = New System.Windows.Forms.TabPage()
+        Me._fraOutFileRes_1 = New System.Windows.Forms.GroupBox()
+        Me._cmdOutFileView_1 = New System.Windows.Forms.Button()
+        Me._lblOutFileView_1 = New System.Windows.Forms.Label()
+        Me.fraGraphics = New System.Windows.Forms.GroupBox()
+        Me.cmdGraph = New System.Windows.Forms.Button()
+        Me.lstGraphs = New System.Windows.Forms.ListBox()
+        Me._fraOutFileRes_0 = New System.Windows.Forms.GroupBox()
+        Me._cmdOutFileView_0 = New System.Windows.Forms.Button()
+        Me._lblOutFileView_0 = New System.Windows.Forms.Label()
+        Me.cdlOpenOpen = New System.Windows.Forms.OpenFileDialog()
+        Me.cdlOpenSave = New System.Windows.Forms.SaveFileDialog()
+        Me.lblInstruct = New System.Windows.Forms.Label()
+        Me.lblSpec = New System.Windows.Forms.Label()
+        Me.lblData = New System.Windows.Forms.Label()
         Me.chkAddOut = New Microsoft.VisualBasic.Compatibility.VB6.CheckBoxArray(Me.components)
         Me.cmdOpenOut = New Microsoft.VisualBasic.Compatibility.VB6.ButtonArray(Me.components)
         Me.cmdOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.ButtonArray(Me.components)
@@ -186,7 +186,7 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(757, 24)
+        Me.MainMenu1.Size = New System.Drawing.Size(813, 24)
         Me.MainMenu1.TabIndex = 30
         '
         'mnuFile
@@ -250,7 +250,7 @@
         Me.fraButtons.Cursor = System.Windows.Forms.Cursors.Default
         Me.fraButtons.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraButtons.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraButtons.Location = New System.Drawing.Point(400, 352)
+        Me.fraButtons.Location = New System.Drawing.Point(456, 443)
         Me.fraButtons.Name = "fraButtons"
         Me.fraButtons.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.fraButtons.Size = New System.Drawing.Size(345, 25)
@@ -312,7 +312,7 @@
         Me.sstPfq.Location = New System.Drawing.Point(8, 88)
         Me.sstPfq.Name = "sstPfq"
         Me.sstPfq.SelectedIndex = 1
-        Me.sstPfq.Size = New System.Drawing.Size(737, 249)
+        Me.sstPfq.Size = New System.Drawing.Size(793, 340)
         Me.sstPfq.TabIndex = 0
         '
         'tabStationSpecs
@@ -394,7 +394,7 @@
         Me.tabThresholds.Location = New System.Drawing.Point(4, 22)
         Me.tabThresholds.Name = "tabThresholds"
         Me.tabThresholds.Padding = New System.Windows.Forms.Padding(3)
-        Me.tabThresholds.Size = New System.Drawing.Size(729, 223)
+        Me.tabThresholds.Size = New System.Drawing.Size(785, 314)
         Me.tabThresholds.TabIndex = 3
         Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
@@ -414,31 +414,31 @@
         Me.zgcThresh.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.zgcThresh.Location = New System.Drawing.Point(452, 3)
+        Me.zgcThresh.Location = New System.Drawing.Point(404, 3)
         Me.zgcThresh.Name = "zgcThresh"
-        Me.zgcThresh.ScrollGrace = 0
-        Me.zgcThresh.ScrollMaxX = 0
-        Me.zgcThresh.ScrollMaxY = 0
-        Me.zgcThresh.ScrollMaxY2 = 0
-        Me.zgcThresh.ScrollMinX = 0
-        Me.zgcThresh.ScrollMinY = 0
-        Me.zgcThresh.ScrollMinY2 = 0
-        Me.zgcThresh.Size = New System.Drawing.Size(274, 217)
+        Me.zgcThresh.ScrollGrace = 0.0R
+        Me.zgcThresh.ScrollMaxX = 0.0R
+        Me.zgcThresh.ScrollMaxY = 0.0R
+        Me.zgcThresh.ScrollMaxY2 = 0.0R
+        Me.zgcThresh.ScrollMinX = 0.0R
+        Me.zgcThresh.ScrollMinY = 0.0R
+        Me.zgcThresh.ScrollMinY2 = 0.0R
+        Me.zgcThresh.Size = New System.Drawing.Size(378, 308)
         Me.zgcThresh.TabIndex = 12
         '
         'lblIntervals
         '
         Me.lblIntervals.AutoSize = True
-        Me.lblIntervals.Location = New System.Drawing.Point(326, 45)
+        Me.lblIntervals.Location = New System.Drawing.Point(185, 133)
         Me.lblIntervals.Name = "lblIntervals"
-        Me.lblIntervals.Size = New System.Drawing.Size(48, 14)
+        Me.lblIntervals.Size = New System.Drawing.Size(29, 14)
         Me.lblIntervals.TabIndex = 11
-        Me.lblIntervals.Text = "Intervals"
+        Me.lblIntervals.Text = "Data"
         '
         'lblThresholds
         '
         Me.lblThresholds.AutoSize = True
-        Me.lblThresholds.Location = New System.Drawing.Point(71, 45)
+        Me.lblThresholds.Location = New System.Drawing.Point(148, 45)
         Me.lblThresholds.Name = "lblThresholds"
         Me.lblThresholds.Size = New System.Drawing.Size(115, 14)
         Me.lblThresholds.TabIndex = 10
@@ -447,7 +447,7 @@
         'cmdAddInt
         '
         Me.cmdAddInt.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.cmdAddInt.Location = New System.Drawing.Point(329, 200)
+        Me.cmdAddInt.Location = New System.Drawing.Point(329, 291)
         Me.cmdAddInt.Name = "cmdAddInt"
         Me.cmdAddInt.Size = New System.Drawing.Size(57, 21)
         Me.cmdAddInt.TabIndex = 9
@@ -458,7 +458,7 @@
         'cmdAddThr
         '
         Me.cmdAddThr.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.cmdAddThr.Location = New System.Drawing.Point(94, 200)
+        Me.cmdAddThr.Location = New System.Drawing.Point(94, 291)
         Me.cmdAddThr.Name = "cmdAddThr"
         Me.cmdAddThr.Size = New System.Drawing.Size(57, 21)
         Me.cmdAddThr.TabIndex = 7
@@ -495,9 +495,9 @@
         Me.grdInterval.Fixed3D = False
         Me.grdInterval.LineColor = System.Drawing.SystemColors.Control
         Me.grdInterval.LineWidth = 1.0!
-        Me.grdInterval.Location = New System.Drawing.Point(248, 62)
+        Me.grdInterval.Location = New System.Drawing.Point(1, 150)
         Me.grdInterval.Name = "grdInterval"
-        Me.grdInterval.Size = New System.Drawing.Size(178, 132)
+        Me.grdInterval.Size = New System.Drawing.Size(397, 135)
         Me.grdInterval.Source = Nothing
         Me.grdInterval.TabIndex = 4
         '
@@ -505,15 +505,13 @@
         '
         Me.grdThresh.AllowHorizontalScrolling = False
         Me.grdThresh.AllowNewValidValues = False
-        Me.grdThresh.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.grdThresh.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdThresh.Fixed3D = False
         Me.grdThresh.LineColor = System.Drawing.SystemColors.Control
         Me.grdThresh.LineWidth = 1.0!
         Me.grdThresh.Location = New System.Drawing.Point(1, 62)
         Me.grdThresh.Name = "grdThresh"
-        Me.grdThresh.Size = New System.Drawing.Size(228, 132)
+        Me.grdThresh.Size = New System.Drawing.Size(397, 57)
         Me.grdThresh.Source = Nothing
         Me.grdThresh.TabIndex = 3
         '
@@ -737,8 +735,8 @@
         Me.txtCL.Alignment = System.Windows.Forms.HorizontalAlignment.Left
         Me.txtCL.DataType = atcControls.atcText.ATCoDataType.ATCoDbl
         Me.txtCL.DefaultValue = ""
-        Me.txtCL.HardMax = 0.995
-        Me.txtCL.HardMin = 0.5
+        Me.txtCL.HardMax = 0.995R
+        Me.txtCL.HardMin = 0.5R
         Me.txtCL.InsideLimitsBackground = System.Drawing.Color.White
         Me.txtCL.Location = New System.Drawing.Point(120, 157)
         Me.txtCL.MaxWidth = 20
@@ -749,10 +747,10 @@
         Me.txtCL.SelLength = 0
         Me.txtCL.SelStart = 0
         Me.txtCL.Size = New System.Drawing.Size(49, 20)
-        Me.txtCL.SoftMax = -999
-        Me.txtCL.SoftMin = -999
+        Me.txtCL.SoftMax = -999.0R
+        Me.txtCL.SoftMin = -999.0R
         Me.txtCL.TabIndex = 41
-        Me.txtCL.ValueDouble = 0.995
+        Me.txtCL.ValueDouble = 0.995R
         Me.txtCL.ValueInteger = 0
         '
         'txtPlotPos
@@ -760,8 +758,8 @@
         Me.txtPlotPos.Alignment = System.Windows.Forms.HorizontalAlignment.Left
         Me.txtPlotPos.DataType = atcControls.atcText.ATCoDataType.ATCoDbl
         Me.txtPlotPos.DefaultValue = ""
-        Me.txtPlotPos.HardMax = 0.5
-        Me.txtPlotPos.HardMin = 0
+        Me.txtPlotPos.HardMax = 0.5R
+        Me.txtPlotPos.HardMin = 0.0R
         Me.txtPlotPos.InsideLimitsBackground = System.Drawing.Color.White
         Me.txtPlotPos.Location = New System.Drawing.Point(120, 134)
         Me.txtPlotPos.MaxWidth = 20
@@ -772,10 +770,10 @@
         Me.txtPlotPos.SelLength = 0
         Me.txtPlotPos.SelStart = 0
         Me.txtPlotPos.Size = New System.Drawing.Size(49, 20)
-        Me.txtPlotPos.SoftMax = -999
-        Me.txtPlotPos.SoftMin = -999
+        Me.txtPlotPos.SoftMax = -999.0R
+        Me.txtPlotPos.SoftMin = -999.0R
         Me.txtPlotPos.TabIndex = 40
-        Me.txtPlotPos.ValueDouble = 0
+        Me.txtPlotPos.ValueDouble = 0.0R
         Me.txtPlotPos.ValueInteger = 0
         '
         'chkPlotPos
@@ -1089,7 +1087,7 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(757, 386)
+        Me.ClientSize = New System.Drawing.Size(813, 477)
         Me.Controls.Add(Me.fraButtons)
         Me.Controls.Add(Me.sstPfq)
         Me.Controls.Add(Me.lblInstruct)

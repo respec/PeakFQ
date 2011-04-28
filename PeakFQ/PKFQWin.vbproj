@@ -1,4 +1,5 @@
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
@@ -20,6 +21,10 @@
     <RootNamespace>PKFQWin</RootNamespace>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>.\bin\</OutputPath>
@@ -29,7 +34,7 @@
     <DefineTrace>True</DefineTrace>
     <DefineConstants>Win32=True</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
-    <NoWarn>42016,42017,42018,42019,42032</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -40,17 +45,35 @@
     <DefineTrace>True</DefineTrace>
     <DefineConstants>Win32=True</DefineConstants>
     <PlatformTarget>x86</PlatformTarget>
-    <NoWarn>42016,42017,42018,42019,42032</NoWarn>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
     <DebugType>none</DebugType>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>Win32=True</DefineConstants>
+    <DocumentationFile>PKFQWin.xml</DocumentationFile>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>true</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>Win32=True</DefineConstants>
+    <DocumentationFile>PKFQWin.xml</DocumentationFile>
+    <NoWarn>42016,42017,42018,42019,42032,42353,42354,42355</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="atcControls, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\BASINS40\Bin\Plugins\BASINS\atcControls.dll</HintPath>
-    </Reference>
-    <Reference Include="atcGraph, Version=3.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\BASINS40\Bin\Plugins\BASINS\atcGraph.dll</HintPath>
+    <Reference Include="MapWinInterfaces">
+      <HintPath>..\BASINS40\local\x86Debug\MapWinInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic.Compatibility">
       <Name>Microsoft.VisualBasic.Compatibility</Name>
@@ -76,7 +99,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Import Include="atcControls" />
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="Microsoft.VisualBasic.Compatibility" />
     <Import Include="System" />
@@ -113,17 +135,25 @@
     <Content Include="PKFQWin.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BASINS40\atcUtility\atcUtility.vbproj">
-      <Project>{67027820-9036-481E-80F6-077E5085F59D}</Project>
-      <Name>atcUtility</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapWindow4Plugins\MapWinUtility\BASINS-MapWinUtility.vbproj">
-      <Project>{3C991AE4-9EDB-4C24-BAF3-42F7303D7DF3}</Project>
-      <Name>BASINS-MapWinUtility</Name>
-    </ProjectReference>
+    <Folder Include="My Project\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="My Project\" />
+    <ProjectReference Include="..\BASINS40\atcControls\atcControls10.vbproj">
+      <Project>{B219575F-1541-41DB-9FA4-D9D7CD62B4A5}</Project>
+      <Name>atcControls10</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BASINS40\atcGraphExperimental\atcGraph10.vbproj">
+      <Project>{D52E1A9C-E219-4DF7-9CA8-B4FD1B28CEC9}</Project>
+      <Name>atcGraph10</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BASINS40\atcUtility\atcUtility10.vbproj">
+      <Project>{67027820-9036-481E-80F6-077E5085F59D}</Project>
+      <Name>atcUtility10</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MapWindow4Plugins\MapWinUtility\BASINS-MapWinUtility10.vbproj">
+      <Project>{672FD222-EAF2-43F1-BBB4-A6CC9D016103}</Project>
+      <Name>BASINS-MapWinUtility10</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <PropertyGroup>
