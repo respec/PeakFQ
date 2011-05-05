@@ -1183,17 +1183,12 @@ FileCancel:
         Dim lPane As GraphPane = zgcThresh.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
         Dim lCurve As LineItem = Nothing
-        Dim lThresh As Integer
-        Dim lColor As System.Drawing.Color
         Dim lCurves As atcCollection
         Dim lX(0) As Double
         Dim lY(0) As Double
         Dim i As Integer
-        Dim j As Integer
         Dim lPkCnt As Integer = -1
         Dim lHistCnt As Integer = -1
-        Dim lInd As Integer
-        Dim lThrInd As Integer
 
         'clear previous curves
         lPane.CurveList.Clear()
@@ -1205,22 +1200,35 @@ FileCancel:
             If vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
             If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
         Next
+
+        lCurves = New atcCollection
         For Each lPeak As pfqStation.PeakDataType In lStn.PeakData
             If lPeak.Year < lYearMin Then lYearMin = lPeak.Year
             If lPeak.Year > lYearMax Then lYearMax = lPeak.Year
-            If lPeak.Code <> "H" Then
-                lPkCnt += 1
-                lPkVals(lPkCnt) = lPeak.Value
-                lDateVals(lPkCnt) = lPeak.Year
-                If lPkVals(lPkCnt) > 0 AndAlso lPkVals(lPkCnt) < lDataMin Then lDataMin = lPkVals(lPkCnt)
-                If lPkVals(lPkCnt) > lDataMax Then lDataMax = lPkVals(lPkCnt)
-            ElseIf lStn.HistoricPeriod > 0 Then 'historic peak and we're including them
-                lHistCnt += 1
-                lHistVals(lHistCnt) = Math.Abs(lPeak.Value)
-                lHistDates(lHistCnt) = Math.Abs(lPeak.Year)
-                If lHistVals(lHistCnt) > 0 AndAlso lHistVals(lHistCnt) < lDataMin Then lDataMin = lHistVals(lHistCnt)
-                If lHistVals(lHistCnt) > lDataMax Then lDataMax = lHistVals(lHistCnt)
+            If lCurves.Keys.Contains(lPeak.Code) Then 'add point to this curve
+                lCurve = lCurves.ItemByKey(lPeak.Code)
+                lCurve.AddPoint(lPeak.Year, Math.Abs(lPeak.Value))
+            Else 'new curve needed for another threshold span
+                lX(0) = lPeak.Year
+                lY(0) = Math.Abs(lPeak.Value)
+                Select Case lPeak.Code
+                    Case "7", "H"
+                        lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Diamond)
+                    Case "D", "G", "X", "3", "8", "3+8"
+                        lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, Color.Black, SymbolType.XCross)
+                    Case "K", "6", "C"
+                        lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, Color.Black, SymbolType.Square)
+                    Case "L", "4"
+                        lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, Color.Black, SymbolType.Triangle)
+                    Case Else
+                        lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Black, SymbolType.Circle)
+                End Select
+                lCurve.Line.IsVisible = False
+                lCurves.Add(lPeak.Code, lCurve)
             End If
+
+            If Math.Abs(lPeak.Value) > 0 AndAlso Math.Abs(lPeak.Value) < lDataMin Then lDataMin = Math.Abs(lPeak.Value)
+            If Math.Abs(lPeak.Value) > lDataMax Then lDataMax = Math.Abs(lPeak.Value)
         Next
         'set y-axis range
         lYAxis.Scale.MaxAuto = False
@@ -1232,70 +1240,6 @@ FileCancel:
         'now draw curves
         lYAxis.IsVisible = True
         lYAxis.Scale.IsVisible = True
-
-        If lPkCnt >= 0 Then 'systematic peaks
-            lCurves = New atcCollection
-            For lInd = 0 To lPkCnt
-                lThresh = 0
-                lThrInd = 0
-                lColor = Color.Red
-                For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
-                    If lDateVals(lInd) >= vThresh.SYear AndAlso lDateVals(lInd) <= vThresh.EYear Then
-                        lThresh = vThresh.SYear
-                        lColor = ThreshColors(lThrInd)
-                        Exit For
-                    End If
-                    lThrInd += 1
-                Next
-                If lCurves.Keys.Contains(lThresh) Then 'add point to this curve
-                    lCurve = lCurves.ItemByKey(lThresh)
-                    lCurve.AddPoint(lDateVals(lInd), lPkVals(lInd))
-                Else 'new curve needed for another threshold span
-                    lX(0) = lDateVals(lInd)
-                    lY(0) = lPkVals(lInd)
-                    lCurve = lPane.AddCurve("Peaks", lX, lY, lColor, SymbolType.Circle)
-                    lCurve.Line.IsVisible = False
-                    If lCurves.Count = 0 Then
-                        lCurve.Label.IsVisible = True
-                    Else
-                        lCurve.Label.IsVisible = False
-                    End If
-                    lCurves.Add(lThresh, lCurve)
-                End If
-            Next
-        End If
-
-        If lHistCnt >= 0 Then 'use separate curve for historic peaks
-            lCurves = New atcCollection
-            For lInd = 0 To lHistCnt
-                lThresh = 0
-                lThrInd = 0
-                lColor = Color.Blue
-                For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
-                    If lHistDates(lInd) >= vThresh.SYear AndAlso lHistDates(lInd) <= vThresh.EYear Then
-                        lThresh = vThresh.SYear
-                        lColor = ThreshColors(lThrInd)
-                        Exit For
-                    End If
-                    lThrInd += 1
-                Next
-                If lCurves.Keys.Contains(lThresh) Then 'add point to this curve
-                    lCurve = lCurves.ItemByKey(lThresh)
-                    lCurve.AddPoint(lHistDates(lInd), lHistVals(lInd))
-                Else 'new curve needed for another threshold span
-                    lX(0) = lHistDates(lInd)
-                    lY(0) = lHistVals(lInd)
-                    lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Circle)
-                    lCurve.Line.IsVisible = False
-                    If lCurves.Count = 0 Then
-                        lCurve.Label.IsVisible = True
-                    Else
-                        lCurve.Label.IsVisible = False
-                    End If
-                    lCurves.Add(lThresh, lCurve)
-                End If
-            Next
-        End If
 
         'plot any interval data
         i = 0
@@ -1322,19 +1266,19 @@ FileCancel:
             '1st curve is lower limit down to bottom of graph
             lThrshVals(0) = vThresh.LowerLimit
             lThrshVals(1) = vThresh.LowerLimit
-            lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+            lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
             lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
             If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
                 '2nd curve fills gap between threshold limits with white fill
                 lThrshVals(0) = vThresh.UpperLimit
                 lThrshVals(1) = vThresh.UpperLimit
-                lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
                 lCurve.Line.Fill = New Fill(Color.White, Color.White)
                 lCurve.Label.IsVisible = False
                 '3rd curve shows upper limit to top of graph
                 lThrshVals(0) = 1.0E+20
                 lThrshVals(1) = 1.0E+20
-                lCurve = lPane.AddCurve("Threshold " & CStr(i), lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
                 lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
                 lCurve.Label.IsVisible = False
             End If
