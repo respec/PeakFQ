@@ -59,7 +59,7 @@ Friend Class frmPeakfq
 
         For i = 0 To lstGraphs.Items.Count - 1
             If lstGraphs.GetSelected(i) Then
-                GenGraph(i)
+                GenFrequencyGraph(i)
                 'GraphName = VB6.GetItemString(lstGraphs, i) & ".BMP"
                 'If FileExists(GraphName) Then
                 '    newform = New frmGraph
@@ -884,7 +884,7 @@ FileCancel:
                     'lstGraphs.Items.Add(FilenameNoExt(newName))
                     lstGraphs.Items.Add(newName)
                     If PfqPrj.Graphic Then 'save graph to file
-                        GenGraph(lstGraphs.Items.Count - 1, True)
+                        GenFrequencyGraph(lstGraphs.Items.Count - 1, True)
                     End If
                 End If
             Next i
@@ -1213,13 +1213,13 @@ FileCancel:
                 lY(0) = Math.Abs(lPeak.Value)
                 Select Case lPeak.Code
                     Case "7", "H"
-                        lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Diamond)
+                        lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Triangle)
                     Case "D", "G", "X", "3", "8", "3+8"
                         lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, Color.Black, SymbolType.XCross)
                     Case "K", "6", "C"
                         lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, Color.Black, SymbolType.Square)
                     Case "L", "4"
-                        lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, Color.Black, SymbolType.Triangle)
+                        lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, Color.Black, SymbolType.Diamond)
                     Case Else
                         lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Black, SymbolType.Circle)
                 End Select
@@ -1518,7 +1518,7 @@ FileCancel:
         End If
     End Sub
 
-    Public Sub GenGraph(ByVal aStnInd As Integer, Optional ByVal aToFile As Boolean = False)
+    Public Sub GenFrequencyGraph(ByVal aStnInd As Integer, Optional ByVal aToFile As Boolean = False)
         Dim newform As New atcGraph.atcGraphForm
         Dim lCurve As LineItem = Nothing
         Dim i As Integer
@@ -1527,6 +1527,9 @@ FileCancel:
         Dim lPkLog(199) As Single
         Dim lSysPP(199) As Single
         Dim lWrcPP(199) As Single
+        Dim lIQual(4, 199) As Integer
+        Dim lXQual(199) As String
+        Dim lPkYear(199) As Integer
         Dim lWeiba As Single
         Dim lNPlot As Integer
         Dim lSysRFC(31) As Single
@@ -1554,9 +1557,11 @@ FileCancel:
 
         Dim lStnInd As Integer = aStnInd + 1
         Dim lHeader As String = " ".PadLeft(80)
-        Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lWeiba, _
-                    lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
-                    lNoCLim, lCLimL, lCLimU, lHeader, lHeader.Length)
+        Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
+                     lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
+                     lNoCLim, lCLimL, lCLimU, lHeader, lHeader.Length)
+        NumChr(5, 200, lIQual, lXQual)
+
         lNPlot1 = 0
         lNPlot2 = lNPlot - 1
         For i = 0 To lNPlot - 1
@@ -1677,6 +1682,19 @@ FileCancel:
             newform.Show()
         End If
 
+    End Sub
+
+    Private Sub NumChr(ByRef aSLen As Integer, ByRef aArrayLen As Integer, ByRef aIntStr(,) As Integer, ByRef aStr() As String)
+        Dim lStr As String
+        For lArrayInd As Integer = 0 To aArrayLen - 1
+            lStr = ""
+            For lInd As Integer = 0 To aSLen - 1 'added "- 1" 8/16/2002 Mark Gray
+                If aIntStr(lInd, lArrayInd) > 0 Then
+                    lStr &= Chr(aIntStr(lInd, lArrayInd))
+                End If
+            Next lInd
+            aStr(lArrayInd) = RTrim(lStr)
+        Next lArrayInd
     End Sub
 
     Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles zgcThresh.Paint

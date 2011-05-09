@@ -899,7 +899,7 @@ Friend Class pfqProject
         lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")
         While lOutStr.Length > 0
             lStr = StrSplit(lOutStr, vbCrLf, "") 'skip blank line
-            lStr = StrSplit(lOutStr, vbCrLf, "")
+            'lStr = StrSplit(lOutStr, vbCrLf, "")
             lStr = StrSplit(lOutStr, vbCrLf, "") 'read first line of values
             lPeaks = New Generic.List(Of pfqStation.PeakDataType)
             While lStr.Length > 0 'read records until blank line is reached

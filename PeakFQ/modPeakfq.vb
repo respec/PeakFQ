@@ -8,7 +8,8 @@ Module modPeakfq
     Friend Declare Sub PEAKFQ Lib "peakfq.dll" (ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
     Friend Declare Sub GETDATA Lib "peakfq.dll" (ByRef aStnInd As Integer, ByRef aNPkPlt As Integer, _
                                                  ByVal aPkLog() As Single, ByVal aSysPP() As Single, _
-                                                 ByVal aWrcPP() As Single, ByRef aWeiba As Single, _
+                                                 ByVal aWrcPP() As Single, ByVal aXQual(,) As Integer,
+                                                 ByVal aPkSeq() As Integer, ByRef aWeiba As Single, _
                                                  ByRef aNPlot As Integer, ByVal aSysRfc() As Single, _
                                                  ByVal aWrcFc() As Single, ByVal aTxProb() As Single, _
                                                  ByRef aHistFlg As Integer, ByRef aNoCLim As Integer, _
