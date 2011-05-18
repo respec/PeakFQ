@@ -412,10 +412,13 @@ Friend Class pfqProject
 						'build new station
 						CurStation = New pfqStation
 						CurStation.id = Rec
-						If CommentPending Then CurStation.Comment = lCom
-					Case "GENSKEW"
-						CurStation.GenSkew = CSng(Rec)
-						If CommentPending Then CurStation.CGenSkew = lCom
+                        If CommentPending Then CurStation.Comment = lCom
+                    Case "ANALYZE"
+                        CurStation.AnalysisOption = Rec
+                        If CommentPending Then CurStation.CAnalysisOption = lCom
+                    Case "GENSKEW"
+                        CurStation.GenSkew = CSng(Rec)
+                        If CommentPending Then CurStation.CGenSkew = lCom
 					Case "SKEWSE"
 						CurStation.SESkew = CSng(Rec)
 						If CommentPending Then CurStation.CSESkew = lCom
@@ -472,6 +475,7 @@ Friend Class pfqProject
                         lThresh.EYear = CSng(StrRetRem(Rec))
                         lThresh.LowerLimit = CSng(StrRetRem(Rec))
                         lThresh.UpperLimit = CSng(StrRetRem(Rec))
+                        lThresh.Comment = StrRetRem(Rec)
                         CurStation.Thresholds.Add(lThresh)
                         If CommentPending Then CurStation.CThresholds = lCom
                     Case "INTERVAL"
@@ -479,6 +483,7 @@ Friend Class pfqProject
                         lData.Year = CSng(StrRetRem(Rec))
                         lData.LowerLimit = CSng(StrRetRem(Rec))
                         lData.UpperLimit = CSng(StrRetRem(Rec))
+                        lData.Comment = StrRetRem(Rec)
                         CurStation.PeakData.Add(lData)
                         If CommentPending Then CurStation.CIntervals = lCom
                 End Select
