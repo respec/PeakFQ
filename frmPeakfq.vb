@@ -755,7 +755,7 @@ FileCancel:
         Else 'open spec file
             s = WholeFileString(FName)
             'build default project from initial version of spec file
-            SaveFileString(tmpSpecName, s)
+            SaveFileString(PathNameOnly(FName) & "\" & tmpSpecName, s)
             PfqPrj.SpecFileName = tmpSpecName 'make working verbose copy
             DefPfqPrj = PfqPrj.SaveDefaults(s)
         End If
@@ -1035,7 +1035,7 @@ FileCancel:
                 j = 0
                 For Each lData As pfqStation.PeakDataType In lDataColl
                     j += 1
-                    .CellValue(j, 0) = lData.Year
+                    .CellValue(j, 0) = Math.Abs(lData.Year)
                     .CellEditable(j, 0) = True
                     .Alignment(j, 0) = atcAlignment.HAlignRight
                     .CellValue(j, 1) = lData.Value
@@ -1070,7 +1070,7 @@ FileCancel:
         grdInterval.Visible = True
         AddIntervalRow()
 
-        UpdateGraph()
+        UpdateInputGraph()
     End Sub
 
     Private Sub ProcessThresholds()
@@ -1164,10 +1164,10 @@ FileCancel:
 
     Private Sub cmdUpdateGraph_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdateGraph.Click
         ProcessThresholds()
-        UpdateGraph()
+        UpdateInputGraph()
     End Sub
 
-    Private Sub UpdateGraph()
+    Private Sub UpdateInputGraph()
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         Dim lYearMin As Double = 10000
         Dim lYearMax As Double = -10000
@@ -1189,6 +1189,8 @@ FileCancel:
         Dim i As Integer
         Dim lPkCnt As Integer = -1
         Dim lHistCnt As Integer = -1
+        Dim lYr As Integer
+        Dim lPk As Double
 
         'clear previous curves
         lPane.CurveList.Clear()
@@ -1203,14 +1205,16 @@ FileCancel:
 
         lCurves = New atcCollection
         For Each lPeak As pfqStation.PeakDataType In lStn.PeakData
-            If lPeak.Year < lYearMin Then lYearMin = lPeak.Year
-            If lPeak.Year > lYearMax Then lYearMax = lPeak.Year
+            lYr = Math.Abs(lPeak.Year)
+            lPk = Math.Abs(lPeak.Value)
+            If lYr < lYearMin Then lYearMin = lYr
+            If lYr > lYearMax Then lYearMax = lYr
             If lCurves.Keys.Contains(lPeak.Code) Then 'add point to this curve
                 lCurve = lCurves.ItemByKey(lPeak.Code)
-                lCurve.AddPoint(lPeak.Year, Math.Abs(lPeak.Value))
+                lCurve.AddPoint(lYr, lPk)
             Else 'new curve needed for another threshold span
-                lX(0) = lPeak.Year
-                lY(0) = Math.Abs(lPeak.Value)
+                lX(0) = lYr
+                lY(0) = lPk
                 Select Case lPeak.Code
                     Case "7", "H"
                         lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Triangle)
@@ -1227,8 +1231,8 @@ FileCancel:
                 lCurves.Add(lPeak.Code, lCurve)
             End If
 
-            If Math.Abs(lPeak.Value) > 0 AndAlso Math.Abs(lPeak.Value) < lDataMin Then lDataMin = Math.Abs(lPeak.Value)
-            If Math.Abs(lPeak.Value) > lDataMax Then lDataMax = Math.Abs(lPeak.Value)
+            If lPk > 0 AndAlso lPk < lDataMin Then lDataMin = lPk
+            If lPk > lDataMax Then lDataMax = lPk
         Next
         'set y-axis range
         lYAxis.Scale.MaxAuto = False
@@ -1527,7 +1531,7 @@ FileCancel:
         Dim lPkLog(199) As Single
         Dim lSysPP(199) As Single
         Dim lWrcPP(199) As Single
-        Dim lIQual(4, 199) As Integer
+        Dim lIQual(199, 4) As Integer
         Dim lXQual(199) As String
         Dim lPkYear(199) As Integer
         Dim lWeiba As Single
@@ -1547,9 +1551,24 @@ FileCancel:
         Dim lNPlCL2 As Integer
         Dim lPMin As Double = 1.0E+20
         Dim lPMax As Double = -1.0E+20
+        Dim lCurves As atcCollection
+        Dim lThresh As Integer
+        Dim lThrMinPk As Double
+        Dim lKey As String
+        Dim lX(0) As Double
+        Dim lY(0) As Double
+        Dim lColor As System.Drawing.Color
+        Dim lThreshSymbol As New System.Drawing.Drawing2D.GraphicsPath
+        Dim lSize As Single = 0.5
+        lThreshSymbol.AddLine(0, 0, lSize, -2 * lSize)
+        lThreshSymbol.AddLine(lSize, -2 * lSize, -lSize, -2 * lSize)
+        lThreshSymbol.AddLine(-lSize, -2 * lSize, 0, 0)
+        lThreshSymbol.StartFigure()
+        lThreshSymbol.AddLine(-lSize, 0, lSize, 0)
 
-        newform.Height = VB6.TwipsToPixelsY(6300)
-        newform.Width = VB6.TwipsToPixelsX(8800)
+
+        newform.Height = VB6.TwipsToPixelsY(9450)
+        newform.Width = VB6.TwipsToPixelsX(13200)
         Dim lZGC As ZedGraphControl = newform.ZedGraphCtrl
         InitGraph(lZGC, "R")
         Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
@@ -1588,47 +1607,89 @@ FileCancel:
         lCurve = lPane.AddCurve("Bull. 17-B frequency", lXVals, lYVals, Color.Red, SymbolType.None)
 
         'observed peaks
+        lCurves = New atcCollection
         ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
         For i = 0 To lNPkPlt - 1
             lYVals(i) = 10 ^ lPkLog(i)
             If lYVals(i) > lPMax Then lPMax = lYVals(i)
             If lYVals(i) < lPMin Then lPMin = lYVals(i)
-            lXVals(i) = lSysPP(i)
-        Next
-        lCurve = lPane.AddCurve("Systematic peaks", lXVals, lYVals, Color.Black, SymbolType.Circle)
-        lCurve.Line.IsVisible = False
-
-        'Systematic record
-        lNPlot1 = 0
-        lNPlot2 = lNPlot - 1
-        For i = 0 To lNPlot - 1
-            If lTxProb(i) < lPP0 Then lNPlot2 = i
-            j = lNPlot - i - 1 ' + 1 - i
-            If lTxProb(j) > lPP1 AndAlso lSysRFC(j) > -1.0 Then lNPlot1 = j
-        Next
-        ReDim lYVals(lNPlot2 - lNPlot1)
-        ReDim lXVals(lNPlot2 - lNPlot1)
-        For i = lNPlot1 To lNPlot2
-            j = i - lNPlot1
-            lYVals(j) = 10 ^ lSysRFC(i)
-            If lYVals(j) > lPMax Then lPMax = lYVals(j)
-            If lYVals(j) < lPMin Then lPMin = lYVals(j)
-            lXVals(j) = lTxProb(i)
-        Next
-        lCurve = lPane.AddCurve("Systematic frequency", lXVals, lYVals, Color.Blue, SymbolType.None)
-        lCurve.Line.Style = Drawing2D.DashStyle.Dash
-
-        If lHistFlg = 0 Then 'include historical peaks
-            ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
-            For i = 0 To lNPkPlt - 1
-                lYVals(i) = 10 ^ lPkLog(i)
-                If lYVals(i) > lPMax Then lPMax = lYVals(i)
-                If lYVals(i) < lPMin Then lPMin = lYVals(i)
+            If lHistFlg = 0 Then
                 lXVals(i) = lWrcPP(i)
+            Else
+                lXVals(i) = lSysPP(i)
+            End If
+            lThresh = -1
+            j = 0
+            For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(aStnInd).Thresholds
+                If Math.Abs(lPkYear(i)) >= vThresh.SYear AndAlso Math.Abs(lPkYear(i)) <= vThresh.EYear Then 'peak is in a threshold
+                    lThresh = j
+                    Exit For
+                End If
+                j += 1
             Next
-            lCurve = lPane.AddCurve("Historical adjusted", lXVals, lYVals, Color.Black, SymbolType.XCross)
-            lCurve.Line.IsVisible = False
-        End If
+            lKey = lXQual(i) & CStr(lThresh)
+            If lCurves.Keys.Contains(lKey) Then 'add point to this curve
+                lCurve = lCurves.ItemByKey(lKey)
+                lCurve.AddPoint(lXVals(i), lYVals(i))
+            Else 'need a new curve
+                If lThresh >= 0 Then 'match color of threshold
+                    lColor = ThreshColors(lThresh)
+                Else
+                    lColor = Color.Black
+                End If
+                lX(0) = lXVals(i) 'lSysPP(i)
+                lY(0) = lYVals(i) '10 ^ lPkLog(i)
+                Select Case lXQual(i)
+                    Case "7", "H"
+                        lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Triangle)
+                    Case "D", "G", "X", "3", "8", "3+8"
+                        lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
+                    Case "K", "6", "C"
+                        lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
+                    Case "L", "4"
+                        lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
+                    Case Else
+                        lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, lColor, SymbolType.Circle)
+                End Select
+                lCurve.Line.IsVisible = False
+                lCurves.Add(lKey, lCurve)
+            End If
+        Next
+        'lCurve = lPane.AddCurve("Systematic peaks", lXVals, lYVals, Color.Black, SymbolType.Circle)
+        'lCurve.Line.IsVisible = False
+
+        'If lHistFlg = 0 Then 'include historical peaks
+        '    ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
+        '    For i = 0 To lNPkPlt - 1
+        '        lYVals(i) = 10 ^ lPkLog(i)
+        '        If lYVals(i) > lPMax Then lPMax = lYVals(i)
+        '        If lYVals(i) < lPMin Then lPMin = lYVals(i)
+        '        lXVals(i) = lWrcPP(i)
+        '    Next
+        '    lCurve = lPane.AddCurve("Historical adjusted", lXVals, lYVals, Color.Black, SymbolType.XCross)
+        '    lCurve.Line.IsVisible = False
+        'End If
+
+        'from DO 16 (May 2011), remove systematic curve
+        ''Systematic record
+        'lNPlot1 = 0
+        'lNPlot2 = lNPlot - 1
+        'For i = 0 To lNPlot - 1
+        '    If lTxProb(i) < lPP0 Then lNPlot2 = i
+        '    j = lNPlot - i - 1 ' + 1 - i
+        '    If lTxProb(j) > lPP1 AndAlso lSysRFC(j) > -1.0 Then lNPlot1 = j
+        'Next
+        'ReDim lYVals(lNPlot2 - lNPlot1)
+        'ReDim lXVals(lNPlot2 - lNPlot1)
+        'For i = lNPlot1 To lNPlot2
+        '    j = i - lNPlot1
+        '    lYVals(j) = 10 ^ lSysRFC(i)
+        '    If lYVals(j) > lPMax Then lPMax = lYVals(j)
+        '    If lYVals(j) < lPMin Then lPMin = lYVals(j)
+        '    lXVals(j) = lTxProb(i)
+        'Next
+        'lCurve = lPane.AddCurve("Systematic frequency", lXVals, lYVals, Color.Blue, SymbolType.None)
+        'lCurve.Line.Style = Drawing2D.DashStyle.Dash
 
         'confidence limits
         ReDim lYVals(lNPlot2 - lNPlot1)
@@ -1640,8 +1701,8 @@ FileCancel:
             If lYVals(j) < lPMin Then lPMin = lYVals(j)
             lXVals(j) = lTxProb(i)
         Next
-        lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Red, SymbolType.None)
-        lCurve.Line.Style = Drawing2D.DashStyle.Dot
+        lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
             j = i - lNPlCL1
             lYVals(j) = 10 ^ lCLimU(i)
@@ -1649,9 +1710,45 @@ FileCancel:
             If lYVals(j) < lPMin Then lPMin = lYVals(j)
             lXVals(j) = lTxProb(i)
         Next
-        lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Label.IsVisible = False
-        lCurve.Line.Style = Drawing2D.DashStyle.Dot
+        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
+
+        'thresholds
+        i = 0
+        For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(aStnInd).Thresholds
+            'Look through peaks for count associated with this threshold
+            lThresh = 0
+            lThrMinPk = 10.0
+            For j = 0 To lNPkPlt - 1
+                If Math.Abs(lPkYear(j)) >= vThresh.SYear AndAlso Math.Abs(lPkYear(j)) <= vThresh.EYear Then
+                    lThresh += 1
+                    If lPkLog(j) < lThrMinPk Then 'lowest peak so far for this threshold
+                        lThrMinPk = lPkLog(j)
+                        If lHistFlg = 0 Then
+                            lX(0) = lWrcPP(j)
+                        Else
+                            lX(0) = lSysPP(j)
+                        End If
+                    End If
+                End If
+            Next
+            lY(0) = vThresh.LowerLimit
+            'add dummy curve to create regular-sized legend symbol
+            Dim lPtList As New ZedGraph.PointPairList
+            lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+            lCurve.Symbol.UserSymbol = lThreshSymbol
+            lCurve.Line.IsVisible = False
+            'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lX, lY, ThreshColors(i), SymbolType.TriangleDown)
+            'lCurve.Line.IsVisible = False
+            lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
+            lCurve.Symbol.UserSymbol = lThreshSymbol
+            lCurve.Line.IsVisible = False
+            lCurve.Label.IsVisible = False
+            lCurve.Symbol.Size = 7 * Math.Sqrt(lThresh)
+            lCurve.Symbol.Border.Width = 2
+            i += 1
+        Next
 
         'set y-axis range
         Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
@@ -1659,9 +1756,10 @@ FileCancel:
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
         Dim lWarning As String = "Peakfq 5 run " & System.DateTime.Now & vbCrLf & _
-                                 "NOTE - Preliminary computation" & vbCrLf & _
-                                 "User is responsible for" & vbCrLf & _
-                                 "assessment and interpretation."
+                                 "G" & vbCrLf & _
+                                 "MSE" & vbCrLf & _
+                                 "Zeroes not displayed" & vbCrLf & _
+                                 "Peaks below Low Outlier Threshold"
         Dim lText As New TextObj(lWarning, 0.5, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
@@ -1689,11 +1787,11 @@ FileCancel:
         For lArrayInd As Integer = 0 To aArrayLen - 1
             lStr = ""
             For lInd As Integer = 0 To aSLen - 1 'added "- 1" 8/16/2002 Mark Gray
-                If aIntStr(lInd, lArrayInd) > 0 Then
-                    lStr &= Chr(aIntStr(lInd, lArrayInd))
+                If aIntStr(lArrayInd, lInd) > 0 Then
+                    lStr &= Chr(aIntStr(lArrayInd, lInd))
                 End If
             Next lInd
-            aStr(lArrayInd) = RTrim(lStr)
+            aStr(lArrayInd) = Trim(lStr)
         Next lArrayInd
     End Sub
 
@@ -1744,7 +1842,7 @@ FileCancel:
                 End If
             End If
             ProcessThresholds()
-            UpdateGraph()
+            UpdateInputGraph()
         End With
         aGrid.SizeAllColumnsToContents(aGrid.Width)
         aGrid.Refresh()
@@ -1781,7 +1879,7 @@ FileCancel:
                 AddIntervalRow()
             End If
             ProcessThresholds()
-            UpdateGraph()
+            UpdateInputGraph()
         End With
         aGrid.SizeAllColumnsToContents(aGrid.Width)
         aGrid.Refresh()

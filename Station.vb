@@ -433,7 +433,7 @@ Friend Class pfqStation
         End If
         If pThresholds.Count > 0 Then 'using perception threshholds, not beg/end years and hist. period
             For Each vPT As ThresholdType In pThresholds
-                s = s & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
+                s = s & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
         Else 'using beg/end years and hist. period
             If Len(pCBegYear) > 0 Then s = s & pad & pCBegYear & vbCrLf
@@ -443,9 +443,11 @@ Friend Class pfqStation
             If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
             If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
         End If
-        If pPeakData.Count > 0 Then 'using perception threshholds
+        If pPeakData.Count > 0 Then 'write any interval data
             For Each vData As PeakDataType In pPeakData
-                s = s & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & vbCrLf
+                If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+                    s = s & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                End If
             Next
         End If
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
@@ -490,12 +492,14 @@ Friend Class pfqStation
         If pAnalysisOption <> defsta.AnalysisOption Then s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
         If pThresholds.Count > 0 Then 'using perception threshholds
             For Each vPT As ThresholdType In pThresholds
-                s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & vbCrLf
+                s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
         End If
-        If pPeakData.Count > 0 Then 'using perception threshholds
+        If pPeakData.Count > 0 Then 'write any interval data
             For Each vData As PeakDataType In pPeakData
-                s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & vbCrLf
+                If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+                    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                End If
             Next
         End If
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
