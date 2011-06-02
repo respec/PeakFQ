@@ -582,7 +582,7 @@ Friend Class pfqProject
 		'It is given a temporary name (tmpSpecName) that will not be saved.
 		Dim s As String
 		
-		pSpecFileName = tmpSpecName
+        pSpecFileName = PathNameOnly(pDataFileName) & "\" & tmpSpecName
 		If UCase(Right(pDataFileName, 3)) = "WDM" Then 'WDM data file
 			s = "I WDM " & FilenameNoPath(pDataFileName) & vbCrLf
 		Else 'assume asci text data file
@@ -591,7 +591,7 @@ Friend Class pfqProject
         pOutFile = IO.Path.ChangeExtension(pDataFileName, ".prt") '".out"
 		s = s & "O File " & FilenameNoPath(pOutFile) & vbCrLf
 		s = s & "Update"
-        SaveFileString(PathNameOnly(pDataFileName) & "\" & pSpecFileName, s)
+        SaveFileString(pSpecFileName, s) '(PathNameOnly(pDataFileName) & "\" & pSpecFileName, s)
 		
 	End Sub
 	
