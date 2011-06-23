@@ -99,6 +99,8 @@
         Me.cmdExit = New System.Windows.Forms.Button()
         Me.sstPfq = New System.Windows.Forms.TabControl()
         Me.tabStationSpecs = New System.Windows.Forms.TabPage()
+        Me.lblLOTest = New System.Windows.Forms.Label()
+        Me.cboLOTest = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.cboAnalysisOption = New System.Windows.Forms.ComboBox()
         Me.lblGlobalAnalysis = New System.Windows.Forms.Label()
@@ -186,7 +188,7 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(934, 24)
+        Me.MainMenu1.Size = New System.Drawing.Size(1037, 24)
         Me.MainMenu1.TabIndex = 30
         '
         'mnuFile
@@ -250,7 +252,7 @@
         Me.fraButtons.Cursor = System.Windows.Forms.Cursors.Default
         Me.fraButtons.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraButtons.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraButtons.Location = New System.Drawing.Point(577, 470)
+        Me.fraButtons.Location = New System.Drawing.Point(680, 470)
         Me.fraButtons.Name = "fraButtons"
         Me.fraButtons.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.fraButtons.Size = New System.Drawing.Size(345, 25)
@@ -312,11 +314,13 @@
         Me.sstPfq.Location = New System.Drawing.Point(8, 88)
         Me.sstPfq.Name = "sstPfq"
         Me.sstPfq.SelectedIndex = 1
-        Me.sstPfq.Size = New System.Drawing.Size(914, 367)
+        Me.sstPfq.Size = New System.Drawing.Size(1017, 367)
         Me.sstPfq.TabIndex = 0
         '
         'tabStationSpecs
         '
+        Me.tabStationSpecs.Controls.Add(Me.lblLOTest)
+        Me.tabStationSpecs.Controls.Add(Me.cboLOTest)
         Me.tabStationSpecs.Controls.Add(Me.Label1)
         Me.tabStationSpecs.Controls.Add(Me.cboAnalysisOption)
         Me.tabStationSpecs.Controls.Add(Me.lblGlobalAnalysis)
@@ -324,10 +328,31 @@
         Me.tabStationSpecs.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabStationSpecs.Location = New System.Drawing.Point(4, 22)
         Me.tabStationSpecs.Name = "tabStationSpecs"
-        Me.tabStationSpecs.Size = New System.Drawing.Size(785, 314)
+        Me.tabStationSpecs.Size = New System.Drawing.Size(1009, 341)
         Me.tabStationSpecs.TabIndex = 0
         Me.tabStationSpecs.Text = "Station Specifications"
         Me.tabStationSpecs.UseVisualStyleBackColor = True
+        '
+        'lblLOTest
+        '
+        Me.lblLOTest.AutoSize = True
+        Me.lblLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblLOTest.Location = New System.Drawing.Point(520, 23)
+        Me.lblLOTest.Name = "lblLOTest"
+        Me.lblLOTest.Size = New System.Drawing.Size(151, 13)
+        Me.lblLOTest.TabIndex = 8
+        Me.lblLOTest.Text = "Global Low Outlier TestOption:"
+        '
+        'cboLOTest
+        '
+        Me.cboLOTest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cboLOTest.FormattingEnabled = True
+        Me.cboLOTest.Items.AddRange(New Object() {"Single Grubbs-Beck", "Multiple Grubbs-Beck"})
+        Me.cboLOTest.Location = New System.Drawing.Point(677, 20)
+        Me.cboLOTest.Name = "cboLOTest"
+        Me.cboLOTest.Size = New System.Drawing.Size(69, 21)
+        Me.cboLOTest.TabIndex = 7
         '
         'Label1
         '
@@ -374,7 +399,7 @@
         Me.grdSpecs.LineWidth = 1.0!
         Me.grdSpecs.Location = New System.Drawing.Point(0, 44)
         Me.grdSpecs.Name = "grdSpecs"
-        Me.grdSpecs.Size = New System.Drawing.Size(729, 176)
+        Me.grdSpecs.Size = New System.Drawing.Size(1006, 294)
         Me.grdSpecs.Source = Nothing
         Me.grdSpecs.TabIndex = 2
         '
@@ -394,7 +419,7 @@
         Me.tabThresholds.Location = New System.Drawing.Point(4, 22)
         Me.tabThresholds.Name = "tabThresholds"
         Me.tabThresholds.Padding = New System.Windows.Forms.Padding(3)
-        Me.tabThresholds.Size = New System.Drawing.Size(906, 341)
+        Me.tabThresholds.Size = New System.Drawing.Size(1009, 341)
         Me.tabThresholds.TabIndex = 3
         Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
@@ -523,7 +548,7 @@
         Me.tabOutput.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabOutput.Location = New System.Drawing.Point(4, 22)
         Me.tabOutput.Name = "tabOutput"
-        Me.tabOutput.Size = New System.Drawing.Size(785, 314)
+        Me.tabOutput.Size = New System.Drawing.Size(1009, 341)
         Me.tabOutput.TabIndex = 1
         Me.tabOutput.Text = "Output Options"
         Me.tabOutput.UseVisualStyleBackColor = True
@@ -870,7 +895,7 @@
         Me.tabResults.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabResults.Location = New System.Drawing.Point(4, 22)
         Me.tabResults.Name = "tabResults"
-        Me.tabResults.Size = New System.Drawing.Size(785, 314)
+        Me.tabResults.Size = New System.Drawing.Size(1009, 341)
         Me.tabResults.TabIndex = 2
         Me.tabResults.Text = "Results"
         Me.tabResults.UseVisualStyleBackColor = True
@@ -1087,7 +1112,7 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(934, 504)
+        Me.ClientSize = New System.Drawing.Size(1037, 504)
         Me.Controls.Add(Me.fraButtons)
         Me.Controls.Add(Me.sstPfq)
         Me.Controls.Add(Me.lblInstruct)
@@ -1145,5 +1170,7 @@
     Friend WithEvents cboAnalysisOption As System.Windows.Forms.ComboBox
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents cboGraphFormat As System.Windows.Forms.ComboBox
+    Friend WithEvents lblLOTest As System.Windows.Forms.Label
+    Friend WithEvents cboLOTest As System.Windows.Forms.ComboBox
 #End Region
 End Class

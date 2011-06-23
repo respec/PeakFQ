@@ -3,12 +3,13 @@ Option Explicit On
 Module modPeakfq
 	Public PfqPrj As New pfqProject
     Public DefPfqPrj As New pfqProject
+    Public LOTestType As String = "Multiple Grubbs-Beck"
     Public PFQExePath As String = IO.Path.GetDirectoryName(Application.ExecutablePath)
 
     Friend Declare Sub PEAKFQ Lib "peakfq.dll" (ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
     Friend Declare Sub GETDATA Lib "peakfq.dll" (ByRef aStnInd As Integer, ByRef aNPkPlt As Integer, _
                                                  ByVal aPkLog() As Single, ByVal aSysPP() As Single, _
-                                                 ByVal aWrcPP() As Single, ByVal aXQual(,) As Integer,
+                                                 ByVal aWrcPP() As Single, ByVal aXQual(,) As Integer, _
                                                  ByVal aPkSeq() As Integer, ByRef aWeiba As Single, _
                                                  ByRef aNPlot As Integer, ByVal aSysRfc() As Single, _
                                                  ByVal aWrcFc() As Single, ByVal aTxProb() As Single, _
