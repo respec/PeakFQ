@@ -24,8 +24,8 @@ Friend Class pfqProject
 	Private pConfidenceLimits As Single
 	Private pInputDir As String
 	Private pOutputDir As String
-	Private pEMA As Boolean
-	'the following are for storing comments for various specification records
+    Private pEMA As Boolean
+    'the following are for storing comments for various specification records
 	Private pCDataFile As String
 	Private pCOutFile As String
 	Private pCPlotStyle As String
@@ -35,8 +35,8 @@ Friend Class pfqProject
 	Private pCAdditional As String
 	Private pCIntermediate As String
 	Private pCConfidenceLimits As String
-	Private pCEMA As String
-	
+    Private pCEMA As String
+
 	Private FType(1) As String
 
 	Public Property SpecFileName() As String
@@ -200,23 +200,23 @@ Friend Class pfqProject
 		End Set
 	End Property
 	
-	Public Property EMA() As Boolean
-		Get
-			EMA = pEMA
-		End Get
-		Set(ByVal Value As Boolean)
-			pEMA = Value
-		End Set
-	End Property
-	
-	Public Property CDataFile() As String
-		Get
-			CDataFile = pCDataFile
-		End Get
-		Set(ByVal Value As String)
-			pCDataFile = Value
-		End Set
-	End Property
+    Public Property EMA() As Boolean
+        Get
+            EMA = pEMA
+        End Get
+        Set(ByVal Value As Boolean)
+            pEMA = Value
+        End Set
+    End Property
+
+    Public Property CDataFile() As String
+        Get
+            CDataFile = pCDataFile
+        End Get
+        Set(ByVal Value As String)
+            pCDataFile = Value
+        End Set
+    End Property
 	
 	Public Property COutFile() As String
 		Get
@@ -290,128 +290,128 @@ Friend Class pfqProject
 		End Set
 	End Property
 	
-	Public Property CEMA() As String
-		Get
-			CEMA = pCEMA
-		End Get
-		Set(ByVal Value As String)
-			pCEMA = Value
-		End Set
-	End Property
-	
-	Public Sub ReadSpecFile()
-		
-		Dim i As Short
-		Dim SpecFile As String
-		Dim Rec, Kwd As String
+    Public Property CEMA() As String
+        Get
+            CEMA = pCEMA
+        End Get
+        Set(ByVal Value As String)
+            pCEMA = Value
+        End Set
+    End Property
+
+    Public Sub ReadSpecFile()
+
+        Dim i As Short
+        Dim SpecFile As String
+        Dim Rec, Kwd As String
         Dim lCom As String = ""
-		Dim CommentPending As Boolean
+        Dim CommentPending As Boolean
         Dim CurStation As pfqStation = Nothing
         Dim lThresh As pfqStation.ThresholdType = Nothing
         Dim lData As pfqStation.PeakDataType = Nothing
-		
-		CommentPending = False
+
+        CommentPending = False
         pStations = New Generic.List(Of pfqStation)
-		SpecFile = WholeFileString(pSpecFileName)
-		
-		While Len(SpecFile) > 0
-			Rec = StrSplit(SpecFile, vbCrLf, "")
-			If Left(Rec, 1) = "'" Then 'process comment
-				If CommentPending Then 'multiple line comment
-					lCom = lCom & vbCrLf & Rec
-				Else 'new comment
-					lCom = Rec
-					CommentPending = True
-				End If
-			Else 'process specification
-				Kwd = UCase(StrRetRem(Rec))
-				Select Case Kwd
-					Case "I"
-						Kwd = UCase(StrRetRem(Rec))
-						For i = 0 To 1
-							If Kwd = FType(i) Then pDataType = i
-						Next i
-						pDataFileName = Rec
-						If CommentPending Then pCDataFile = lCom
-					Case "O"
-						Kwd = UCase(StrRetRem(Rec))
-						Select Case Kwd
-							Case "FILE"
-								pOutFile = Rec
-								If CommentPending Then pCOutFile = lCom
-							Case "PLOT"
-								Kwd = UCase(StrRetRem(Rec))
-								If Kwd = "STYLE" Then
-									If UCase(Rec) = "PRINTER" Or UCase(Rec) = "BOTH" Then
-										pLinePrinter = True
-									End If
-									If UCase(Rec) = "GRAPHICS" Or UCase(Rec) = "BOTH" Then
-										pGraphic = True
-									End If
-									If CommentPending Then pCPlotStyle = lCom
-								ElseIf Kwd = "FORMAT" Then 
-									pGraphFormat = UCase(Rec)
-									If CommentPending Then pCPlotFormat = lCom
-								ElseIf Kwd = "PRINTPOS" Then 
-									If UCase(Rec) = "YES" Then
-										pPrintPlotPos = True
-									Else
-										pPrintPlotPos = False
-									End If
-									If CommentPending Then pCPrintPlotPos = lCom
-								ElseIf Kwd = "POSITION" Then 
-									pPlotPos = CSng(Rec)
-									If CommentPending Then pCPlotPos = lCom
-								End If
-							Case "ADDITIONAL"
-								Kwd = UCase(StrRetRem(Rec))
-								If Kwd = "WDM" Then
-									pAdditionalOutput = 1
-								ElseIf Left(Kwd, 3) = "WAT" Then 
-									pAdditionalOutput = 2
-								ElseIf Left(Kwd, 3) = "TAB" Then 
-									pAdditionalOutput = 4
-								ElseIf Kwd = "BOTH" Then 
-									Kwd = UCase(StrRetRem(Rec))
-									If Left(Kwd, 3) = "WAT" Then 'watstore format
-										pAdditionalOutput = 3
-									Else 'assume tab-separated
-										pAdditionalOutput = 5
-									End If
-								Else
-									pAdditionalOutput = 0
-								End If
-								If pAdditionalOutput >= 2 Then
-									'remaining text should be file name
-									pAddOutFileName = Rec
-								End If
-								If CommentPending Then pCAdditional = lCom
-							Case "DEBUG"
-								If UCase(Rec) = "YES" Then
-									pIntermediateResults = True
-								Else
-									pIntermediateResults = False
-								End If
-								If CommentPending Then pCIntermediate = lCom
-							Case "CONFIDENCE"
-								pConfidenceLimits = CSng(Rec)
-								If CommentPending Then pCConfidenceLimits = lCom
-							Case "EMA"
-								If UCase(Rec) = "YES" Then
-									pEMA = True
-								Else
-									pEMA = False
-								End If
-								If CommentPending Then pCEMA = lCom
-						End Select
-					Case "STATION"
-						If Not CurStation Is Nothing Then
-							'previous station info exists, add it to collection
-							pStations.Add(CurStation)
-						End If
-						'build new station
-						CurStation = New pfqStation
-						CurStation.id = Rec
+        SpecFile = WholeFileString(pSpecFileName)
+
+        While Len(SpecFile) > 0
+            Rec = StrSplit(SpecFile, vbCrLf, "")
+            If Left(Rec, 1) = "'" Then 'process comment
+                If CommentPending Then 'multiple line comment
+                    lCom = lCom & vbCrLf & Rec
+                Else 'new comment
+                    lCom = Rec
+                    CommentPending = True
+                End If
+            Else 'process specification
+                Kwd = UCase(StrRetRem(Rec))
+                Select Case Kwd
+                    Case "I"
+                        Kwd = UCase(StrRetRem(Rec))
+                        For i = 0 To 1
+                            If Kwd = FType(i) Then pDataType = i
+                        Next i
+                        pDataFileName = Rec
+                        If CommentPending Then pCDataFile = lCom
+                    Case "O"
+                        Kwd = UCase(StrRetRem(Rec))
+                        Select Case Kwd
+                            Case "FILE"
+                                pOutFile = Rec
+                                If CommentPending Then pCOutFile = lCom
+                            Case "PLOT"
+                                Kwd = UCase(StrRetRem(Rec))
+                                If Kwd = "STYLE" Then
+                                    If UCase(Rec) = "PRINTER" Or UCase(Rec) = "BOTH" Then
+                                        pLinePrinter = True
+                                    End If
+                                    If UCase(Rec) = "GRAPHICS" Or UCase(Rec) = "BOTH" Then
+                                        pGraphic = True
+                                    End If
+                                    If CommentPending Then pCPlotStyle = lCom
+                                ElseIf Kwd = "FORMAT" Then
+                                    pGraphFormat = UCase(Rec)
+                                    If CommentPending Then pCPlotFormat = lCom
+                                ElseIf Kwd = "PRINTPOS" Then
+                                    If UCase(Rec) = "YES" Then
+                                        pPrintPlotPos = True
+                                    Else
+                                        pPrintPlotPos = False
+                                    End If
+                                    If CommentPending Then pCPrintPlotPos = lCom
+                                ElseIf Kwd = "POSITION" Then
+                                    pPlotPos = CSng(Rec)
+                                    If CommentPending Then pCPlotPos = lCom
+                                End If
+                            Case "ADDITIONAL"
+                                Kwd = UCase(StrRetRem(Rec))
+                                If Kwd = "WDM" Then
+                                    pAdditionalOutput = 1
+                                ElseIf Left(Kwd, 3) = "WAT" Then
+                                    pAdditionalOutput = 2
+                                ElseIf Left(Kwd, 3) = "TAB" Then
+                                    pAdditionalOutput = 4
+                                ElseIf Kwd = "BOTH" Then
+                                    Kwd = UCase(StrRetRem(Rec))
+                                    If Left(Kwd, 3) = "WAT" Then 'watstore format
+                                        pAdditionalOutput = 3
+                                    Else 'assume tab-separated
+                                        pAdditionalOutput = 5
+                                    End If
+                                Else
+                                    pAdditionalOutput = 0
+                                End If
+                                If pAdditionalOutput >= 2 Then
+                                    'remaining text should be file name
+                                    pAddOutFileName = Rec
+                                End If
+                                If CommentPending Then pCAdditional = lCom
+                            Case "DEBUG"
+                                If UCase(Rec) = "YES" Then
+                                    pIntermediateResults = True
+                                Else
+                                    pIntermediateResults = False
+                                End If
+                                If CommentPending Then pCIntermediate = lCom
+                            Case "CONFIDENCE"
+                                pConfidenceLimits = CSng(Rec)
+                                If CommentPending Then pCConfidenceLimits = lCom
+                            Case "EMA"
+                                If UCase(Rec) = "YES" Then
+                                    pEMA = True
+                                Else
+                                    pEMA = False
+                                End If
+                                If CommentPending Then pCEMA = lCom
+                        End Select
+                    Case "STATION"
+                        If Not CurStation Is Nothing Then
+                            'previous station info exists, add it to collection
+                            pStations.Add(CurStation)
+                        End If
+                        'build new station
+                        CurStation = New pfqStation
+                        CurStation.id = Rec
                         If CommentPending Then CurStation.Comment = lCom
                     Case "ANALYZE"
                         CurStation.AnalysisOption = Rec
@@ -419,55 +419,63 @@ Friend Class pfqProject
                     Case "GENSKEW"
                         CurStation.GenSkew = CSng(Rec)
                         If CommentPending Then CurStation.CGenSkew = lCom
-					Case "SKEWSE"
-						CurStation.SESkew = CSng(Rec)
-						If CommentPending Then CurStation.CSESkew = lCom
-					Case "BEGYEAR"
-						CurStation.BegYear = CInt(Rec)
-						If CommentPending Then CurStation.CBegYear = lCom
-					Case "ENDYEAR"
-						CurStation.EndYear = CInt(Rec)
-						If CommentPending Then CurStation.CEndYear = lCom
-					Case "HISTPERIOD"
-						CurStation.HistoricPeriod = CSng(Rec)
-						If CommentPending Then CurStation.CHistoric = lCom
-					Case "SKEWOPT"
-						If UCase(Rec) = "STATION" Then
+                    Case "SKEWSE"
+                        CurStation.SESkew = CSng(Rec)
+                        If CommentPending Then CurStation.CSESkew = lCom
+                    Case "BEGYEAR"
+                        CurStation.BegYear = CInt(Rec)
+                        If CommentPending Then CurStation.CBegYear = lCom
+                    Case "ENDYEAR"
+                        CurStation.EndYear = CInt(Rec)
+                        If CommentPending Then CurStation.CEndYear = lCom
+                    Case "HISTPERIOD"
+                        CurStation.HistoricPeriod = CSng(Rec)
+                        If CommentPending Then CurStation.CHistoric = lCom
+                    Case "SKEWOPT"
+                        If UCase(Rec) = "STATION" Then
                             CurStation.SkewOpt = 0
-						ElseIf UCase(Rec) = "WEIGHTED" Then 
+                        ElseIf UCase(Rec) = "WEIGHTED" Then
                             CurStation.SkewOpt = 1
-						ElseIf UCase(Rec) = "GENERALIZED" Then 
+                        ElseIf UCase(Rec) = "GENERALIZED" Then
                             CurStation.SkewOpt = 2
-						End If
-						If CommentPending Then CurStation.CSkewOpt = lCom
-					Case "URB/REG"
-						If UCase(Rec) = "YES" Then
-							CurStation.UrbanRegPeaks = 1
-						Else
-							CurStation.UrbanRegPeaks = 0
-						End If
-						If CommentPending Then CurStation.CUrban = lCom
-					Case "LOTHRESH"
-						CurStation.LowOutlier = CSng(Rec)
-						If CommentPending Then CurStation.CLowOutlier = lCom
-					Case "HITHRESH"
-						CurStation.HighOutlier = CSng(Rec)
-						If CommentPending Then CurStation.CHighOutlier = lCom
-					Case "GAGEBASE"
-						CurStation.GageBaseDischarge = CSng(Rec)
-						If CommentPending Then CurStation.CGageBase = lCom
-					Case "LATITUDE"
-						CurStation.Lat = CSng(Rec)
-						If CommentPending Then CurStation.CLat = lCom
-					Case "LONGITUDE"
-						CurStation.Lng = CSng(Rec)
-						If CommentPending Then CurStation.CLong = lCom
-					Case "HISYS" 'no comment for HISYS as it is just info for the interface
-						CurStation.HighSysPeak = CSng(Rec)
-					Case "LOHIST" 'no comment for LOHIST as it is just info for the interface
-						CurStation.LowHistPeak = CSng(Rec)
-					Case "PLOTNAME"
-						CurStation.PlotName = Rec
+                        End If
+                        If CommentPending Then CurStation.CSkewOpt = lCom
+                    Case "URB/REG"
+                        If UCase(Rec) = "YES" Then
+                            CurStation.UrbanRegPeaks = 1
+                        Else
+                            CurStation.UrbanRegPeaks = 0
+                        End If
+                        If CommentPending Then CurStation.CUrban = lCom
+                    Case "LOTYPE"
+                        If UCase(Rec) <> "NONE" AndAlso LOTestType.Length = 0 Then
+                            If UCase(Rec) = "SINGLE" Then
+                                LOTestType = "Single Grubbs-Beck"
+                            ElseIf UCase(Rec) = "MULTIPLE" Then
+                                LOTestType = "Multiple Grubbs-Beck"
+                            End If
+                        End If
+                    Case "LOTHRESH"
+                        CurStation.LowOutlier = CSng(Rec)
+                        If CommentPending Then CurStation.CLowOutlier = lCom
+                    Case "HITHRESH"
+                        CurStation.HighOutlier = CSng(Rec)
+                        If CommentPending Then CurStation.CHighOutlier = lCom
+                    Case "GAGEBASE"
+                        CurStation.GageBaseDischarge = CSng(Rec)
+                        If CommentPending Then CurStation.CGageBase = lCom
+                    Case "LATITUDE"
+                        CurStation.Lat = CSng(Rec)
+                        If CommentPending Then CurStation.CLat = lCom
+                    Case "LONGITUDE"
+                        CurStation.Lng = CSng(Rec)
+                        If CommentPending Then CurStation.CLong = lCom
+                    Case "HISYS" 'no comment for HISYS as it is just info for the interface
+                        CurStation.HighSysPeak = CSng(Rec)
+                    Case "LOHIST" 'no comment for LOHIST as it is just info for the interface
+                        CurStation.LowHistPeak = CSng(Rec)
+                    Case "PLOTNAME"
+                        CurStation.PlotName = Rec
                         If CommentPending Then CurStation.CPlotName = lCom
                     Case "PCPT_THRESH"
                         lThresh = New pfqStation.ThresholdType
@@ -487,16 +495,16 @@ Friend Class pfqProject
                         CurStation.PeakData.Add(lData)
                         If CommentPending Then CurStation.CIntervals = lCom
                 End Select
-				CommentPending = False 'assume any pending comment was stored with a specification
-			End If
-		End While
-		If Not CurStation Is Nothing Then
-			'station info exists, add it to collection
-			pStations.Add(CurStation)
-			'UPGRADE_NOTE: Object CurStation may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-			CurStation = Nothing
-		End If
-	End Sub
+                CommentPending = False 'assume any pending comment was stored with a specification
+            End If
+        End While
+        If Not CurStation Is Nothing Then
+            'station info exists, add it to collection
+            pStations.Add(CurStation)
+            'UPGRADE_NOTE: Object CurStation may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+            CurStation = Nothing
+        End If
+    End Sub
 	
 	Public Function SaveAsString(Optional ByRef DefPrj As pfqProject = Nothing) As String
 		
@@ -554,8 +562,8 @@ Friend Class pfqProject
 		If Len(pCEMA) > 0 Then s = s & pCEMA & vbCrLf
 		If pEMA Then
 			s = s & "O EMA YES" & vbCrLf
-		End If
-		i = 0
+        End If
+        i = 0
 		For	Each vSta In pStations
             If vSta.AnalysisOption <> "Skip" Then 'write station specs to string
                 If DefPrj Is Nothing Then 'write out all station specs
@@ -649,8 +657,8 @@ Friend Class pfqProject
 			.PrintPlotPos = pPrintPlotPos
 			.InputDir = pInputDir
 			.OutputDir = pOutputDir
-			.EMA = pEMA
-			.CDataFile = pCDataFile
+            .EMA = pEMA
+            .CDataFile = pCDataFile
 			.COutFile = pCOutFile
 			.CPlotStyle = pCPlotStyle
 			.CPlotFormat = pCPlotFormat
@@ -934,6 +942,7 @@ Friend Class pfqProject
                 If lStr.StartsWith("Explanation") Then lStr = ""
             End While
             lPeaks.Sort()
+            PfqPrj.Stations(lInd).PeakDataOrig = lPeaks
             PfqPrj.Stations(lInd).PeakData = lPeaks
             lInd += 1
             lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")

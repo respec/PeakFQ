@@ -756,7 +756,7 @@ FileCancel:
             s = WholeFileString(FName)
             'build default project from initial version of spec file
             SaveFileString(PathNameOnly(FName) & "\" & tmpSpecName, s)
-            PfqPrj.SpecFileName = tmpSpecName 'make working verbose copy
+            PfqPrj.SpecFileName = PathNameOnly(FName) & "\" & tmpSpecName 'make working verbose copy
             DefPfqPrj = PfqPrj.SaveDefaults(s)
         End If
         If FileExists(PfqPrj.OutFile) Then
@@ -773,6 +773,7 @@ FileCancel:
                 '      txtSpec.Text = fname
                 lblSpec.Text = "PKFQWin Spec File:  " & FName
             End If
+            cboLOTest.SelectedItem = LOTestType
             EnableGrid()
             PopulateGrid()
             PopulateOutput()
