@@ -15,6 +15,8 @@ Module modPeakfq
                                                  ByVal aWrcFc() As Single, ByVal aTxProb() As Single, _
                                                  ByRef aHistFlg As Integer, ByRef aNoCLim As Integer, _
                                                  ByVal aCLimL() As Single, ByVal aCLimU() As Single, _
+                                                 ByVal aNT As Integer, ByVal aThr() As Single, _
+                                                 ByVal aPPTh() As Single, ByVal aNObsTh() As Integer, _
                                                  ByVal aHeader As String, ByVal aHeaderLength As Short)
 
 	'UPGRADE_WARNING: Application will terminate when Sub Main() finishes. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="E08DDC71-66BA-424F-A612-80AF11498FF8"'
