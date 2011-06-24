@@ -1535,6 +1535,10 @@ FileCancel:
         Dim lIQual(199, 4) As Integer
         Dim lXQual(199) As String
         Dim lPkYear(199) As Integer
+        Dim lThr(199) As Single
+        Dim lPPTh(199) As Single
+        Dim lNObsTh(199) As Integer
+        Dim lNT As Integer
         Dim lWeiba As Single
         Dim lNPlot As Integer
         Dim lSysRFC(31) As Single
@@ -1579,7 +1583,7 @@ FileCancel:
         Dim lHeader As String = " ".PadLeft(80)
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
-                     lNoCLim, lCLimL, lCLimU, lHeader, lHeader.Length)
+                     lNoCLim, lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
 
         lNPlot1 = 0
@@ -1719,22 +1723,23 @@ FileCancel:
         i = 0
         For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(aStnInd).Thresholds
             'Look through peaks for count associated with this threshold
-            lThresh = 0
-            lThrMinPk = 10.0
-            For j = 0 To lNPkPlt - 1
-                If Math.Abs(lPkYear(j)) >= vThresh.SYear AndAlso Math.Abs(lPkYear(j)) <= vThresh.EYear Then
-                    lThresh += 1
-                    If lPkLog(j) < lThrMinPk Then 'lowest peak so far for this threshold
-                        lThrMinPk = lPkLog(j)
-                        If lHistFlg = 0 Then
-                            lX(0) = lWrcPP(j)
-                        Else
-                            lX(0) = lSysPP(j)
-                        End If
-                    End If
-                End If
-            Next
-            lY(0) = vThresh.LowerLimit
+            'lThresh = 0
+            'lThrMinPk = 10.0
+            'For j = 0 To lNPkPlt - 1
+            '    If Math.Abs(lPkYear(j)) >= vThresh.SYear AndAlso Math.Abs(lPkYear(j)) <= vThresh.EYear Then
+            '        lThresh += 1
+            '        If lPkLog(j) < lThrMinPk Then 'lowest peak so far for this threshold
+            '            lThrMinPk = lPkLog(j)
+            '            If lHistFlg = 0 Then
+            '                lX(0) = lWrcPP(j)
+            '            Else
+            '                lX(0) = lSysPP(j)
+            '            End If
+            '        End If
+            '    End If
+            'Next
+            lX(0) = lPPTh(i)
+            lY(0) = lThr(i) 'vThresh.LowerLimit
             'add dummy curve to create regular-sized legend symbol
             Dim lPtList As New ZedGraph.PointPairList
             lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
@@ -1746,7 +1751,7 @@ FileCancel:
             lCurve.Symbol.UserSymbol = lThreshSymbol
             lCurve.Line.IsVisible = False
             lCurve.Label.IsVisible = False
-            lCurve.Symbol.Size = 7 * Math.Sqrt(lThresh)
+            lCurve.Symbol.Size = 7 * lNObsTh(i) 'Math.Sqrt(lThresh)
             lCurve.Symbol.Border.Width = 2
             i += 1
         Next
