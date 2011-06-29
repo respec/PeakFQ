@@ -1538,7 +1538,10 @@ FileCancel:
         Dim lThr(199) As Single
         Dim lPPTh(199) As Single
         Dim lNObsTh(199) As Integer
+        Dim lThrSYr(199) As Integer
+        Dim lThrEYr(199) As Integer
         Dim lNT As Integer
+        Dim lThrDef As Boolean
         Dim lWeiba As Single
         Dim lNPlot As Integer
         Dim lSysRFC(31) As Single
@@ -1583,8 +1586,15 @@ FileCancel:
         Dim lHeader As String = " ".PadLeft(80)
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
-                     lNoCLim, lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, lHeader, lHeader.Length)
+                     lNoCLim, lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
+                     lThrSYr, lThrEYr, lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
+
+        If PfqPrj.Stations(aStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
+            lThrDef = True
+        Else
+            lThrDef = False
+        End If
 
         lNPlot1 = 0
         lNPlot2 = lNPlot - 1
@@ -1624,9 +1634,8 @@ FileCancel:
                 lXVals(i) = lSysPP(i)
             End If
             lThresh = -1
-            j = 0
-            For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(aStnInd).Thresholds
-                If Math.Abs(lPkYear(i)) >= vThresh.SYear AndAlso Math.Abs(lPkYear(i)) <= vThresh.EYear Then 'peak is in a threshold
+            For j = 0 To lNT - 1
+                If Math.Abs(lPkYear(i)) >= lThrSYr(j) AndAlso Math.Abs(lPkYear(i)) <= lThrEYr(j) Then 'peak is in a threshold
                     lThresh = j
                     Exit For
                 End If
@@ -1720,40 +1729,31 @@ FileCancel:
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
         'thresholds
-        i = 0
-        For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(aStnInd).Thresholds
-            'Look through peaks for count associated with this threshold
-            'lThresh = 0
-            'lThrMinPk = 10.0
-            'For j = 0 To lNPkPlt - 1
-            '    If Math.Abs(lPkYear(j)) >= vThresh.SYear AndAlso Math.Abs(lPkYear(j)) <= vThresh.EYear Then
-            '        lThresh += 1
-            '        If lPkLog(j) < lThrMinPk Then 'lowest peak so far for this threshold
-            '            lThrMinPk = lPkLog(j)
-            '            If lHistFlg = 0 Then
-            '                lX(0) = lWrcPP(j)
-            '            Else
-            '                lX(0) = lSysPP(j)
-            '            End If
-            '        End If
-            '    End If
-            'Next
-            lX(0) = lPPTh(i)
-            lY(0) = lThr(i) 'vThresh.LowerLimit
-            'add dummy curve to create regular-sized legend symbol
-            Dim lPtList As New ZedGraph.PointPairList
-            lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
-            lCurve.Symbol.UserSymbol = lThreshSymbol
-            lCurve.Line.IsVisible = False
-            'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lX, lY, ThreshColors(i), SymbolType.TriangleDown)
-            'lCurve.Line.IsVisible = False
-            lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
-            lCurve.Symbol.UserSymbol = lThreshSymbol
-            lCurve.Line.IsVisible = False
-            lCurve.Label.IsVisible = False
-            lCurve.Symbol.Size = 7 * lNObsTh(i) 'Math.Sqrt(lThresh)
-            lCurve.Symbol.Border.Width = 2
-            i += 1
+        For i = 0 To lNT - 1
+            If lNObsTh(i) > 0 Then
+                lX(0) = lPPTh(i)
+                lY(0) = lThr(i)
+                'add dummy curve to create regular-sized legend symbol
+                Dim lPtList As New ZedGraph.PointPairList
+                If lThrDef Then
+                    lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+                Else
+                    lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+                End If
+                lCurve.Symbol.UserSymbol = lThreshSymbol
+                lCurve.Line.IsVisible = False
+                'now plot symbol at appropriate scale
+                If lThrDef Then
+                    lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
+                Else
+                    lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
+                End If
+                lCurve.Symbol.UserSymbol = lThreshSymbol
+                lCurve.Line.IsVisible = False
+                lCurve.Label.IsVisible = False
+                lCurve.Symbol.Size = 7 * Math.Sqrt(lNObsTh(i))
+                lCurve.Symbol.Border.Width = 2
+            End If
         Next
 
         'set y-axis range
