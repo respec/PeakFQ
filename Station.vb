@@ -476,12 +476,16 @@ Friend Class pfqStation
         End If
         If pPeakData.Count > 0 Then 'write any interval data or updated peak data
             For Each vData As PeakDataType In pPeakData
-                If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
-                    s = s & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                End If
-                'If Not PeakDataOrig.Contains(vData) Then 'new or revised peak
-                '    s = s & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & vbCrLf
+                'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+                '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                 'End If
+                If Not PeakDataOrigContains(vData) Then 'new or revised peak
+                    If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then 'interval data
+                        s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                    Else 'just revised peak data
+                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & vData.Comment & vbCrLf
+                    End If
+                End If
             Next
         End If
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
@@ -496,7 +500,7 @@ Friend Class pfqStation
         If pLowOutlier > 0 Then 'write record showing specified low outlier
             s = s & pad & "LoThresh " & CStr(pLowOutlier) & vbCrLf
             'when LO specified there's no need for LO Test type
-            s = s & pad & "LOType FIXED"
+            s = s & pad & "LOType FIXED" & vbCrLf
         Else 'need a low outlier test type
             If LOTestType = "None" Then
                 s = s & pad & "LOType None" & vbCrLf
@@ -543,12 +547,16 @@ Friend Class pfqStation
         End If
         If pPeakData.Count > 0 Then 'write any interval data or updated peak data
             For Each vData As PeakDataType In pPeakData
-                If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
-                    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                End If
-                'If Not PeakDataOrig.Contains(vData) Then 'new or revised peak
-                '    s = s & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & vbCrLf
+                'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+                '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                 'End If
+                If Not PeakDataOrigContains(vData) Then 'new or revised peak/interval
+                    If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then 'interval data
+                        s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                    Else 'just revised peak data
+                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & vData.Comment & vbCrLf
+                    End If
+                End If
             Next
         End If
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
@@ -569,14 +577,14 @@ Friend Class pfqStation
         If pLowOutlier <> defsta.LowOutlier Then
             s = s & pad & "LoThresh " & CStr(pLowOutlier) & vbCrLf
             'when LO specified there's no need for LO Test type
-            s = s & pad & "LOType FIXED"
+            s = s & pad & "LOType FIXED" & vbCrLf
         Else 'need a low outlier test type
             If LOTestType = "None" Then
-                s = s & pad & "LOType None"
+                s = s & pad & "LOType None" & vbCrLf
             ElseIf LOTestType = "Single Grubbs-Beck" Then
-                s = s & pad & "LOType Single"
+                s = s & pad & "LOType Single" & vbCrLf
             ElseIf LOTestType = "Multiple Grubbs-Beck" Then
-                s = s & pad & "LOType Multiple"
+                s = s & pad & "LOType Multiple" & vbCrLf
             End If
         End If
         If Len(defsta.CHighOutlier) > 0 Then s = s & pad & defsta.CHighOutlier & vbCrLf
@@ -591,6 +599,18 @@ Friend Class pfqStation
         If pPlotName <> defsta.PlotName Then s = s & pad & "PlotName " & pPlotName & vbCrLf
         WriteSpecsNonDefault = s
 
+    End Function
+
+    Private Function PeakDataOrigContains(ByVal aPeak As PeakDataType) As Boolean
+        For Each lPeak As PeakDataType In pPeakDataOrig
+            If (lPeak.Year = aPeak.Year AndAlso lPeak.Value = aPeak.Value AndAlso _
+                lPeak.Code = aPeak.Code AndAlso lPeak.Comment = aPeak.Comment AndAlso _
+                lPeak.LowerLimit = aPeak.LowerLimit AndAlso _
+                lPeak.UpperLimit = aPeak.UpperLimit) Then
+                Return True
+            End If
+        Next
+        Return False
     End Function
 
     'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
