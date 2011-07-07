@@ -1544,6 +1544,9 @@ FileCancel:
         Dim lThrDef As Boolean
         Dim lWeiba As Single
         Dim lNPlot As Integer
+        Dim lGBCrit As Single
+        Dim lNLow As Integer
+        Dim lNZero As Integer
         Dim lSysRFC(31) As Single
         Dim lWrcFC(31) As Single
         Dim lTxProb(31) As Single
@@ -1587,7 +1590,7 @@ FileCancel:
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                      lNoCLim, lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
-                     lThrSYr, lThrEYr, lHeader, lHeader.Length)
+                     lThrSYr, lThrEYr, lGBCrit, lNLow, lNZero, lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
 
         If PfqPrj.Stations(aStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
