@@ -1547,6 +1547,8 @@ FileCancel:
         Dim lGBCrit As Single
         Dim lNLow As Integer
         Dim lNZero As Integer
+        Dim lSkew As Single
+        Dim lRMSegs As Single
         Dim lSysRFC(31) As Single
         Dim lWrcFC(31) As Single
         Dim lTxProb(31) As Single
@@ -1590,7 +1592,8 @@ FileCancel:
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                      lNoCLim, lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
-                     lThrSYr, lThrEYr, lGBCrit, lNLow, lNZero, lHeader, lHeader.Length)
+                     lThrSYr, lThrEYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
+                     lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
 
         If PfqPrj.Stations(aStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
@@ -1644,7 +1647,13 @@ FileCancel:
                 End If
                 j += 1
             Next
-            lKey = lXQual(i) & CStr(lThresh)
+            If lYVals(i) > lGBCrit Then 'above low outlier threshold
+                lKey = lXQual(i) & CStr(lThresh)
+            ElseIf Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
+                lKey = "LO Threshold"
+            Else
+                lKey = "Low Outlier"
+            End If
             If lCurves.Keys.Contains(lKey) Then 'add point to this curve
                 lCurve = lCurves.ItemByKey(lKey)
                 lCurve.AddPoint(lXVals(i), lYVals(i))
@@ -1656,18 +1665,28 @@ FileCancel:
                 End If
                 lX(0) = lXVals(i) 'lSysPP(i)
                 lY(0) = lYVals(i) '10 ^ lPkLog(i)
-                Select Case lXQual(i)
-                    Case "7", "H"
-                        lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Triangle)
-                    Case "D", "G", "X", "3", "8", "3+8"
-                        lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
-                    Case "K", "6", "C"
-                        lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
-                    Case "L", "4"
-                        lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
-                    Case Else
-                        lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, lColor, SymbolType.Circle)
-                End Select
+                If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
+                    lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.HDash)
+                    lCurve.Symbol.Size = 15
+                    lCurve = lPane.AddCurve("Low Outlier", lX, lY, Color.Red, SymbolType.Circle)
+                    lCurve.Symbol.Fill.Type = FillType.Solid
+                    lCurve.Label.IsVisible = False
+                ElseIf lY(0) < lGBCrit Then
+                    lCurve = lPane.AddCurve("Low Outlier", lX, lY, Color.Black, SymbolType.XCross)
+                Else
+                    Select Case lXQual(i)
+                        Case "7", "H"
+                            lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Triangle)
+                        Case "D", "G", "X", "3", "8", "3+8"
+                            lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
+                        Case "K", "6", "C"
+                            lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
+                        Case "L", "4"
+                            lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
+                        Case Else
+                            lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, lColor, SymbolType.Circle)
+                    End Select
+                End If
                 lCurve.Line.IsVisible = False
                 lCurves.Add(lKey, lCurve)
             End If
@@ -1765,10 +1784,10 @@ FileCancel:
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
         Dim lWarning As String = "Peakfq 5 run " & System.DateTime.Now & vbCrLf & _
-                                 "G" & vbCrLf & _
-                                 "MSE" & vbCrLf & _
-                                 "Zeroes not displayed" & vbCrLf & _
-                                 "Peaks below Low Outlier Threshold"
+                                 "Gg = " & lSkew & vbCrLf & _
+                                 "MSEg = " & lRMSegs & vbCrLf & _
+                                 lNZero & " Zeroes not displayed" & vbCrLf & _
+                                 lNLow & " Peaks below Low Outlier Threshold"
         Dim lText As New TextObj(lWarning, 0.5, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
