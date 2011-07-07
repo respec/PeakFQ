@@ -19,6 +19,9 @@ Module modPeakfq
                                                  ByVal aPPTh() As Single, ByVal aNObsTh() As Integer, _
                                                  ByVal aThrSYr() As Integer, ByVal aThrEYr() As Integer, _
                                                  ByVal aHeader As String, ByVal aHeaderLength As Short)
+    Friend Declare Sub GETPEAKS Lib "peakfq.dll" (ByRef aStnInd As Integer, ByRef aNPkPlt As Integer, _
+                                                  ByVal aPks() As Single, ByVal aXQual(,) As Integer, _
+                                                  ByVal aPkSeq() As Integer)
 
 	'UPGRADE_WARNING: Application will terminate when Sub Main() finishes. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="E08DDC71-66BA-424F-A612-80AF11498FF8"'
 	Public Sub Main()

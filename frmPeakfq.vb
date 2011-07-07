@@ -759,9 +759,9 @@ FileCancel:
             PfqPrj.SpecFileName = PathNameOnly(FName) & "\" & tmpSpecName 'make working verbose copy
             DefPfqPrj = PfqPrj.SaveDefaults(s)
         End If
+        'read peak data for each station from output file
+        PfqPrj.ReadPeaks()
         If FileExists(PfqPrj.OutFile) Then
-            'read peak data for each station from output file
-            PfqPrj.ReadPeaks()
             'delete output file generated from reading data
             Kill(PfqPrj.OutFile)
         End If
@@ -1788,7 +1788,7 @@ FileCancel:
 
     End Sub
 
-    Private Sub NumChr(ByRef aSLen As Integer, ByRef aArrayLen As Integer, ByRef aIntStr(,) As Integer, ByRef aStr() As String)
+    Public Sub NumChr(ByRef aSLen As Integer, ByRef aArrayLen As Integer, ByRef aIntStr(,) As Integer, ByRef aStr() As String)
         Dim lStr As String
         For lArrayInd As Integer = 0 To aArrayLen - 1
             lStr = ""

@@ -901,54 +901,46 @@ Friend Class pfqProject
 	End Function
 
     Public Sub ReadPeaks()
-        Dim lOutStr As String = WholeFileString(Me.OutFile)
-        Dim lStr As String
-        Dim lValStr As String
         Dim lInd As Integer = 0
+        Dim lNPks As Integer
+        Dim lPks(199) As Single
+        Dim lPksSeq(199) As Integer
+        Dim lIQual(199, 4) As Integer
+        Dim lXQual(199) As String
         Dim lPeak As pfqStation.PeakDataType
         Dim lPeaks As Generic.List(Of pfqStation.PeakDataType)
 
-        'find heading for peak values
-        lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")
-        While lOutStr.Length > 0
-            lStr = StrSplit(lOutStr, vbCrLf, "") 'skip blank line
-            'lStr = StrSplit(lOutStr, vbCrLf, "")
-            lStr = StrSplit(lOutStr, vbCrLf, "") 'read first line of values
+        For Each lStn As pfqStation In PfqPrj.Stations
             lPeaks = New Generic.List(Of pfqStation.PeakDataType)
-            While lStr.Length > 0 'read records until blank line is reached
-                lPeak = New pfqStation.PeakDataType
-                Do 'read values on this record
-                    lPeak.Year = CInt(StrRetRem(lStr))
-                    lPeak.Value = CDbl(StrRetRem(lStr))
-                    lValStr = StrRetRem(lStr)
-                    If lValStr.Length > 0 AndAlso (Not IsNumeric(lValStr) OrElse lValStr < 1800) Then 'not a date, code exists for this value
-                        lPeak.Code = lValStr
-                        lValStr = StrRetRem(lStr)
-                    End If
-                    lPeaks.Add(lPeak)
-                    If lValStr.Length > 0 Then 'second set of values on this record
-                        lPeak = New pfqStation.PeakDataType
-                        lPeak.Year = CInt(lValStr)
-                        lPeak.Value = CDbl(StrRetRem(lStr))
-                        lValStr = StrRetRem(lStr)
-                        If lValStr.Length > 0 Then 'code exists for this value
-                            lPeak.Code = lValStr
-                            lValStr = "" 'trigger exit of "read record" loop
-                        End If
-                        lPeaks.Add(lPeak)
-                    End If
-                Loop While lValStr.Length > 0
-                lStr = StrSplit(lOutStr, vbCrLf, "") 'read next line of values
-                If lStr.StartsWith("Explanation") Then lStr = ""
-            End While
-            lPeaks.Sort()
-            PfqPrj.Stations(lInd).PeakDataOrig = lPeaks
-            PfqPrj.Stations(lInd).PeakData = lPeaks
             lInd += 1
-            lStr = StrSplit(lOutStr, "WATER YEAR    DISCHARGE", "")
-        End While
+            GETPEAKS(lInd, lNPks, lPks, lIQual, lPksSeq)
+            NumChr(5, 200, lIQual, lXQual)
+            For i As Integer = 0 To lNPks - 1
+                lPeak = New pfqStation.PeakDataType
+                lPeak.Year = Math.Abs(lPksSeq(i))
+                lPeak.Value = lPks(i)
+                lPeak.Code = lXQual(i)
+                lPeaks.Add(lPeak)
+            Next i
+            lPeaks.Sort()
+            lStn.PeakDataOrig = lPeaks
+            lStn.PeakData = lPeaks
+        Next
     End Sub
-	
+
+    Public Sub NumChr(ByRef aSLen As Integer, ByRef aArrayLen As Integer, ByRef aIntStr(,) As Integer, ByRef aStr() As String)
+        Dim lStr As String
+        For lArrayInd As Integer = 0 To aArrayLen - 1
+            lStr = ""
+            For lInd As Integer = 0 To aSLen - 1 'added "- 1" 8/16/2002 Mark Gray
+                If aIntStr(lArrayInd, lInd) > 0 Then
+                    lStr &= Chr(aIntStr(lArrayInd, lInd))
+                End If
+            Next lInd
+            aStr(lArrayInd) = Trim(lStr)
+        Next lArrayInd
+    End Sub
+
 	'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
 	Private Sub Class_Initialize_Renamed()
         pSpecFileName = ""
