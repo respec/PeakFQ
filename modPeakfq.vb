@@ -18,6 +18,7 @@ Module modPeakfq
                                                  ByRef aNT As Integer, ByVal aThr() As Single, _
                                                  ByVal aPPTh() As Single, ByVal aNObsTh() As Integer, _
                                                  ByVal aThrSYr() As Integer, ByVal aThrEYr() As Integer, _
+                                                 ByRef aGBCrit As Single, ByRef aNLow As Integer, ByRef aNZero As Integer, _
                                                  ByVal aHeader As String, ByVal aHeaderLength As Short)
     Friend Declare Sub GETPEAKS Lib "peakfq.dll" (ByRef aStnInd As Integer, ByRef aNPkPlt As Integer, _
                                                   ByVal aPks() As Single, ByVal aXQual(,) As Integer, _
