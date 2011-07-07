@@ -464,16 +464,15 @@ Friend Class pfqStation
         End If
         If pThresholds.Count > 0 Then 'using perception threshholds, not beg/end years and hist. period
             For Each vPT As ThresholdType In pThresholds
-                s = s & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
+                s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
-        Else 'using beg/end years and hist. period
-            If Len(pCBegYear) > 0 Then s = s & pad & pCBegYear & vbCrLf
-            If pBegYear > 0 Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
-            If Len(pCEndYear) > 0 Then s = s & pad & pCEndYear & vbCrLf
-            If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
-            If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
-            If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
         End If
+        If Len(pCBegYear) > 0 Then s = s & pad & pCBegYear & vbCrLf
+        If pBegYear > 0 Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
+        If Len(pCEndYear) > 0 Then s = s & pad & pCEndYear & vbCrLf
+        If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
+        If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
+        If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
         If pPeakData.Count > 0 Then 'write any interval data or updated peak data
             For Each vData As PeakDataType In pPeakData
                 'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
@@ -483,7 +482,7 @@ Friend Class pfqStation
                     If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then 'interval data
                         s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                     Else 'just revised peak data
-                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & vData.Comment & vbCrLf
+                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
                     End If
                 End If
             Next
@@ -554,7 +553,7 @@ Friend Class pfqStation
                     If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then 'interval data
                         s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                     Else 'just revised peak data
-                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & vData.Comment & vbCrLf
+                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
                     End If
                 End If
             Next
