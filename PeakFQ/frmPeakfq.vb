@@ -1783,7 +1783,7 @@ FileCancel:
 
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
-        Dim lWarning As String = "Peakfq 5 run " & System.DateTime.Now & vbCrLf & _
+        Dim lWarning As String = "Peakfq 6 run " & System.DateTime.Now & vbCrLf & _
                                  "Gg = " & lSkew & vbCrLf & _
                                  "MSEg = " & lRMSegs & vbCrLf & _
                                  lNZero & " Zeroes not displayed" & vbCrLf & _
