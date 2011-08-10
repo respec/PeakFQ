@@ -504,9 +504,9 @@ Friend Class pfqStation
             If LOTestType = "None" Then
                 s = s & pad & "LOType None" & vbCrLf
             ElseIf LOTestType = "Single Grubbs-Beck" Then
-                s = s & pad & "LOType Single" & vbCrLf
+                s = s & pad & "LOType GBT" & vbCrLf
             ElseIf LOTestType = "Multiple Grubbs-Beck" Then
-                s = s & pad & "LOType Multiple" & vbCrLf
+                s = s & pad & "LOType MGBT" & vbCrLf
             End If
         End If
         If Len(pCHighOutlier) > 0 Then s = s & pad & pCHighOutlier & vbCrLf
@@ -581,9 +581,9 @@ Friend Class pfqStation
             If LOTestType = "None" Then
                 s = s & pad & "LOType None" & vbCrLf
             ElseIf LOTestType = "Single Grubbs-Beck" Then
-                s = s & pad & "LOType Single" & vbCrLf
+                s = s & pad & "LOType GBT" & vbCrLf
             ElseIf LOTestType = "Multiple Grubbs-Beck" Then
-                s = s & pad & "LOType Multiple" & vbCrLf
+                s = s & pad & "LOType MGBT" & vbCrLf
             End If
         End If
         If Len(defsta.CHighOutlier) > 0 Then s = s & pad & defsta.CHighOutlier & vbCrLf
