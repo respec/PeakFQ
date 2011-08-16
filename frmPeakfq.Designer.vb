@@ -188,7 +188,7 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(1037, 24)
+        Me.MainMenu1.Size = New System.Drawing.Size(1141, 24)
         Me.MainMenu1.TabIndex = 30
         '
         'mnuFile
@@ -252,7 +252,7 @@
         Me.fraButtons.Cursor = System.Windows.Forms.Cursors.Default
         Me.fraButtons.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraButtons.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraButtons.Location = New System.Drawing.Point(680, 470)
+        Me.fraButtons.Location = New System.Drawing.Point(784, 502)
         Me.fraButtons.Name = "fraButtons"
         Me.fraButtons.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.fraButtons.Size = New System.Drawing.Size(345, 25)
@@ -314,7 +314,7 @@
         Me.sstPfq.Location = New System.Drawing.Point(8, 88)
         Me.sstPfq.Name = "sstPfq"
         Me.sstPfq.SelectedIndex = 1
-        Me.sstPfq.Size = New System.Drawing.Size(1017, 367)
+        Me.sstPfq.Size = New System.Drawing.Size(1121, 399)
         Me.sstPfq.TabIndex = 0
         '
         'tabStationSpecs
@@ -328,7 +328,7 @@
         Me.tabStationSpecs.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabStationSpecs.Location = New System.Drawing.Point(4, 22)
         Me.tabStationSpecs.Name = "tabStationSpecs"
-        Me.tabStationSpecs.Size = New System.Drawing.Size(1009, 341)
+        Me.tabStationSpecs.Size = New System.Drawing.Size(1113, 373)
         Me.tabStationSpecs.TabIndex = 0
         Me.tabStationSpecs.Text = "Station Specifications"
         Me.tabStationSpecs.UseVisualStyleBackColor = True
@@ -351,7 +351,7 @@
         Me.cboLOTest.Items.AddRange(New Object() {"Single Grubbs-Beck", "Multiple Grubbs-Beck"})
         Me.cboLOTest.Location = New System.Drawing.Point(677, 20)
         Me.cboLOTest.Name = "cboLOTest"
-        Me.cboLOTest.Size = New System.Drawing.Size(69, 21)
+        Me.cboLOTest.Size = New System.Drawing.Size(145, 21)
         Me.cboLOTest.TabIndex = 7
         '
         'Label1
@@ -399,7 +399,7 @@
         Me.grdSpecs.LineWidth = 1.0!
         Me.grdSpecs.Location = New System.Drawing.Point(0, 44)
         Me.grdSpecs.Name = "grdSpecs"
-        Me.grdSpecs.Size = New System.Drawing.Size(1006, 294)
+        Me.grdSpecs.Size = New System.Drawing.Size(1110, 326)
         Me.grdSpecs.Source = Nothing
         Me.grdSpecs.TabIndex = 2
         '
@@ -419,7 +419,7 @@
         Me.tabThresholds.Location = New System.Drawing.Point(4, 22)
         Me.tabThresholds.Name = "tabThresholds"
         Me.tabThresholds.Padding = New System.Windows.Forms.Padding(3)
-        Me.tabThresholds.Size = New System.Drawing.Size(1009, 341)
+        Me.tabThresholds.Size = New System.Drawing.Size(1113, 373)
         Me.tabThresholds.TabIndex = 3
         Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
@@ -448,7 +448,7 @@
         Me.zgcThresh.ScrollMinX = 0.0R
         Me.zgcThresh.ScrollMinY = 0.0R
         Me.zgcThresh.ScrollMinY2 = 0.0R
-        Me.zgcThresh.Size = New System.Drawing.Size(417, 335)
+        Me.zgcThresh.Size = New System.Drawing.Size(521, 367)
         Me.zgcThresh.TabIndex = 12
         '
         'lblIntervals
@@ -472,7 +472,7 @@
         'cmdAddInt
         '
         Me.cmdAddInt.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.cmdAddInt.Location = New System.Drawing.Point(329, 318)
+        Me.cmdAddInt.Location = New System.Drawing.Point(329, 350)
         Me.cmdAddInt.Name = "cmdAddInt"
         Me.cmdAddInt.Size = New System.Drawing.Size(57, 21)
         Me.cmdAddInt.TabIndex = 9
@@ -483,7 +483,7 @@
         'cmdAddThr
         '
         Me.cmdAddThr.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.cmdAddThr.Location = New System.Drawing.Point(94, 318)
+        Me.cmdAddThr.Location = New System.Drawing.Point(94, 350)
         Me.cmdAddThr.Name = "cmdAddThr"
         Me.cmdAddThr.Size = New System.Drawing.Size(57, 21)
         Me.cmdAddThr.TabIndex = 7
@@ -522,7 +522,7 @@
         Me.grdInterval.LineWidth = 1.0!
         Me.grdInterval.Location = New System.Drawing.Point(1, 150)
         Me.grdInterval.Name = "grdInterval"
-        Me.grdInterval.Size = New System.Drawing.Size(479, 162)
+        Me.grdInterval.Size = New System.Drawing.Size(479, 194)
         Me.grdInterval.Source = Nothing
         Me.grdInterval.TabIndex = 4
         '
@@ -1112,7 +1112,7 @@
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(1037, 504)
+        Me.ClientSize = New System.Drawing.Size(1141, 536)
         Me.Controls.Add(Me.fraButtons)
         Me.Controls.Add(Me.sstPfq)
         Me.Controls.Add(Me.lblInstruct)
