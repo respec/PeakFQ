@@ -16,7 +16,7 @@ Friend Class frmPeakfq
 
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
-    Friend ThreshColors() As System.Drawing.Color = {Color.LightBlue, Color.LightGreen, Color.Yellow, Color.LightCoral, Color.LightSlateGray, Color.LightCyan}
+    Friend ThreshColors() As System.Drawing.Color = {Color.LightBlue, Color.LightCoral, Color.LimeGreen, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -1085,12 +1085,21 @@ FileCancel:
             lThrColl = New Generic.List(Of pfqStation.ThresholdType)
             For i = .FixedRows To .Rows - 1
                 If IsNumeric(.CellValue(i, 0)) AndAlso IsNumeric(.CellValue(i, 1)) AndAlso _
-                   IsNumeric(.CellValue(i, 2)) AndAlso IsNumeric(.CellValue(i, 3)) Then
+                   (IsNumeric(.CellValue(i, 2)) Or (.CellValue(i, 2) IsNot Nothing AndAlso .CellValue(i, 2).ToLower = "inf")) AndAlso _
+                   (IsNumeric(.CellValue(i, 3)) Or (.CellValue(i, 3) IsNot Nothing AndAlso .CellValue(i, 3).ToLower = "inf")) Then
                     Dim lThresh As New pfqStation.ThresholdType
                     lThresh.SYear = CInt(.CellValue(i, 0))
                     lThresh.EYear = CInt(.CellValue(i, 1))
-                    lThresh.LowerLimit = CSng(.CellValue(i, 2))
-                    lThresh.UpperLimit = CSng(.CellValue(i, 3))
+                    If .CellValue(i, 2).ToLower = "inf" Then
+                        lThresh.LowerLimit = 1.0E+20
+                    Else
+                        lThresh.LowerLimit = CSng(.CellValue(i, 2))
+                    End If
+                    If .CellValue(i, 3).ToLower = "inf" Then
+                        lThresh.UpperLimit = 1.0E+20
+                    Else
+                        lThresh.UpperLimit = CSng(.CellValue(i, 3))
+                    End If
                     lThresh.Comment = .CellValue(i, 4)
                     lThrColl.Add(lThresh)
                 End If
@@ -1571,6 +1580,7 @@ FileCancel:
         Dim lX(0) As Double
         Dim lY(0) As Double
         Dim lColor As System.Drawing.Color
+        'build threshold symbol
         Dim lThreshSymbol As New System.Drawing.Drawing2D.GraphicsPath
         Dim lSize As Single = 0.5
         lThreshSymbol.AddLine(0, 0, lSize, -2 * lSize)
@@ -1578,7 +1588,11 @@ FileCancel:
         lThreshSymbol.AddLine(-lSize, -2 * lSize, 0, 0)
         lThreshSymbol.StartFigure()
         lThreshSymbol.AddLine(-lSize, 0, lSize, 0)
-
+        'build low outlier threshold
+        Dim lLOThreshSymbol As New System.Drawing.Drawing2D.GraphicsPath
+        lLOThreshSymbol.AddEllipse(-lSize, -lSize, 2 * lSize, 2 * lSize)
+        lLOThreshSymbol.StartFigure()
+        lLOThreshSymbol.AddLine(-2 * lSize, 0, 2 * lSize, 0)
 
         newform.Height = VB6.TwipsToPixelsY(9450)
         newform.Width = VB6.TwipsToPixelsX(13200)
@@ -1595,6 +1609,8 @@ FileCancel:
                      lThrSYr, lThrEYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
                      lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
+
+        If lGBCrit > 0 Then lGBCrit = 10 ^ lGBCrit 'convert low outlier threshold from log to base 10
 
         If PfqPrj.Stations(aStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
             lThrDef = True
@@ -1645,7 +1661,6 @@ FileCancel:
                     lThresh = j
                     Exit For
                 End If
-                j += 1
             Next
             If lYVals(i) > lGBCrit Then 'above low outlier threshold
                 lKey = lXQual(i) & CStr(lThresh)
@@ -1666,11 +1681,12 @@ FileCancel:
                 lX(0) = lXVals(i) 'lSysPP(i)
                 lY(0) = lYVals(i) '10 ^ lPkLog(i)
                 If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
-                    lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.HDash)
-                    lCurve.Symbol.Size = 15
-                    lCurve = lPane.AddCurve("Low Outlier", lX, lY, Color.Red, SymbolType.Circle)
+                    lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.UserDefined)
+                    lCurve.Symbol.UserSymbol = lLOThreshSymbol
                     lCurve.Symbol.Fill.Type = FillType.Solid
-                    lCurve.Label.IsVisible = False
+                    'lCurve.Symbol.Size = 15
+                    'lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.Circle)
+                    'lCurve.Label.IsVisible = False
                 ElseIf lY(0) < lGBCrit Then
                     lCurve = lPane.AddCurve("Low Outlier", lX, lY, Color.Black, SymbolType.XCross)
                 Else
@@ -1843,7 +1859,9 @@ FileCancel:
             Dim lVal As String = .CellValue(aRow, aColumn)
             Dim lGoodRow As Boolean = True
             If aColumn < .Columns - 1 Then
-                If IsNumeric(lVal) Then 'set to this threshold's color
+                'check for case of 'inf' entered for threshold value
+                If IsNumeric(lVal) OrElse (aColumn > 1 AndAlso lVal.ToLower = "inf") Then 'set to this threshold's color
+                    If IsNumeric(lVal) AndAlso CDbl(lVal) > 1.0E+19 Then .CellValue(aRow, aColumn) = "inf"
                     .CellColor(aRow, aColumn) = ThreshColors(aRow - .FixedRows)
                 Else 'reminder that values should be numeric
                     MessageBox.Show("All fields (except Comment) for Perception Thresholds must be numeric.", "Perception Threshold Problem")
@@ -1859,8 +1877,11 @@ FileCancel:
             End If
             For i As Integer = 0 To .Columns - 2
                 If Not IsNumeric(.CellValue(aRow, i)) Then
-                    lGoodRow = False
-                    Exit For
+                    If i < 2 OrElse .CellValue(aRow, i) Is Nothing OrElse .CellValue(aRow, i).ToLower <> "inf" Then
+                        'not 'inf' entered for threshold value
+                        lGoodRow = False
+                        Exit For
+                    End If
                 End If
             Next
             If IsNothing(.CellValue(aRow, .Columns - 1)) OrElse .CellValue(aRow, .Columns - 1).Length = 0 Then lGoodRow = False
@@ -1924,7 +1945,7 @@ FileCancel:
                     .Alignment(.Rows - 1, i) = atcAlignment.HAlignRight
                 End If
                 If i = 3 Then 'default high threshold value and assign threshold color
-                    .CellValue(.Rows - 1, i) = "1.0e20"
+                    .CellValue(.Rows - 1, i) = "inf" '"1.0e20"
                     .CellColor(.Rows - 1, i) = ThreshColors(.Rows - .FixedRows - 1)
                 End If
             Next
@@ -1947,5 +1968,9 @@ FileCancel:
         End With
         grdInterval.SizeAllColumnsToContents(grdThresh.Width, True)
         grdInterval.Refresh()
+    End Sub
+
+    Private Sub cboLOTest_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboLOTest.SelectedIndexChanged
+        LOTestType = cboLOTest.SelectedItem
     End Sub
 End Class
