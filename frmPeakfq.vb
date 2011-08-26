@@ -860,7 +860,7 @@ FileCancel:
         lstGraphs.Items.Clear()
         With grdSpecs.Source
             For i = 1 To .Rows - .FixedRows
-                If .CellValue(i, 1) <> "Skip" Then
+                If .CellValue(i + 1, 1) <> "Skip" Then
                     j = j + 1
                     'oldName = "PKFQ-" & j & ".BMP"
                     newName = .CellValue(i + 1, 17)
