@@ -1583,6 +1583,8 @@ FileCancel:
         Dim lKey As String
         Dim lX(0) As Double
         Dim lY(0) As Double
+        Dim lX2(1) As Double
+        Dim lY2(1) As Double
         Dim lColor As System.Drawing.Color
         'build threshold symbol
         Dim lThreshSymbol As New System.Drawing.Drawing2D.GraphicsPath
@@ -1770,6 +1772,18 @@ FileCancel:
         lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Label.IsVisible = False
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
+
+        'plot any interval data
+        For i = 0 To lNInt - 1
+            lX2(0) = lIntPPos(i)
+            lX2(1) = lIntPPos(i)
+            lY2(0) = lIntLwr(i)
+            lY2(1) = lIntUpr(i)
+            lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Green, SymbolType.HDash)
+            If i > 0 Then
+                lCurve.Label.IsVisible = False
+            End If
+        Next
 
         'thresholds
         For i = 0 To lNT - 1
