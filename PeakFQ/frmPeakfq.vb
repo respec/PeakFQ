@@ -1549,6 +1549,10 @@ FileCancel:
         Dim lNObsTh(199) As Integer
         Dim lThrSYr(199) As Integer
         Dim lThrEYr(199) As Integer
+        Dim lNInt As Integer
+        Dim lIntLwr(199) As Single
+        Dim lIntUpr(199) As Single
+        Dim lIntPPos(199) As Single
         Dim lNT As Integer
         Dim lThrDef As Boolean
         Dim lWeiba As Single
@@ -1606,7 +1610,8 @@ FileCancel:
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                      lNoCLim, lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
-                     lThrSYr, lThrEYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
+                     lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lIntPPos, _
+                     lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
                      lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
 

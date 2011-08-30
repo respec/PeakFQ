@@ -18,6 +18,8 @@ Module modPeakfq
                                                  ByRef aNT As Integer, ByVal aThr() As Single, _
                                                  ByVal aPPTh() As Single, ByVal aNObsTh() As Integer, _
                                                  ByVal aThrSYr() As Integer, ByVal aThrEYr() As Integer, _
+                                                 ByVal aNInt As Integer, ByVal aIntLwr() As Single, _
+                                                 ByVal aIntUpr() As Single, ByVal aIntPPos() As Single, _
                                                  ByRef aGBCrit As Single, ByRef aNLow As Integer, ByRef aNZero As Integer, _
                                                  ByRef aSkew As Single, ByRef aRMSegs As Single, _
                                                  ByVal aHeader As String, ByVal aHeaderLength As Short)
