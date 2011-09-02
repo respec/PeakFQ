@@ -1648,7 +1648,7 @@ FileCancel:
         Next
         lYAxis.IsVisible = True
         lYAxis.Scale.IsVisible = True
-        lCurve = lPane.AddCurve("Bull. 17-B frequency", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve = lPane.AddCurve("Fitted frequency", lXVals, lYVals, Color.Red, SymbolType.None)
 
         'observed peaks
         lCurves = New atcCollection
@@ -1927,27 +1927,31 @@ FileCancel:
                     MessageBox.Show("All values for Peaks/Intervals must be numeric.", "Data Problem")
                 End If
             End If
-            If IsNumeric(.CellValue(aRow, 0)) AndAlso _
-               IsNumeric(.CellValue(aRow, 1)) Then 'valid peak value entry
-                lGoodRow = True
-                For i As Integer = 0 To .Columns - 1
-                    'set text color to red
-
-                Next
+            If IsNumeric(.CellValue(aRow, 0)) Then 'valid year entered
+                If IsNumeric(.CellValue(aRow, 1)) AndAlso _
+                   (Not .CellValue(aRow, 2) Is Nothing AndAlso .CellValue(aRow, 2).Length > 0) Then 'valid peak value entry
+                    lGoodRow = True
+                End If
+                If IsNumeric(.CellValue(aRow, 3)) Or IsNumeric(.CellValue(aRow, 4)) Then 'some interval data entered, check it
+                    If IsNumeric(.CellValue(aRow, 0)) AndAlso _
+                       IsNumeric(.CellValue(aRow, 3)) AndAlso _
+                       IsNumeric(.CellValue(aRow, 4)) AndAlso _
+                       (Not .CellValue(aRow, 5) Is Nothing AndAlso .CellValue(aRow, 5).Length > 0) Then 'valid interval value entry
+                        lGoodRow = True
+                    Else
+                        lGoodRow = False
+                    End If
+                End If
             End If
-            If IsNumeric(.CellValue(aRow, 0)) AndAlso _
-               IsNumeric(.CellValue(aRow, 3)) AndAlso _
-               IsNumeric(.CellValue(aRow, 4)) Then 'valid interval value entry
-                lGoodRow = True
-                For i As Integer = 0 To .Columns - 1
-                    'set text color to green
-                Next
+            If lGoodRow Then
+                ProcessThresholds()
+                UpdateInputGraph()
+                If aRow = .Rows - 1 Then
+                    AddIntervalRow()
+                End If
             End If
-            If lGoodRow AndAlso aRow = .Rows - 1 Then
-                AddIntervalRow()
-            End If
-            ProcessThresholds()
-            UpdateInputGraph()
+                'ProcessThresholds()
+                'UpdateInputGraph()
         End With
         aGrid.SizeAllColumnsToContents(aGrid.Width)
         aGrid.Refresh()
@@ -1985,7 +1989,7 @@ FileCancel:
                 End If
             Next
         End With
-        grdInterval.SizeAllColumnsToContents(grdThresh.Width, True)
+        grdInterval.SizeAllColumnsToContents(grdInterval.Width, True)
         grdInterval.Refresh()
     End Sub
 
