@@ -99,6 +99,7 @@
         Me.cmdExit = New System.Windows.Forms.Button()
         Me.sstPfq = New System.Windows.Forms.TabControl()
         Me.tabStationSpecs = New System.Windows.Forms.TabPage()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.lblLOTest = New System.Windows.Forms.Label()
         Me.cboLOTest = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -319,6 +320,7 @@
         '
         'tabStationSpecs
         '
+        Me.tabStationSpecs.Controls.Add(Me.Label2)
         Me.tabStationSpecs.Controls.Add(Me.lblLOTest)
         Me.tabStationSpecs.Controls.Add(Me.cboLOTest)
         Me.tabStationSpecs.Controls.Add(Me.Label1)
@@ -333,11 +335,21 @@
         Me.tabStationSpecs.Text = "Station Specifications"
         Me.tabStationSpecs.UseVisualStyleBackColor = True
         '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(806, 23)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(222, 13)
+        Me.Label2.TabIndex = 9
+        Me.Label2.Text = "(Multiple Grubbs-Beck only available for EMA)"
+        '
         'lblLOTest
         '
         Me.lblLOTest.AutoSize = True
         Me.lblLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblLOTest.Location = New System.Drawing.Point(520, 23)
+        Me.lblLOTest.Location = New System.Drawing.Point(498, 23)
         Me.lblLOTest.Name = "lblLOTest"
         Me.lblLOTest.Size = New System.Drawing.Size(151, 13)
         Me.lblLOTest.TabIndex = 8
@@ -349,7 +361,7 @@
         Me.cboLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cboLOTest.FormattingEnabled = True
         Me.cboLOTest.Items.AddRange(New Object() {"Single Grubbs-Beck", "Multiple Grubbs-Beck"})
-        Me.cboLOTest.Location = New System.Drawing.Point(677, 20)
+        Me.cboLOTest.Location = New System.Drawing.Point(655, 20)
         Me.cboLOTest.Name = "cboLOTest"
         Me.cboLOTest.Size = New System.Drawing.Size(145, 21)
         Me.cboLOTest.TabIndex = 7
@@ -548,7 +560,7 @@
         Me.tabOutput.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabOutput.Location = New System.Drawing.Point(4, 22)
         Me.tabOutput.Name = "tabOutput"
-        Me.tabOutput.Size = New System.Drawing.Size(1009, 341)
+        Me.tabOutput.Size = New System.Drawing.Size(1113, 373)
         Me.tabOutput.TabIndex = 1
         Me.tabOutput.Text = "Output Options"
         Me.tabOutput.UseVisualStyleBackColor = True
@@ -895,7 +907,7 @@
         Me.tabResults.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabResults.Location = New System.Drawing.Point(4, 22)
         Me.tabResults.Name = "tabResults"
-        Me.tabResults.Size = New System.Drawing.Size(1009, 341)
+        Me.tabResults.Size = New System.Drawing.Size(1113, 373)
         Me.tabResults.TabIndex = 2
         Me.tabResults.Text = "Results"
         Me.tabResults.UseVisualStyleBackColor = True
@@ -1172,5 +1184,6 @@
     Friend WithEvents cboGraphFormat As System.Windows.Forms.ComboBox
     Friend WithEvents lblLOTest As System.Windows.Forms.Label
     Friend WithEvents cboLOTest As System.Windows.Forms.ComboBox
+    Friend WithEvents Label2 As System.Windows.Forms.Label
 #End Region
 End Class

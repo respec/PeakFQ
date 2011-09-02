@@ -618,7 +618,12 @@ Friend Class pfqProject
             IO.File.Delete(PfqPrj.OutFile)
         End If
 
-        Logger.Status("Caption PKFQWin Status")
+        Logger.ProgressStatus = New StatusMonitor 'MonitorProgressStatus
+        Logger.Status("Begin")
+        Logger.Status("Show")
+        'Logger.Status("Caption PKFQWin Status")
+        Logger.Status("Label Title PKFQWin 6.0 ")
+
 
         'Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
         Logger.Status("Running PeakFQ from " & CurDir() & " using spec file " & pSpecFileName, True)
@@ -629,6 +634,7 @@ Friend Class pfqProject
         Else
             Logger.Status("PeakFQ run successfully.", True)
         End If
+        Logger.Status("Exit")
 
         If CurDir() <> PFQExePath Then
             Kill("pkfqms.wdm")
