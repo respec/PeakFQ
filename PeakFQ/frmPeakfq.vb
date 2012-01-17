@@ -24,26 +24,38 @@ Friend Class frmPeakfq
 
     Dim pLastClickedRow As Integer
 
+    Private Class GraphListItem
+        Public Label As String
+        Public Index As Integer
+        Public Overrides Function ToString() As String
+            Return Label
+        End Function
+        Public Sub New(ByVal aLabel As String, ByVal aIndex As Integer)
+            Label = aLabel
+            Index = aIndex
+        End Sub
+    End Class
+
     'UPGRADE_WARNING: Event chkAddOut.CheckStateChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
     Private Sub chkAddOut_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles chkAddOut.CheckStateChanged
         Dim Index As Short = chkAddOut.GetIndex(eventSender)
         If Index = 1 Then 'text file additional output
-            If chkAddOut(1).CheckState = System.Windows.Forms.CheckState.Checked Then
+            If chkAddOut(1).CheckState = CheckState.Checked Then
                 'expand frame to show additional output file and button to edit it
                 'fraAddOut.Height = VB6.TwipsToPixelsY(1575)
                 If Len(PfqPrj.AddOutFileName) = 0 Then 'set default
                     lblOutFile(1).Text = IO.Path.ChangeExtension(PfqPrj.OutFile, ".bcd")
                 End If
-                lblOutFile(1).Visible = TriState.True
-                cmdOpenOut(1).Visible = TriState.True
-                optAddFormat(0).Visible = TriState.True
-                optAddFormat(1).Visible = TriState.True
+                lblOutFile(1).Visible = True
+                cmdOpenOut(1).Visible = True
+                optAddFormat(0).Visible = True
+                optAddFormat(1).Visible = True
             Else 'smaller frame is fine
                 'fraAddOut.Height = VB6.TwipsToPixelsY(735)
-                lblOutFile(1).Visible = TriState.False
-                cmdOpenOut(1).Visible = TriState.False
-                optAddFormat(0).Visible = TriState.False
-                optAddFormat(1).Visible = TriState.False
+                lblOutFile(1).Visible = False
+                cmdOpenOut(1).Visible = False
+                optAddFormat(0).Visible = False
+                optAddFormat(1).Visible = False
             End If
         End If
     End Sub
@@ -56,7 +68,9 @@ Friend Class frmPeakfq
         Dim i As Integer
         'Dim GraphName As String
         'Dim newform As frmGraph
-
+        'For Each lItem As GraphListItem In lstGraphs.SelectedItems
+        '    GenFrequencyGraph(lItem.Index)
+        'Next
         For i = 0 To lstGraphs.Items.Count - 1
             If lstGraphs.GetSelected(i) Then
                 GenFrequencyGraph(i)
@@ -259,44 +273,66 @@ Friend Class frmPeakfq
         lblOutFile(0).Text = PfqPrj.OutFile
         If PfqPrj.DataType = 0 Then 'ASCII input, can't output to WDM
             chkAddOut(0).Enabled = False
-            chkAddOut(0).CheckState = System.Windows.Forms.CheckState.Unchecked
+            chkAddOut(0).CheckState = CheckState.Unchecked
         Else
             chkAddOut(0).Enabled = True
             If PfqPrj.AdditionalOutput Mod 2 = 1 Then
-                chkAddOut(0).CheckState = System.Windows.Forms.CheckState.Checked
+                chkAddOut(0).CheckState = CheckState.Checked
             End If
         End If
         If PfqPrj.AdditionalOutput >= 2 Then
-            chkAddOut(1).CheckState = System.Windows.Forms.CheckState.Checked
+            chkAddOut(1).CheckState = CheckState.Checked
             lblOutFile(1).Text = PfqPrj.AddOutFileName
-            lblOutFile(1).Visible = TriState.True
-            cmdOpenOut(1).Visible = TriState.True
-            optAddFormat(0).Visible = TriState.True
-            optAddFormat(1).Visible = TriState.True
+            lblOutFile(1).Visible = True
+            cmdOpenOut(1).Visible = True
+            optAddFormat(0).Visible = True
+            optAddFormat(1).Visible = True
             If PfqPrj.AdditionalOutput < 4 Then 'watstore format
-                optAddFormat(0).Checked = TriState.True
+                optAddFormat(0).Checked = True
             Else 'tab-separated format
-                optAddFormat(1).Checked = TriState.True
+                optAddFormat(1).Checked = True
             End If
             'fraAddOut.Height = VB6.TwipsToPixelsY(1575)
         Else
-            chkAddOut(1).CheckState = System.Windows.Forms.CheckState.Unchecked
+            chkAddOut(1).CheckState = CheckState.Unchecked
             lblOutFile(1).Text = "(none)"
-            lblOutFile(1).Visible = TriState.False
-            cmdOpenOut(1).Visible = TriState.False
-            optAddFormat(0).Visible = TriState.False
-            optAddFormat(1).Visible = TriState.False
+            lblOutFile(1).Visible = False
+            cmdOpenOut(1).Visible = False
+            optAddFormat(0).Visible = False
+            optAddFormat(1).Visible = False
             'fraAddOut.Height = VB6.TwipsToPixelsY(735)
         End If
-        If PfqPrj.IntermediateResults Then
-            chkIntRes.CheckState = System.Windows.Forms.CheckState.Checked
+        If PfqPrj.ExportFileName.Length > 0 Then
+            chkExport.CheckState = CheckState.Checked
+            lblExportFile.Text = PfqPrj.ExportFileName
+            lblExportFile.Visible = True
+            cmdOpenExport.Visible = True
         Else
-            chkIntRes.CheckState = System.Windows.Forms.CheckState.Unchecked
+            chkExport.CheckState = CheckState.Unchecked
+            lblExportFile.Text = "(none)"
+            lblExportFile.Visible = False
+            cmdOpenExport.Visible = False
+        End If
+        If PfqPrj.EmpiricalFileName.Length > 0 Then
+            chkEmpirical.CheckState = CheckState.Checked
+            lblEmpirical.Text = PfqPrj.EmpiricalFileName
+            lblEmpirical.Visible = True
+            cmdOpenEmpirical.Visible = True
+        Else
+            chkEmpirical.CheckState = CheckState.Unchecked
+            lblEmpirical.Text = "(none)"
+            lblEmpirical.Visible = False
+            cmdOpenEmpirical.Visible = False
+        End If
+        If PfqPrj.IntermediateResults Then
+            chkIntRes.CheckState = CheckState.Checked
+        Else
+            chkIntRes.CheckState = CheckState.Unchecked
         End If
         If PfqPrj.LinePrinter Then
-            chkLinePrinter.CheckState = System.Windows.Forms.CheckState.Checked
+            chkLinePrinter.CheckState = CheckState.Checked
         Else
-            chkLinePrinter.CheckState = System.Windows.Forms.CheckState.Unchecked
+            chkLinePrinter.CheckState = CheckState.Unchecked
         End If
         If PfqPrj.Graphic Then
             If UCase(PfqPrj.GraphFormat) = "EMF" Then
@@ -316,9 +352,9 @@ Friend Class frmPeakfq
             cboGraphFormat.SelectedIndex = 0
         End If
         If PfqPrj.PrintPlotPos Then
-            chkPlotPos.CheckState = System.Windows.Forms.CheckState.Checked
+            chkPlotPos.CheckState = CheckState.Checked
         Else
-            chkPlotPos.CheckState = System.Windows.Forms.CheckState.Unchecked
+            chkPlotPos.CheckState = CheckState.Unchecked
         End If
         txtCL.Text = PfqPrj.ConfidenceLimits
         txtPlotPos.Text = PfqPrj.PlotPos
@@ -332,13 +368,13 @@ Friend Class frmPeakfq
         lOutDir = PathNameOnly((PfqPrj.OutFile))
         If Len(lOutDir) > 0 And lOutDir <> PfqPrj.InputDir Then PfqPrj.OutputDir = lOutDir
         lblOutFileView(0).Text = PfqPrj.OutFile
-        If chkAddOut(0).CheckState = System.Windows.Forms.CheckState.Checked Then
+        If chkAddOut(0).CheckState = CheckState.Checked Then
             PfqPrj.AdditionalOutput = 1
         Else
             PfqPrj.AdditionalOutput = 0
         End If
-        If chkAddOut(1).CheckState = System.Windows.Forms.CheckState.Checked Then
-            If optAddFormat(0).Checked = TriState.True Then 'watstore format
+        If chkAddOut(1).CheckState = CheckState.Checked Then
+            If optAddFormat(0).Checked = True Then 'watstore format
                 PfqPrj.AdditionalOutput = PfqPrj.AdditionalOutput + 2
             Else 'tab-separated format
                 PfqPrj.AdditionalOutput = PfqPrj.AdditionalOutput + 4
@@ -349,12 +385,26 @@ Friend Class frmPeakfq
             PfqPrj.AddOutFileName = ""
             lblOutFileView(1).Text = "(none)"
         End If
-        If chkIntRes.CheckState = System.Windows.Forms.CheckState.Checked Then
+        If chkExport.CheckState = CheckState.Checked Then
+            PfqPrj.ExportFileName = lblExportFile.Text
+            lblExportFileView.Text = PfqPrj.ExportFileName
+        Else
+            PfqPrj.ExportFileName = ""
+            lblExportFile.Text = "(none)"
+        End If
+        If chkEmpirical.CheckState = CheckState.Checked Then
+            PfqPrj.EmpiricalFileName = lblEmpirical.Text
+            lblEmpiricalFileView.Text = PfqPrj.EmpiricalFileName
+        Else
+            PfqPrj.EmpiricalFileName = ""
+            lblEmpirical.Text = "(none)"
+        End If
+        If chkIntRes.CheckState = CheckState.Checked Then
             PfqPrj.IntermediateResults = True
         Else
             PfqPrj.IntermediateResults = False
         End If
-        If chkLinePrinter.CheckState = System.Windows.Forms.CheckState.Checked Then
+        If chkLinePrinter.CheckState = CheckState.Checked Then
             PfqPrj.LinePrinter = True
         Else
             PfqPrj.LinePrinter = False
@@ -365,7 +415,7 @@ Friend Class frmPeakfq
             PfqPrj.Graphic = True
             PfqPrj.GraphFormat = StrRetRem(cboGraphFormat.Text)
         End If
-        If chkPlotPos.CheckState = System.Windows.Forms.CheckState.Checked Then
+        If chkPlotPos.CheckState = CheckState.Checked Then
             PfqPrj.PrintPlotPos = True
         Else
             PfqPrj.PrintPlotPos = False
@@ -392,7 +442,7 @@ Friend Class frmPeakfq
         Else 'additional output file
             cdlOpenOpen.Title = "Additional PeakFQ Output File"
             cdlOpenSave.Title = "Additional PeakFQ Output File"
-            If optAddFormat(0).Checked = TriState.True Then
+            If optAddFormat(0).Checked = True Then
                 'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
                 cdlOpenOpen.Filter = "Watstore Output (*.bcd)|*.bcd|All Files (*.*)|*.*"
                 cdlOpenSave.Filter = "Watstore Output (*.bcd)|*.bcd|All Files (*.*)|*.*"
@@ -445,9 +495,9 @@ FileCancel:
             ProcessOutput()
             s = PfqPrj.SaveAsString
             SaveFileString((PfqPrj.SpecFileName), s)
-            System.Windows.Forms.Application.DoEvents()
+            Application.DoEvents()
             PfqPrj.RunBatchModel()
-            System.Windows.Forms.Application.DoEvents()
+            Application.DoEvents()
             'If PfqPrj.Graphic Then
             SetGraphNames()
             cmdGraph.Enabled = True
@@ -745,7 +795,7 @@ FileCancel:
         sstPfq.SelectedIndex = 0
         sstPfq.TabPages.Item(3).Enabled = False
         Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-        System.Windows.Forms.Application.DoEvents()
+        Application.DoEvents()
         If cdlOpenOpen.FilterIndex <= 3 Then 'open data file
             PfqPrj.DataFileName = FName
             PfqPrj.BuildNewSpecFile() 'build basic spec file (I/O files)
@@ -883,7 +933,7 @@ FileCancel:
                     'newName = newName & ".BMP"
                     'RenameGraph(oldName, newName)
                     'lstGraphs.Items.Add(FilenameNoExt(newName))
-                    lstGraphs.Items.Add(newName)
+                    lstGraphs.Items.Add(New GraphListItem(newName, i))
                     If PfqPrj.Graphic Then 'save graph to file
                         GenFrequencyGraph(lstGraphs.Items.Count - 1, True)
                     End If
@@ -1995,5 +2045,77 @@ FileCancel:
 
     Private Sub cboLOTest_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboLOTest.SelectedIndexChanged
         LOTestType = cboLOTest.SelectedItem
+    End Sub
+
+    Private Sub chkExport_CheckStateChanged(sender As Object, e As System.EventArgs) Handles chkExport.CheckStateChanged
+        If chkExport.CheckState = CheckState.Checked Then
+            lblExportFile.Visible = True
+            cmdOpenExport.Visible = True
+        Else
+            lblExportFile.Visible = False
+            cmdOpenExport.Visible = False
+        End If
+    End Sub
+
+    Private Sub chkEmpirical_CheckStateChanged(sender As Object, e As System.EventArgs) Handles chkEmpirical.CheckStateChanged
+        If chkEmpirical.CheckState = CheckState.Checked Then
+            lblEmpirical.Visible = True
+            cmdOpenEmpirical.Visible = True
+        Else
+            lblEmpirical.Visible = False
+            cmdOpenEmpirical.Visible = False
+        End If
+    End Sub
+
+    Private Sub cmdOpenExport_Click(sender As Object, e As System.EventArgs) Handles cmdOpenExport.Click
+
+        cdlOpenSave.Title = "PeakFQ Export File"
+        cdlOpenSave.Filter = "PeakFQ Export (*.exp)|*.exp|All Files (*.*)|*.*"
+        If Len(PfqPrj.ExportFileName) = 0 Then 'provide default file name
+            PfqPrj.ExportFileName = IO.Path.ChangeExtension(PfqPrj.DataFileName, ".exp")
+        End If
+        cdlOpenSave.FileName = PfqPrj.ExportFileName
+        cdlOpenSave.ShowDialog()
+        If FileExists(cdlOpenSave.FileName) Then 'make sure it's OK to overwrite
+            If MsgBox("File exists.  Do you want to overwrite it?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then GoTo FileCancel
+        End If
+        lblExportFile.Text = cdlOpenSave.FileName
+
+FileCancel:
+    End Sub
+
+    Private Sub cmdOpenEmpirical_Click(sender As Object, e As System.EventArgs) Handles cmdOpenEmpirical.Click
+
+        cdlOpenSave.Title = "Empirical Frequency Curve Table File"
+        cdlOpenSave.Filter = "PeakFQ Empirical Frequency Curve (*.emp)|*.exp|All Files (*.*)|*.*"
+        If Len(PfqPrj.EmpiricalFileName) = 0 Then 'provide default file name
+            PfqPrj.EmpiricalFileName = IO.Path.ChangeExtension(PfqPrj.DataFileName, ".emp")
+        End If
+        cdlOpenSave.FileName = PfqPrj.EmpiricalFileName
+        cdlOpenSave.ShowDialog()
+        If FileExists(cdlOpenSave.FileName) Then 'make sure it's OK to overwrite
+            If MsgBox("File exists.  Do you want to overwrite it?", MsgBoxStyle.YesNo) = MsgBoxResult.No Then GoTo FileCancel
+        End If
+        lblEmpirical.Text = cdlOpenSave.FileName
+
+FileCancel:
+    End Sub
+
+    Private Sub cmdExportFileView_Click(sender As Object, e As System.EventArgs) Handles cmdExportFileView.Click
+
+        If lblExportFileView.Text.Length > 0 And lblExportFileView.Text <> "(none)" Then
+            System.Diagnostics.Process.Start("notepad.exe", lblExportFileView.Text)
+        Else
+            MsgBox("No Export file is available for viewing.", MsgBoxStyle.Information, "PeakFQ")
+        End If
+    End Sub
+
+    Private Sub cmdEmpiricalFileView_Click(sender As Object, e As System.EventArgs) Handles cmdEmpiricalFileView.Click
+
+        If lblEmpiricalFileView.Text.Length > 0 And lblEmpiricalFileView.Text <> "(none)" Then
+            System.Diagnostics.Process.Start("notepad.exe", lblEmpiricalFileView.Text)
+        Else
+            MsgBox("No Empirical Frequency Curve file is available for viewing.", MsgBoxStyle.Information, "PeakFQ")
+        End If
     End Sub
 End Class

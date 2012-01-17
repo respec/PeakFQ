@@ -14,7 +14,9 @@ Friend Class pfqProject
     Private pStations As Generic.List(Of pfqStation)
 	Private pOutFile As String
 	Private pAdditionalOutput As Integer
-	Private pAddOutFileName As String
+    Private pAddOutFileName As String
+    Private pExportFileName As String
+    Private pEmpiricalFileName As String
 	Private pIntermediateResults As Boolean
 	Private pLinePrinter As Boolean
 	Private pGraphic As Boolean
@@ -33,7 +35,9 @@ Friend Class pfqProject
 	Private pCPrintPlotPos As String
 	Private pCPlotPos As String
 	Private pCAdditional As String
-	Private pCIntermediate As String
+    Private pCExportFileName As String
+    Private pCEmpiricalFileName As String
+    Private pCIntermediate As String
 	Private pCConfidenceLimits As String
     Private pCEMA As String
 
@@ -110,23 +114,41 @@ Friend Class pfqProject
 		End Set
 	End Property
 	
-	Public Property AddOutFileName() As String
-		Get
-			AddOutFileName = pAddOutFileName
-		End Get
-		Set(ByVal Value As String)
-			pAddOutFileName = Value
-		End Set
-	End Property
-	
-	Public Property IntermediateResults() As Boolean
-		Get
-			IntermediateResults = pIntermediateResults
-		End Get
-		Set(ByVal Value As Boolean)
-			pIntermediateResults = Value
-		End Set
-	End Property
+    Public Property AddOutFileName() As String
+        Get
+            AddOutFileName = pAddOutFileName
+        End Get
+        Set(ByVal Value As String)
+            pAddOutFileName = Value
+        End Set
+    End Property
+
+    Public Property ExportFileName() As String
+        Get
+            ExportFileName = pExportFileName
+        End Get
+        Set(ByVal Value As String)
+            pExportFileName = Value
+        End Set
+    End Property
+
+    Public Property EmpiricalFileName() As String
+        Get
+            EmpiricalFileName = pEmpiricalFileName
+        End Get
+        Set(ByVal Value As String)
+            pEmpiricalFileName = Value
+        End Set
+    End Property
+
+    Public Property IntermediateResults() As Boolean
+        Get
+            IntermediateResults = pIntermediateResults
+        End Get
+        Set(ByVal Value As Boolean)
+            pIntermediateResults = Value
+        End Set
+    End Property
 	
 	Public Property ConfidenceLimits() As Single
 		Get
@@ -272,14 +294,32 @@ Friend Class pfqProject
 		End Set
 	End Property
 	
-	Public Property CIntermediate() As String
-		Get
-			CIntermediate = pCIntermediate
-		End Get
-		Set(ByVal Value As String)
-			pCIntermediate = Value
-		End Set
-	End Property
+    Public Property CExportFileName() As String
+        Get
+            CExportFileName = pCExportFileName
+        End Get
+        Set(ByVal Value As String)
+            pCExportFileName = Value
+        End Set
+    End Property
+
+    Public Property CEmpiricalFileName() As String
+        Get
+            CEmpiricalFileName = pCEmpiricalFileName
+        End Get
+        Set(ByVal Value As String)
+            pCEmpiricalFileName = Value
+        End Set
+    End Property
+
+    Public Property CIntermediate() As String
+        Get
+            CIntermediate = pCIntermediate
+        End Get
+        Set(ByVal Value As String)
+            pCIntermediate = Value
+        End Set
+    End Property
 	
 	Public Property CConfidenceLimits() As String
 		Get
@@ -386,6 +426,12 @@ Friend Class pfqProject
                                     pAddOutFileName = Rec
                                 End If
                                 If CommentPending Then pCAdditional = lCom
+                            Case "EXPORT"
+                                pExportFileName = Rec
+                                If CommentPending Then pCExportFileName = lCom
+                            Case "EMPIRICAL"
+                                pEmpiricalFileName = Rec
+                                If CommentPending Then pCEmpiricalFileName = lCom
                             Case "DEBUG"
                                 If UCase(Rec) = "YES" Then
                                     pIntermediateResults = True
@@ -553,7 +599,11 @@ Friend Class pfqProject
 		ElseIf pAdditionalOutput = 5 Then 
 			s = s & "O Additional Both Tab " & pAddOutFileName & vbCrLf
 		End If
-		If Len(pCIntermediate) > 0 Then s = s & pCIntermediate & vbCrLf
+        If Len(pCExportFileName) > 0 Then s = s & pCExportFileName & vbCrLf
+        If Len(pExportFileName) > 0 Then s = s & "O Export " & pExportFileName & vbCrLf
+        If Len(pCEmpiricalFileName) > 0 Then s = s & pCEmpiricalFileName & vbCrLf
+        If Len(pEmpiricalFileName) > 0 Then s = s & "O Empirical " & pEmpiricalFileName & vbCrLf
+        If Len(pCIntermediate) > 0 Then s = s & pCIntermediate & vbCrLf
 		If pIntermediateResults Then s = s & "O Debug YES" & vbCrLf
 		If Len(pCConfidenceLimits) > 0 Then s = s & pCConfidenceLimits & vbCrLf
 		If System.Math.Abs(pConfidenceLimits - 0.95) > 0.000001 Then 'not using .95, print it
@@ -650,7 +700,9 @@ Friend Class pfqProject
 
 		With retval
 			.AdditionalOutput = pAdditionalOutput
-			.AddOutFileName = pAddOutFileName
+            .AddOutFileName = pAddOutFileName
+            .ExportFileName = pExportFileName
+            .EmpiricalFileName = pEmpiricalFileName
 			.ConfidenceLimits = pConfidenceLimits
 			.DataFileName = pDataFileName
 			.DataType = pDataType
@@ -670,7 +722,9 @@ Friend Class pfqProject
 			.CPlotFormat = pCPlotFormat
 			.CPrintPlotPos = pCPrintPlotPos
 			.CPlotPos = pCPlotPos
-			.CAdditional = pCAdditional
+            .CAdditional = pCAdditional
+            .CExportFileName = pCExportFileName
+            .CEmpiricalFileName = pCEmpiricalFileName
 			.CIntermediate = pCIntermediate
 			.CConfidenceLimits = pCConfidenceLimits
 			.CEMA = pCEMA
@@ -952,7 +1006,9 @@ Friend Class pfqProject
         pSpecFileName = ""
 		pDataFileName = ""
         pStations = New Generic.List(Of pfqStation)
-		pAdditionalOutput = 0
+        pAdditionalOutput = 0
+        pExportFileName = ""
+        pEmpiricalFileName = ""
 		pIntermediateResults = False
 		pLinePrinter = False
 		pGraphic = False
