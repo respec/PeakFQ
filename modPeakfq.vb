@@ -3,7 +3,7 @@ Option Explicit On
 Module modPeakfq
 	Public PfqPrj As New pfqProject
     Public DefPfqPrj As New pfqProject
-    Public LOTestType As String = "Multiple Grubbs-Beck"
+    Public LOTestType As String = "Single Grubbs-Beck"
     Public PFQExePath As String = IO.Path.GetDirectoryName(Application.ExecutablePath)
 
     Friend Declare Sub PEAKFQ Lib "peakfq.dll" (ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
