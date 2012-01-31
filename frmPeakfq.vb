@@ -823,6 +823,11 @@ FileCancel:
                 '      txtSpec.Text = fname
                 lblSpec.Text = "PKFQWin Spec File:  " & FName
             End If
+            If PfqPrj.EMA Then
+                cboAnalysisOption.SelectedItem = "EMA"
+            Else
+                cboAnalysisOption.SelectedItem = "B17B"
+            End If
             cboLOTest.SelectedItem = LOTestType
             EnableGrid()
             PopulateGrid()
@@ -1616,7 +1621,6 @@ FileCancel:
         Dim lWrcFC(31) As Single
         Dim lTxProb(31) As Single
         Dim lHistFlg As Integer
-        Dim lNoCLim As Integer
         Dim lCLimL(31) As Single
         Dim lCLimU(31) As Single
         Const lPP1 As Double = 0.002 '0.995 '-2.577
@@ -1661,7 +1665,7 @@ FileCancel:
         Dim lHeader As String = " ".PadLeft(80)
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
-                     lNoCLim, lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
+                     lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
                      lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lIntPPos, _
                      lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
                      lHeader, lHeader.Length)
@@ -1884,12 +1888,18 @@ FileCancel:
         lText.Location.AlignV = AlignV.Top
         lPane.GraphObjList.Add(lText)
 
-        lZGC.AxisChange()
-        lZGC.Invalidate()
-        lZGC.Refresh()
         If aToFile Then 'save plot to file
-            lZGC.SaveIn(PfqPrj.OutputDir & "\" & lstGraphs.Items(aStnInd) & "." & PfqPrj.GraphFormat)
+            lZGC.MasterPane.PaneList(0).Rect = New System.Drawing.Rectangle( _
+                    0, 0, _
+                    lZGC.Width, lZGC.Height)
+            lZGC.AxisChange()
+            lZGC.Invalidate()
+            lZGC.Refresh()
+            lZGC.SaveIn(PfqPrj.OutputDir & "\" & lstGraphs.Items(aStnInd).ToString & "." & PfqPrj.GraphFormat)
         Else 'display plot on form
+            lZGC.AxisChange()
+            lZGC.Invalidate()
+            lZGC.Refresh()
             newform.Show()
         End If
 
@@ -2071,6 +2081,7 @@ FileCancel:
 
         cdlOpenSave.Title = "PeakFQ Export File"
         cdlOpenSave.Filter = "PeakFQ Export (*.exp)|*.exp|All Files (*.*)|*.*"
+        cdlOpenSave.OverwritePrompt = False
         If Len(PfqPrj.ExportFileName) = 0 Then 'provide default file name
             PfqPrj.ExportFileName = IO.Path.ChangeExtension(PfqPrj.DataFileName, ".exp")
         End If
@@ -2088,6 +2099,7 @@ FileCancel:
 
         cdlOpenSave.Title = "Empirical Frequency Curve Table File"
         cdlOpenSave.Filter = "PeakFQ Empirical Frequency Curve (*.emp)|*.exp|All Files (*.*)|*.*"
+        cdlOpenSave.OverwritePrompt = False
         If Len(PfqPrj.EmpiricalFileName) = 0 Then 'provide default file name
             PfqPrj.EmpiricalFileName = IO.Path.ChangeExtension(PfqPrj.DataFileName, ".emp")
         End If

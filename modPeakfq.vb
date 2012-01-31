@@ -13,7 +13,7 @@ Module modPeakfq
                                                  ByVal aPkSeq() As Integer, ByRef aWeiba As Single, _
                                                  ByRef aNPlot As Integer, ByVal aSysRfc() As Single, _
                                                  ByVal aWrcFc() As Single, ByVal aTxProb() As Single, _
-                                                 ByRef aHistFlg As Integer, ByRef aNoCLim As Integer, _
+                                                 ByRef aHistFlg As Integer, _
                                                  ByVal aCLimL() As Single, ByVal aCLimU() As Single, _
                                                  ByRef aNT As Integer, ByVal aThr() As Single, _
                                                  ByVal aPPTh() As Single, ByVal aNObsTh() As Integer, _
@@ -26,6 +26,8 @@ Module modPeakfq
     Friend Declare Sub GETPEAKS Lib "peakfq.dll" (ByRef aStnInd As Integer, ByRef aNPkPlt As Integer, _
                                                   ByVal aPks() As Single, ByVal aXQual(,) As Integer, _
                                                   ByVal aPkSeq() As Integer)
+
+    Friend Declare Sub F90_SPIPH Lib "peakfq.dll" (ByRef aHin As Integer, ByRef aHout As Integer)
 
     Friend pPipeWriteToStatus As Integer = 0
     Friend pPipeReadFromStatus As Integer = 0
@@ -91,6 +93,8 @@ Friend Class StatusMonitor
                 pPipeWriteToStatus = lStreamMonitorInputFromMyOutput.SafeFileHandle.DangerousGetHandle
                 Dim lStreamMonitorOutputToMyInput As IO.FileStream = pMonitorProcess.StandardOutput.BaseStream
                 pPipeReadFromStatus = lStreamMonitorOutputToMyInput.SafeFileHandle.DangerousGetHandle
+
+                Call F90_SPIPH(pPipeReadFromStatus, pPipeWriteToStatus)
             Catch ex As Exception
                 MapWinUtility.Logger.Msg("StatusProcessStartError:" & ex.Message)
             End Try

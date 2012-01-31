@@ -458,6 +458,9 @@ Friend Class pfqProject
                         'build new station
                         CurStation = New pfqStation
                         CurStation.id = Rec
+                        If pEMA Then 'global EMA option was set, use for all stations
+                            CurStation.AnalysisOption = "EMA"
+                        End If
                         If CommentPending Then CurStation.Comment = lCom
                     Case "ANALYZE"
                         CurStation.AnalysisOption = Rec
@@ -668,7 +671,9 @@ Friend Class pfqProject
             IO.File.Delete(PfqPrj.OutFile)
         End If
 
-        Logger.ProgressStatus = New StatusMonitor 'MonitorProgressStatus
+        If TypeOf (Logger.ProgressStatus) Is MapWinUtility.NullProgressStatus Then
+            Logger.ProgressStatus = New StatusMonitor 'MonitorProgressStatus
+        End If
         Logger.Status("Begin")
         Logger.Status("Show")
         'Logger.Status("Caption PKFQWin Status")
@@ -685,6 +690,7 @@ Friend Class pfqProject
             Logger.Status("PeakFQ run successfully.", True)
         End If
         Logger.Status("Exit")
+        Logger.ProgressStatus = New MapWinUtility.NullProgressStatus
 
         If CurDir() <> PFQExePath Then
             Kill("pkfqms.wdm")
