@@ -99,7 +99,6 @@
         Me.cmdExit = New System.Windows.Forms.Button()
         Me.sstPfq = New System.Windows.Forms.TabControl()
         Me.tabStationSpecs = New System.Windows.Forms.TabPage()
-        Me.Label2 = New System.Windows.Forms.Label()
         Me.lblLOTest = New System.Windows.Forms.Label()
         Me.cboLOTest = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -146,6 +145,10 @@
         Me.lblCL = New System.Windows.Forms.Label()
         Me.tabResults = New System.Windows.Forms.TabPage()
         Me._fraOutFileRes_1 = New System.Windows.Forms.GroupBox()
+        Me.cmdEmpiricalFileView = New System.Windows.Forms.Button()
+        Me.lblEmpiricalFileView = New System.Windows.Forms.Label()
+        Me.cmdExportFileView = New System.Windows.Forms.Button()
+        Me.lblExportFileView = New System.Windows.Forms.Label()
         Me._cmdOutFileView_1 = New System.Windows.Forms.Button()
         Me._lblOutFileView_1 = New System.Windows.Forms.Label()
         Me.fraGraphics = New System.Windows.Forms.GroupBox()
@@ -167,10 +170,6 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
-        Me.cmdExportFileView = New System.Windows.Forms.Button()
-        Me.lblExportFileView = New System.Windows.Forms.Label()
-        Me.cmdEmpiricalFileView = New System.Windows.Forms.Button()
-        Me.lblEmpiricalFileView = New System.Windows.Forms.Label()
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -330,7 +329,6 @@
         '
         'tabStationSpecs
         '
-        Me.tabStationSpecs.Controls.Add(Me.Label2)
         Me.tabStationSpecs.Controls.Add(Me.lblLOTest)
         Me.tabStationSpecs.Controls.Add(Me.cboLOTest)
         Me.tabStationSpecs.Controls.Add(Me.Label1)
@@ -344,16 +342,6 @@
         Me.tabStationSpecs.TabIndex = 0
         Me.tabStationSpecs.Text = "Station Specifications"
         Me.tabStationSpecs.UseVisualStyleBackColor = True
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label2.Location = New System.Drawing.Point(806, 23)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(222, 13)
-        Me.Label2.TabIndex = 9
-        Me.Label2.Text = "(Multiple Grubbs-Beck only available for EMA)"
         '
         'lblLOTest
         '
@@ -1040,6 +1028,66 @@
         Me._fraOutFileRes_1.TabStop = False
         Me._fraOutFileRes_1.Text = "Additional Output"
         '
+        'cmdEmpiricalFileView
+        '
+        Me.cmdEmpiricalFileView.BackColor = System.Drawing.SystemColors.Control
+        Me.cmdEmpiricalFileView.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cmdEmpiricalFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cmdEmpiricalFileView.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.cmdEmpiricalFileView.Location = New System.Drawing.Point(8, 180)
+        Me.cmdEmpiricalFileView.Name = "cmdEmpiricalFileView"
+        Me.cmdEmpiricalFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmdEmpiricalFileView.Size = New System.Drawing.Size(57, 25)
+        Me.cmdEmpiricalFileView.TabIndex = 15
+        Me.cmdEmpiricalFileView.Text = "View"
+        Me.cmdEmpiricalFileView.UseVisualStyleBackColor = False
+        '
+        'lblEmpiricalFileView
+        '
+        Me.lblEmpiricalFileView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblEmpiricalFileView.BackColor = System.Drawing.SystemColors.Control
+        Me.lblEmpiricalFileView.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblEmpiricalFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblEmpiricalFileView.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lblEmpiricalFileView.Location = New System.Drawing.Point(72, 180)
+        Me.lblEmpiricalFileView.Name = "lblEmpiricalFileView"
+        Me.lblEmpiricalFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblEmpiricalFileView.Size = New System.Drawing.Size(430, 48)
+        Me.lblEmpiricalFileView.TabIndex = 16
+        Me.lblEmpiricalFileView.Text = "(none)"
+        '
+        'cmdExportFileView
+        '
+        Me.cmdExportFileView.BackColor = System.Drawing.SystemColors.Control
+        Me.cmdExportFileView.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cmdExportFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cmdExportFileView.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.cmdExportFileView.Location = New System.Drawing.Point(8, 97)
+        Me.cmdExportFileView.Name = "cmdExportFileView"
+        Me.cmdExportFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmdExportFileView.Size = New System.Drawing.Size(57, 25)
+        Me.cmdExportFileView.TabIndex = 13
+        Me.cmdExportFileView.Text = "View"
+        Me.cmdExportFileView.UseVisualStyleBackColor = False
+        '
+        'lblExportFileView
+        '
+        Me.lblExportFileView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblExportFileView.BackColor = System.Drawing.SystemColors.Control
+        Me.lblExportFileView.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblExportFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblExportFileView.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lblExportFileView.Location = New System.Drawing.Point(72, 97)
+        Me.lblExportFileView.Name = "lblExportFileView"
+        Me.lblExportFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblExportFileView.Size = New System.Drawing.Size(430, 44)
+        Me.lblExportFileView.TabIndex = 14
+        Me.lblExportFileView.Text = "(none)"
+        '
         '_cmdOutFileView_1
         '
         Me._cmdOutFileView_1.BackColor = System.Drawing.SystemColors.Control
@@ -1227,66 +1275,6 @@
         'cmdOutFileView
         '
         '
-        'cmdExportFileView
-        '
-        Me.cmdExportFileView.BackColor = System.Drawing.SystemColors.Control
-        Me.cmdExportFileView.Cursor = System.Windows.Forms.Cursors.Default
-        Me.cmdExportFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cmdExportFileView.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdExportFileView.Location = New System.Drawing.Point(8, 97)
-        Me.cmdExportFileView.Name = "cmdExportFileView"
-        Me.cmdExportFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdExportFileView.Size = New System.Drawing.Size(57, 25)
-        Me.cmdExportFileView.TabIndex = 13
-        Me.cmdExportFileView.Text = "View"
-        Me.cmdExportFileView.UseVisualStyleBackColor = False
-        '
-        'lblExportFileView
-        '
-        Me.lblExportFileView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lblExportFileView.BackColor = System.Drawing.SystemColors.Control
-        Me.lblExportFileView.Cursor = System.Windows.Forms.Cursors.Default
-        Me.lblExportFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblExportFileView.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblExportFileView.Location = New System.Drawing.Point(72, 97)
-        Me.lblExportFileView.Name = "lblExportFileView"
-        Me.lblExportFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblExportFileView.Size = New System.Drawing.Size(430, 44)
-        Me.lblExportFileView.TabIndex = 14
-        Me.lblExportFileView.Text = "(none)"
-        '
-        'cmdEmpiricalFileView
-        '
-        Me.cmdEmpiricalFileView.BackColor = System.Drawing.SystemColors.Control
-        Me.cmdEmpiricalFileView.Cursor = System.Windows.Forms.Cursors.Default
-        Me.cmdEmpiricalFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cmdEmpiricalFileView.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdEmpiricalFileView.Location = New System.Drawing.Point(8, 180)
-        Me.cmdEmpiricalFileView.Name = "cmdEmpiricalFileView"
-        Me.cmdEmpiricalFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdEmpiricalFileView.Size = New System.Drawing.Size(57, 25)
-        Me.cmdEmpiricalFileView.TabIndex = 15
-        Me.cmdEmpiricalFileView.Text = "View"
-        Me.cmdEmpiricalFileView.UseVisualStyleBackColor = False
-        '
-        'lblEmpiricalFileView
-        '
-        Me.lblEmpiricalFileView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.lblEmpiricalFileView.BackColor = System.Drawing.SystemColors.Control
-        Me.lblEmpiricalFileView.Cursor = System.Windows.Forms.Cursors.Default
-        Me.lblEmpiricalFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblEmpiricalFileView.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblEmpiricalFileView.Location = New System.Drawing.Point(72, 180)
-        Me.lblEmpiricalFileView.Name = "lblEmpiricalFileView"
-        Me.lblEmpiricalFileView.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblEmpiricalFileView.Size = New System.Drawing.Size(430, 48)
-        Me.lblEmpiricalFileView.TabIndex = 16
-        Me.lblEmpiricalFileView.Text = "(none)"
-        '
         'frmPeakfq
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1352,7 +1340,6 @@
     Friend WithEvents cboGraphFormat As System.Windows.Forms.ComboBox
     Friend WithEvents lblLOTest As System.Windows.Forms.Label
     Friend WithEvents cboLOTest As System.Windows.Forms.ComboBox
-    Friend WithEvents Label2 As System.Windows.Forms.Label
     Public WithEvents lblEmpirical As System.Windows.Forms.Label
     Public WithEvents cmdOpenEmpirical As System.Windows.Forms.Button
     Public WithEvents chkEmpirical As System.Windows.Forms.CheckBox
