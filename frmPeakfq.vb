@@ -486,12 +486,21 @@ FileCancel:
 
         Dim i As Integer
         Dim s As String
+        Dim lStnInd As Integer
 
         If Len(PfqPrj.SpecFileName) > 0 Then
             Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
             lstGraphs.Items.Clear()
             ProcessGrid()
             If CurStationIndex >= 0 Then ProcessThresholds()
+            If cboDataGraphFormat.SelectedIndex > 0 Then
+                'save all data input graphs in specified format
+                lStnInd = CurStationIndex
+                For CurStationIndex = 0 To PfqPrj.Stations.Count - 1
+                    UpdateInputGraph(vbTrue)
+                Next
+                CurStationIndex = lStnInd
+            End If
             ProcessOutput()
             s = PfqPrj.SaveAsString
             SaveFileString((PfqPrj.SpecFileName), s)
@@ -1227,12 +1236,12 @@ FileCancel:
         End With
     End Sub
 
-    Private Sub cmdUpdateGraph_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdUpdateGraph.Click
+    Private Sub cmdUpdateGraph_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         ProcessThresholds()
         UpdateInputGraph()
     End Sub
 
-    Private Sub UpdateInputGraph()
+    Private Sub UpdateInputGraph(Optional ByVal aSaveToFile As Boolean = False)
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         Dim lYearMin As Double = 10000
         Dim lYearMax As Double = -10000
@@ -1356,6 +1365,10 @@ FileCancel:
         zgcThresh.AxisChange()
         zgcThresh.Invalidate()
         zgcThresh.Refresh()
+        If aSaveToFile Then
+            Dim lFmt As String = StrRetRem(cboDataGraphFormat.SelectedItem.ToString)
+            zgcThresh.SaveIn(PfqPrj.OutputDir & "\" & cboStation.Items(CurStationIndex).ToString & "_inp." & lFmt)
+        End If
 
     End Sub
 
