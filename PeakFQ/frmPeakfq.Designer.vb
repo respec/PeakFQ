@@ -106,7 +106,6 @@
         Me.lblGlobalAnalysis = New System.Windows.Forms.Label()
         Me.grdSpecs = New atcControls.atcGrid()
         Me.tabThresholds = New System.Windows.Forms.TabPage()
-        Me.cmdUpdateGraph = New System.Windows.Forms.Button()
         Me.zgcThresh = New ZedGraph.ZedGraphControl()
         Me.lblIntervals = New System.Windows.Forms.Label()
         Me.lblThresholds = New System.Windows.Forms.Label()
@@ -170,6 +169,8 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
+        Me.lblDataGraphFormat = New System.Windows.Forms.Label()
+        Me.cboDataGraphFormat = New System.Windows.Forms.ComboBox()
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -415,7 +416,8 @@
         '
         'tabThresholds
         '
-        Me.tabThresholds.Controls.Add(Me.cmdUpdateGraph)
+        Me.tabThresholds.Controls.Add(Me.cboDataGraphFormat)
+        Me.tabThresholds.Controls.Add(Me.lblDataGraphFormat)
         Me.tabThresholds.Controls.Add(Me.zgcThresh)
         Me.tabThresholds.Controls.Add(Me.lblIntervals)
         Me.tabThresholds.Controls.Add(Me.lblThresholds)
@@ -433,16 +435,6 @@
         Me.tabThresholds.TabIndex = 3
         Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
-        '
-        'cmdUpdateGraph
-        '
-        Me.cmdUpdateGraph.Location = New System.Drawing.Point(300, 6)
-        Me.cmdUpdateGraph.Name = "cmdUpdateGraph"
-        Me.cmdUpdateGraph.Size = New System.Drawing.Size(98, 22)
-        Me.cmdUpdateGraph.TabIndex = 13
-        Me.cmdUpdateGraph.Text = "Update Graph"
-        Me.cmdUpdateGraph.UseVisualStyleBackColor = True
-        Me.cmdUpdateGraph.Visible = False
         '
         'zgcThresh
         '
@@ -1275,6 +1267,25 @@
         'cmdOutFileView
         '
         '
+        'lblDataGraphFormat
+        '
+        Me.lblDataGraphFormat.AutoSize = True
+        Me.lblDataGraphFormat.Location = New System.Drawing.Point(267, 9)
+        Me.lblDataGraphFormat.Name = "lblDataGraphFormat"
+        Me.lblDataGraphFormat.Size = New System.Drawing.Size(141, 14)
+        Me.lblDataGraphFormat.TabIndex = 13
+        Me.lblDataGraphFormat.Text = "Save Input Peaks Graph as:"
+        '
+        'cboDataGraphFormat
+        '
+        Me.cboDataGraphFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboDataGraphFormat.FormattingEnabled = True
+        Me.cboDataGraphFormat.Items.AddRange(New Object() {"None", "EMF - Enhanced Windows Metafile", "PNG - Portable Network Graphics", "GIF - Graphic Interchange Format", "JPEG", "TIFF", "BMP - Bitmap"})
+        Me.cboDataGraphFormat.Location = New System.Drawing.Point(405, 9)
+        Me.cboDataGraphFormat.Name = "cboDataGraphFormat"
+        Me.cboDataGraphFormat.Size = New System.Drawing.Size(75, 22)
+        Me.cboDataGraphFormat.TabIndex = 43
+        '
         'frmPeakfq
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1332,7 +1343,6 @@
     Friend WithEvents cmdAddThr As System.Windows.Forms.Button
     Friend WithEvents lblThresholds As System.Windows.Forms.Label
     Friend WithEvents lblIntervals As System.Windows.Forms.Label
-    Friend WithEvents cmdUpdateGraph As System.Windows.Forms.Button
     Friend WithEvents zgcThresh As ZedGraph.ZedGraphControl
     Friend WithEvents lblGlobalAnalysis As System.Windows.Forms.Label
     Friend WithEvents cboAnalysisOption As System.Windows.Forms.ComboBox
@@ -1350,5 +1360,7 @@
     Public WithEvents lblEmpiricalFileView As System.Windows.Forms.Label
     Public WithEvents cmdExportFileView As System.Windows.Forms.Button
     Public WithEvents lblExportFileView As System.Windows.Forms.Label
+    Friend WithEvents cboDataGraphFormat As System.Windows.Forms.ComboBox
+    Friend WithEvents lblDataGraphFormat As System.Windows.Forms.Label
 #End Region
 End Class

@@ -532,7 +532,7 @@ Friend Class pfqProject
                         lThresh.EYear = CSng(StrRetRem(Rec))
                         lThresh.LowerLimit = CSng(StrRetRem(Rec))
                         lThresh.UpperLimit = CSng(StrRetRem(Rec))
-                        lThresh.Comment = StrRetRem(Rec)
+                        lThresh.Comment = Rec
                         CurStation.Thresholds.Add(lThresh)
                         If CommentPending Then CurStation.CThresholds = lCom
                     Case "INTERVAL"
@@ -540,7 +540,7 @@ Friend Class pfqProject
                         lData.Year = CSng(StrRetRem(Rec))
                         lData.LowerLimit = CSng(StrRetRem(Rec))
                         lData.UpperLimit = CSng(StrRetRem(Rec))
-                        lData.Comment = StrRetRem(Rec)
+                        lData.Comment = Rec
                         CurStation.PeakData.Add(lData)
                         If CommentPending Then CurStation.CIntervals = lCom
                 End Select
