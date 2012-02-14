@@ -2074,6 +2074,9 @@ FileCancel:
         If chkExport.CheckState = CheckState.Checked Then
             lblExportFile.Visible = True
             cmdOpenExport.Visible = True
+            If Len(PfqPrj.ExportFileName) = 0 Then 'set default
+                lblExportFile.Text = IO.Path.ChangeExtension(PfqPrj.OutFile, ".exp")
+            End If
         Else
             lblExportFile.Visible = False
             cmdOpenExport.Visible = False
@@ -2084,6 +2087,9 @@ FileCancel:
         If chkEmpirical.CheckState = CheckState.Checked Then
             lblEmpirical.Visible = True
             cmdOpenEmpirical.Visible = True
+            If Len(PfqPrj.EmpiricalFileName) = 0 Then 'set default
+                lblEmpirical.Text = IO.Path.ChangeExtension(PfqPrj.OutFile, ".emp")
+            End If
         Else
             lblEmpirical.Visible = False
             cmdOpenEmpirical.Visible = False
