@@ -1265,6 +1265,7 @@ FileCancel:
         Dim lHistCnt As Integer = -1
         Dim lYr As Integer
         Dim lPk As Double
+        Dim lCode As String
 
         'clear previous curves
         lPane.CurveList.Clear()
@@ -1283,13 +1284,23 @@ FileCancel:
             lPk = Math.Abs(lPeak.Value)
             If lYr < lYearMin Then lYearMin = lYr
             If lYr > lYearMax Then lYearMax = lYr
-            If lCurves.Keys.Contains(lPeak.Code) Then 'add point to this curve
-                lCurve = lCurves.ItemByKey(lPeak.Code)
+            If lPeak.Code.Length > 1 Then
+                If lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'check for historic first
+                    lCode = "7"
+                ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
+                    'urban/regulated peak
+                    lCode = "6"
+                End If
+            Else
+                lCode = lPeak.Code
+            End If
+            If lCurves.Keys.Contains(lCode) Then 'add point to this curve
+                lCurve = lCurves.ItemByKey(lCode)
                 lCurve.AddPoint(lYr, lPk)
             Else 'new curve needed for another threshold span
                 lX(0) = lYr
                 lY(0) = lPk
-                Select Case lPeak.Code
+                Select Case lCode
                     Case "7", "H"
                         lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Triangle)
                     Case "D", "G", "X", "3", "8", "3+8"
@@ -1302,7 +1313,7 @@ FileCancel:
                         lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Black, SymbolType.Circle)
                 End Select
                 lCurve.Line.IsVisible = False
-                lCurves.Add(lPeak.Code, lCurve)
+                lCurves.Add(lCode, lCurve)
             End If
 
             If lPk > 0 AndAlso lPk < lDataMin Then lDataMin = lPk
