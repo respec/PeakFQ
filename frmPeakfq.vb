@@ -797,6 +797,7 @@ FileCancel:
         cdlOpenOpen.ShowDialog()
         cdlOpenSave.FileName = cdlOpenOpen.FileName
         FName = cdlOpenOpen.FileName
+        PfqPrj.Stations.Clear()
         PfqPrj.InputDir = PathNameOnly(FName)
         PfqPrj.OutputDir = PathNameOnly(FName) 'default output directory to same as input
         'set to current directory
@@ -1747,10 +1748,10 @@ FileCancel:
                     Exit For
                 End If
             Next
-            If lYVals(i) > lGBCrit Then 'above low outlier threshold
-                lKey = lXQual(i) & CStr(lThresh)
-            ElseIf Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
+            If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
                 lKey = "LO Threshold"
+            ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
+                lKey = lXQual(i) & CStr(lThresh)
             Else
                 lKey = "Low Outlier"
             End If
