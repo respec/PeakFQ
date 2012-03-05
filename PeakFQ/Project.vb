@@ -914,44 +914,44 @@ Friend Class pfqProject
 							'UPGRADE_WARNING: Couldn't resolve default property of object Me.Stations(i).UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
 							If Me.Stations(i).UrbanRegPeaks Then
 								'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-								.Stations(i).UrbanRegPeaks = False
-							Else
-								'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-								.Stations(i).UrbanRegPeaks = True
-							End If
+                                .Stations(i).UrbanRegPeaks = True
+                            Else
+                                'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                                .Stations(i).UrbanRegPeaks = False
+                            End If
 							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CUrban. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
 							If CommentPending Then .Stations(i).CUrban = lCom
 						Case "LOTHRESH"
 							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().LowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).LowOutlier = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CLowOutlier = lCom
-						Case "HITHRESH"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().HighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).HighOutlier = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CHighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CHighOutlier = lCom
-						Case "GAGEBASE"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().GageBaseDischarge. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).GageBaseDischarge = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CGageBase. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CGageBase = lCom
-						Case "LATITUDE"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().Lat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).Lat = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CLat = lCom
-						Case "LONGITUDE"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().Lng. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).Lng = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLong. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CLong = lCom
-						Case "PLOTNAME"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).PlotName = "-999"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CPlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CPlotName = lCom
-					End Select
+                            If .Stations(i).LowOutlier > 0 Then Stations(i).LowOutlier = -999.0#
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If CommentPending Then .Stations(i).CLowOutlier = lCom
+                        Case "HITHRESH"
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().HighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If .Stations(i).HighOutlier > 0 Then .Stations(i).HighOutlier = -999.0#
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CHighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If CommentPending Then .Stations(i).CHighOutlier = lCom
+                        Case "GAGEBASE"
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().GageBaseDischarge. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If .Stations(i).GageBaseDischarge Then .Stations(i).GageBaseDischarge = -999.0#
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CGageBase. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If CommentPending Then .Stations(i).CGageBase = lCom
+                        Case "LATITUDE"
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().Lat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            .Stations(i).Lat = -999.0#
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If CommentPending Then .Stations(i).CLat = lCom
+                        Case "LONGITUDE"
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().Lng. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            .Stations(i).Lng = -999.0#
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLong. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If CommentPending Then .Stations(i).CLong = lCom
+                        Case "PLOTNAME"
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            .Stations(i).PlotName = "-999"
+                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CPlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If CommentPending Then .Stations(i).CPlotName = lCom
+                    End Select
 					CommentPending = False 'assume any pending comment was stored with a specification
 				End If
 			End While
