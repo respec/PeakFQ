@@ -106,6 +106,8 @@
         Me.lblGlobalAnalysis = New System.Windows.Forms.Label()
         Me.grdSpecs = New atcControls.atcGrid()
         Me.tabThresholds = New System.Windows.Forms.TabPage()
+        Me.cboDataGraphFormat = New System.Windows.Forms.ComboBox()
+        Me.lblDataGraphFormat = New System.Windows.Forms.Label()
         Me.zgcThresh = New ZedGraph.ZedGraphControl()
         Me.lblIntervals = New System.Windows.Forms.Label()
         Me.lblThresholds = New System.Windows.Forms.Label()
@@ -169,8 +171,6 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
-        Me.lblDataGraphFormat = New System.Windows.Forms.Label()
-        Me.cboDataGraphFormat = New System.Windows.Forms.ComboBox()
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -350,9 +350,9 @@
         Me.lblLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblLOTest.Location = New System.Drawing.Point(498, 23)
         Me.lblLOTest.Name = "lblLOTest"
-        Me.lblLOTest.Size = New System.Drawing.Size(151, 13)
+        Me.lblLOTest.Size = New System.Drawing.Size(154, 13)
         Me.lblLOTest.TabIndex = 8
-        Me.lblLOTest.Text = "Global Low Outlier TestOption:"
+        Me.lblLOTest.Text = "Global Low Outlier Test Option:"
         '
         'cboLOTest
         '
@@ -435,6 +435,25 @@
         Me.tabThresholds.TabIndex = 3
         Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
+        '
+        'cboDataGraphFormat
+        '
+        Me.cboDataGraphFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cboDataGraphFormat.FormattingEnabled = True
+        Me.cboDataGraphFormat.Items.AddRange(New Object() {"None", "EMF - Enhanced Windows Metafile", "PNG - Portable Network Graphics", "GIF - Graphic Interchange Format", "JPEG", "TIFF", "BMP - Bitmap"})
+        Me.cboDataGraphFormat.Location = New System.Drawing.Point(405, 9)
+        Me.cboDataGraphFormat.Name = "cboDataGraphFormat"
+        Me.cboDataGraphFormat.Size = New System.Drawing.Size(75, 22)
+        Me.cboDataGraphFormat.TabIndex = 43
+        '
+        'lblDataGraphFormat
+        '
+        Me.lblDataGraphFormat.AutoSize = True
+        Me.lblDataGraphFormat.Location = New System.Drawing.Point(267, 9)
+        Me.lblDataGraphFormat.Name = "lblDataGraphFormat"
+        Me.lblDataGraphFormat.Size = New System.Drawing.Size(141, 14)
+        Me.lblDataGraphFormat.TabIndex = 13
+        Me.lblDataGraphFormat.Text = "Save Input Peaks Graph as:"
         '
         'zgcThresh
         '
@@ -1266,25 +1285,6 @@
         '
         'cmdOutFileView
         '
-        '
-        'lblDataGraphFormat
-        '
-        Me.lblDataGraphFormat.AutoSize = True
-        Me.lblDataGraphFormat.Location = New System.Drawing.Point(267, 9)
-        Me.lblDataGraphFormat.Name = "lblDataGraphFormat"
-        Me.lblDataGraphFormat.Size = New System.Drawing.Size(141, 14)
-        Me.lblDataGraphFormat.TabIndex = 13
-        Me.lblDataGraphFormat.Text = "Save Input Peaks Graph as:"
-        '
-        'cboDataGraphFormat
-        '
-        Me.cboDataGraphFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cboDataGraphFormat.FormattingEnabled = True
-        Me.cboDataGraphFormat.Items.AddRange(New Object() {"None", "EMF - Enhanced Windows Metafile", "PNG - Portable Network Graphics", "GIF - Graphic Interchange Format", "JPEG", "TIFF", "BMP - Bitmap"})
-        Me.cboDataGraphFormat.Location = New System.Drawing.Point(405, 9)
-        Me.cboDataGraphFormat.Name = "cboDataGraphFormat"
-        Me.cboDataGraphFormat.Size = New System.Drawing.Size(75, 22)
-        Me.cboDataGraphFormat.TabIndex = 43
         '
         'frmPeakfq
         '

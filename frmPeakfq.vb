@@ -16,7 +16,7 @@ Friend Class frmPeakfq
 
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
-    Friend ThreshColors() As System.Drawing.Color = {Color.LightBlue, Color.LightCoral, Color.LimeGreen, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
+    Friend ThreshColors() As System.Drawing.Color = {Color.CornflowerBlue, Color.LightCoral, Color.LimeGreen, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -497,7 +497,9 @@ FileCancel:
                 'save all data input graphs in specified format
                 lStnInd = CurStationIndex
                 For CurStationIndex = 0 To PfqPrj.Stations.Count - 1
-                    UpdateInputGraph(vbTrue)
+                    If PfqPrj.Stations(CurStationIndex).AnalysisOption.ToUpper <> "SKIP" Then
+                        UpdateInputGraph(vbTrue)
+                    End If
                 Next
                 CurStationIndex = lStnInd
             End If
@@ -817,16 +819,16 @@ FileCancel:
             'build default project from initial version of spec file
             SaveFileString(PathNameOnly(FName) & "\" & tmpSpecName, s)
             PfqPrj.SpecFileName = PathNameOnly(FName) & "\" & tmpSpecName 'make working verbose copy
-            DefPfqPrj = PfqPrj.SaveDefaults(s)
-        End If
-        'read peak data for each station from output file
-        PfqPrj.ReadPeaks()
-        If FileExists(PfqPrj.OutFile) Then
-            'delete output file generated from reading data
-            Kill(PfqPrj.OutFile)
+            If PfqPrj.Stations.Count > 0 Then DefPfqPrj = PfqPrj.SaveDefaults(s)
         End If
         Me.Cursor = System.Windows.Forms.Cursors.Default
         If PfqPrj.Stations.Count > 0 Then
+            'read peak data for each station from output file
+            PfqPrj.ReadPeaks()
+            If FileExists(PfqPrj.OutFile) Then
+                'delete output file generated from reading data
+                Kill(PfqPrj.OutFile)
+            End If
             '    txtData.Text = PfqPrj.DataFileName
             lblData.Text = "PeakFQ Data File:  " & PfqPrj.DataFileName
             If cdlOpenOpen.FilterIndex = 4 Then 'opened spec file, put name on main form
@@ -849,6 +851,9 @@ FileCancel:
             cmdSave.Enabled = True
             mnuSaveSpecs.Enabled = True
             '    PfqPrj.SpecFileName = tmpSpecName 'use temporary name for active spec file
+        Else
+            MessageBox.Show("Problem processing peak station data." & vbCrLf & _
+                            "Check file and path names of selected files", "File-Open Problem")
         End If
 
 FileCancel:
@@ -1285,7 +1290,9 @@ FileCancel:
             lPk = Math.Abs(lPeak.Value)
             If lYr < lYearMin Then lYearMin = lYr
             If lYr > lYearMax Then lYearMax = lYr
-            If lPeak.Code.Length > 1 Then
+            If lPeak.Code Is Nothing Then
+                lCode = ""
+            ElseIf lPeak.Code.Length > 1 Then
                 If lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'check for historic first
                     lCode = "7"
                 ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
@@ -1326,6 +1333,7 @@ FileCancel:
         'set x-axis range
         lPane.X2Axis.Scale.Min = lYearMin
         lPane.X2Axis.Scale.Max = lYearMax
+        lPane.XAxis.Title.Text = "Water Year" & vbCrLf & "Station - " & lStn.id & " " & lStn.Name
 
         'now draw curves
         lYAxis.IsVisible = True
@@ -1502,12 +1510,13 @@ FileCancel:
                 .DashOff = 0
                 .IsVisible = True
             End With
+            .Title.Text = "Annual Peak Discharge (cfs)"
             If aType = "T" Then
-                .Title.Text = "Discharge (cfs)"
+                '.Title.Text = "Discharge (cfs)"
                 .Title.FontSpec.Size = 8
                 .Scale.FontSpec.Size = 8
             Else
-                .Title.Text = "Annual Peak Discharge (cfs)"
+                '.Title.Text = "Annual Peak Discharge (cfs)"
                 .Title.FontSpec.Size = 12
                 .Scale.FontSpec.Size = 12
             End If
