@@ -1333,7 +1333,7 @@ FileCancel:
         'set x-axis range
         lPane.X2Axis.Scale.Min = lYearMin
         lPane.X2Axis.Scale.Max = lYearMax
-        lPane.XAxis.Title.Text = "Water Year" & vbCrLf & "Station - " & lStn.id & " " & lStn.Name
+        lPane.XAxis.Title.Text = "Water Year" & vbCrLf & "Station - " & lStn.PlotName ' lStn.id & " " & lStn.Name
 
         'now draw curves
         lYAxis.IsVisible = True
