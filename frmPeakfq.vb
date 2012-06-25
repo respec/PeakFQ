@@ -16,7 +16,7 @@ Friend Class frmPeakfq
 
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
-    Friend ThreshColors() As System.Drawing.Color = {Color.CornflowerBlue, Color.LightCoral, Color.LimeGreen, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
+    Friend ThreshColors() As System.Drawing.Color = {Color.CornflowerBlue, Color.DarkSeaGreen, Color.DeepPink, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -1359,7 +1359,11 @@ FileCancel:
         i = 0
         For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
             lThrshDates(0) = vThresh.SYear
-            lThrshDates(1) = vThresh.EYear
+            If vThresh.EYear = vThresh.SYear Then 'increase end date a bit to give line some width
+                lThrshDates(1) = vThresh.EYear + 1
+            Else
+                lThrshDates(1) = vThresh.EYear
+            End If
             i += 1
             '1st curve is lower limit down to bottom of graph
             lThrshVals(0) = vThresh.LowerLimit
