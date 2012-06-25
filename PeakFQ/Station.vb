@@ -479,7 +479,7 @@ Friend Class pfqStation
                 '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                 'End If
                 If Not PeakDataOrigContains(vData) Then 'new or revised peak
-                    If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then 'interval data
+                    If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 Then 'interval data
                         s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                     Else 'just revised peak data
                         s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
