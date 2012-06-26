@@ -36,13 +36,10 @@ Friend Class frmPeakfq
         End Sub
     End Class
 
-    'UPGRADE_WARNING: Event chkAddOut.CheckStateChanged may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
     Private Sub chkAddOut_CheckStateChanged(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles chkAddOut.CheckStateChanged
         Dim Index As Short = chkAddOut.GetIndex(eventSender)
         If Index = 1 Then 'text file additional output
             If chkAddOut(1).CheckState = CheckState.Checked Then
-                'expand frame to show additional output file and button to edit it
-                'fraAddOut.Height = VB6.TwipsToPixelsY(1575)
                 If Len(PfqPrj.AddOutFileName) = 0 Then 'set default
                     lblOutFile(1).Text = IO.Path.ChangeExtension(PfqPrj.OutFile, ".bcd")
                 End If
@@ -51,7 +48,6 @@ Friend Class frmPeakfq
                 optAddFormat(0).Visible = True
                 optAddFormat(1).Visible = True
             Else 'smaller frame is fine
-                'fraAddOut.Height = VB6.TwipsToPixelsY(735)
                 lblOutFile(1).Visible = False
                 cmdOpenOut(1).Visible = False
                 optAddFormat(0).Visible = False
@@ -107,7 +103,7 @@ Friend Class frmPeakfq
             '.FixedColumns = 0
 
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            .Columns = 18 ' already know there are 18 columns
+            .Columns = 19 ' already know there are 19 columns
             For Each vSta In PfqPrj.Stations
                 .Rows += 1
                 .CellValue(.Rows - 1, 0) = vSta.id
@@ -133,85 +129,96 @@ Friend Class frmPeakfq
                 .CellEditable(.Rows - 1, 3) = True
                 .Alignment(.Rows - 1, 3) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 4) = vSta.HistoricPeriod
-                .CellEditable(.Rows - 1, 4) = True
+                .CellValue(.Rows - 1, 4) = vSta.EndYear - vSta.BegYear + 1
+                .CellEditable(.Rows - 1, 4) = False
+                .CellColor(.Rows - 1, 4) = SystemColors.ControlDark
                 .Alignment(.Rows - 1, 4) = atcAlignment.HAlignRight
 
-                If vSta.SkewOpt = 0 Then
-                    .CellValue(.Rows - 1, 5) = "Station"
-                ElseIf vSta.SkewOpt = 1 Then
-                    .CellValue(.Rows - 1, 5) = "Weighted"
-                ElseIf vSta.SkewOpt = 2 Then
-                    .CellValue(.Rows - 1, 5) = "Generalized"
+                If vSta.HistoricPeriod Then
+                    .CellValue(.Rows - 1, 5) = "Yes"
+                Else
+                    .CellValue(.Rows - 1, 5) = "No"
                 End If
                 .CellEditable(.Rows - 1, 5) = True
 
-                .CellValue(.Rows - 1, 6) = vSta.GenSkew
+                If vSta.SkewOpt = 0 Then
+                    .CellValue(.Rows - 1, 6) = "Station"
+                ElseIf vSta.SkewOpt = 1 Then
+                    .CellValue(.Rows - 1, 6) = "Weighted"
+                ElseIf vSta.SkewOpt = 2 Then
+                    .CellValue(.Rows - 1, 6) = "Generalized"
+                End If
                 .CellEditable(.Rows - 1, 6) = True
-                .Alignment(.Rows - 1, 6) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 7) = vSta.SESkew
+                .CellValue(.Rows - 1, 7) = vSta.GenSkew
                 .CellEditable(.Rows - 1, 7) = True
                 .Alignment(.Rows - 1, 7) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 8) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
-                .CellColor(.Rows - 1, 8) = SystemColors.ControlDark
-                .CellEditable(.Rows - 1, 8) = False
+                .CellValue(.Rows - 1, 8) = vSta.SESkew
+                .CellEditable(.Rows - 1, 8) = True
+                .Alignment(.Rows - 1, 8) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 9) = vSta.LowHistPeak
+                .CellValue(.Rows - 1, 9) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
                 .CellColor(.Rows - 1, 9) = SystemColors.ControlDark
                 .CellEditable(.Rows - 1, 9) = False
-                .Alignment(.Rows - 1, 9) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 10) = vSta.LowOutlier
-                .CellEditable(.Rows - 1, 10) = True
+                .CellValue(.Rows - 1, 10) = vSta.LowHistPeak
+                .CellColor(.Rows - 1, 10) = SystemColors.ControlDark
+                .CellEditable(.Rows - 1, 10) = False
                 .Alignment(.Rows - 1, 10) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 11) = vSta.HighSysPeak
-                .CellColor(.Rows - 1, 11) = SystemColors.ControlDark
-                .CellEditable(.Rows - 1, 11) = False
+                .CellValue(.Rows - 1, 11) = vSta.LowOutlier
+                .CellEditable(.Rows - 1, 11) = True
                 .Alignment(.Rows - 1, 11) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 12) = vSta.HighOutlier
+                .CellValue(.Rows - 1, 12) = vSta.LOTestType
                 .CellEditable(.Rows - 1, 12) = True
-                .Alignment(.Rows - 1, 12) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 13) = vSta.GageBaseDischarge
-                .CellEditable(.Rows - 1, 13) = True
+                .CellValue(.Rows - 1, 13) = vSta.HighSysPeak
+                .CellColor(.Rows - 1, 13) = SystemColors.ControlDark
+                .CellEditable(.Rows - 1, 13) = False
                 .Alignment(.Rows - 1, 13) = atcAlignment.HAlignRight
 
-                If vSta.UrbanRegPeaks Then
-                    .CellValue(.Rows - 1, 14) = "Yes"
-                Else
-                    .CellValue(.Rows - 1, 14) = "No"
-                End If
+                .CellValue(.Rows - 1, 14) = vSta.HighOutlier
                 .CellEditable(.Rows - 1, 14) = True
+                .Alignment(.Rows - 1, 14) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 15) = vSta.Lat
+                .CellValue(.Rows - 1, 15) = vSta.GageBaseDischarge
                 .CellEditable(.Rows - 1, 15) = True
                 .Alignment(.Rows - 1, 15) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 16) = vSta.Lng
+                If vSta.UrbanRegPeaks Then
+                    .CellValue(.Rows - 1, 16) = "Yes"
+                Else
+                    .CellValue(.Rows - 1, 16) = "No"
+                End If
                 .CellEditable(.Rows - 1, 16) = True
-                .Alignment(.Rows - 1, 16) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 17) = vSta.PlotName
+                .CellValue(.Rows - 1, 17) = vSta.Lat
                 .CellEditable(.Rows - 1, 17) = True
+                .Alignment(.Rows - 1, 17) = atcAlignment.HAlignRight
+
+                .CellValue(.Rows - 1, 18) = vSta.Lng
+                .CellEditable(.Rows - 1, 18) = True
+                .Alignment(.Rows - 1, 18) = atcAlignment.HAlignRight
+
+                .CellValue(.Rows - 1, 19) = vSta.PlotName
+                .CellEditable(.Rows - 1, 19) = True
 
                 ilen = Len(vSta.PlotName)
                 For j = .Rows - 2 To .FixedRows Step -1 'look for duplicate plot names and adjust as needed
                     If vSta.PlotName = Nothing Then
 
-                    ElseIf VB.Left(.CellValue(j, 17), ilen) = vSta.PlotName Then 'duplicate found
-                        ipos = InStr(.CellValue(j, 17), "-")
+                    ElseIf VB.Left(.CellValue(j, 19), ilen) = vSta.PlotName Then 'duplicate found
+                        ipos = InStr(.CellValue(j, 19), "-")
                         If ipos > 0 Then 'not first duplicate, increase index number
-                            Dim larr() As String = .CellValue(.Rows - 1, 17).Split("-")
+                            Dim larr() As String = .CellValue(.Rows - 1, 19).Split("-")
                             Dim lastInd As Integer = Integer.Parse(larr(larr.Length - 1))
                             Ind = lastInd
                             'Ind = CInt(Mid(.CellValue(j, 17), ipos + 1))
-                            .CellValue(.Rows - 1, 17) = vSta.PlotName & "-" & CStr(Ind + 1)
+                            .CellValue(.Rows - 1, 19) = vSta.PlotName & "-" & CStr(Ind + 1)
                         Else 'first duplicate
-                            .CellValue(.Rows - 1, 17) = vSta.PlotName & "-1"
+                            .CellValue(.Rows - 1, 19) = vSta.PlotName & "-1"
                         End If
                     End If
                 Next j
@@ -232,9 +239,6 @@ Friend Class frmPeakfq
         Dim i As Integer
         Dim curSta As pfqStation
 
-        'UPGRADE_NOTE: Object PfqPrj.Stations may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-        '        PfqPrj.Stations.Clear()
-        '       PfqPrj.Stations = Nothing
         With grdSpecs.Source
             For i = .FixedRows To .Rows - 1
                 curSta = PfqPrj.Stations.Item(i - .FixedRows) ' New pfqStation
@@ -242,27 +246,32 @@ Friend Class frmPeakfq
                 curSta.AnalysisOption = .CellValue(i, 1)
                 If IsNumeric(.CellValue(i, 2)) Then curSta.BegYear = CInt(.CellValue(i, 2))
                 If IsNumeric(.CellValue(i, 3)) Then curSta.EndYear = CInt(.CellValue(i, 3))
-                If IsNumeric(.CellValue(i, 4)) Then curSta.HistoricPeriod = CSng(.CellValue(i, 4))
-                If .CellValue(i, 5) = "Station" Then
+                If .CellValue(i, 5) = "Yes" Then
+                    curSta.HistoricPeriod = True
+                Else
+                    curSta.HistoricPeriod = False
+                End If
+                If .CellValue(i, 6) = "Station" Then
                     curSta.SkewOpt = 0
-                ElseIf .CellValue(i, 5) = "Weighted" Then
+                ElseIf .CellValue(i, 6) = "Weighted" Then
                     curSta.SkewOpt = 1
-                ElseIf .CellValue(i, 5) = "Generalized" Then
+                ElseIf .CellValue(i, 6) = "Generalized" Then
                     curSta.SkewOpt = 2
                 End If
-                If IsNumeric(.CellValue(i, 6)) Then curSta.GenSkew = CSng(.CellValue(i, 6))
-                If IsNumeric(.CellValue(i, 7)) Then curSta.SESkew = CSng(.CellValue(i, 7))
-                If IsNumeric(.CellValue(i, 10)) Then curSta.LowOutlier = CSng(.CellValue(i, 10))
-                If IsNumeric(.CellValue(i, 12)) Then curSta.HighOutlier = CSng(.CellValue(i, 12))
-                If IsNumeric(.CellValue(i, 13)) Then curSta.GageBaseDischarge = CSng(.CellValue(i, 13))
-                If .CellValue(i, 14) = "Yes" Then
+                If IsNumeric(.CellValue(i, 7)) Then curSta.GenSkew = CSng(.CellValue(i, 6))
+                If IsNumeric(.CellValue(i, 8)) Then curSta.SESkew = CSng(.CellValue(i, 7))
+                If IsNumeric(.CellValue(i, 11)) Then curSta.LowOutlier = CSng(.CellValue(i, 10))
+                curSta.LOTestType = .CellValue(i, 12)
+                If IsNumeric(.CellValue(i, 14)) Then curSta.HighOutlier = CSng(.CellValue(i, 13))
+                If IsNumeric(.CellValue(i, 15)) Then curSta.GageBaseDischarge = CSng(.CellValue(i, 14))
+                If .CellValue(i, 16) = "Yes" Then
                     curSta.UrbanRegPeaks = True
                 Else
                     curSta.UrbanRegPeaks = False
                 End If
-                If IsNumeric(.CellValue(i, 15)) Then curSta.Lat = CSng(.CellValue(i, 15))
-                If IsNumeric(.CellValue(i, 16)) Then curSta.Lng = CSng(.CellValue(i, 16))
-                curSta.PlotName = .CellValue(i, 17)
+                If IsNumeric(.CellValue(i, 17)) Then curSta.Lat = CSng(.CellValue(i, 17))
+                If IsNumeric(.CellValue(i, 18)) Then curSta.Lng = CSng(.CellValue(i, 18))
+                curSta.PlotName = .CellValue(i, 19)
                 'PfqPrj.Stations.Add(curSta)
             Next
         End With
@@ -543,61 +552,44 @@ FileCancel:
         With grdSpecs.Source
             .FixedRows = 2
             .Rows = 1
-            '  grdSpecs.cols = 16
-            .Columns = 18
-            'For i = 0 To 17
-            '    grdSpecs.set_ColEditable(i, False)
-            'Next i
+            .Columns = 19
             .CellValue(1, 0) = "Station ID"
-            'grdSpecs.set_ColType(0, ATCoCtl.ATCoDataType.ATCoTxt)
             .CellValue(0, 1) = "Analysis"
             .CellValue(1, 1) = "Option"
-            'grdSpecs.set_ColType(1, ATCoCtl.ATCoDataType.ATCoTxt)
             .CellValue(0, 2) = "Beginning"
             .CellValue(1, 2) = "Year"
-            'grdSpecs.set_ColType(2, ATCoCtl.ATCoDataType.ATCoInt)
             .CellValue(0, 3) = "Ending"
             .CellValue(1, 3) = "Year"
-            'grdSpecs.set_ColType(3, ATCoCtl.ATCoDataType.ATCoInt)
-            .CellValue(0, 4) = "Historic"
-            .CellValue(1, 4) = "Period"
-            'grdSpecs.set_ColType(4, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 5) = "Skew"
-            .CellValue(1, 5) = "Option"
-            'grdSpecs.set_ColType(5, ATCoCtl.ATCoDataType.ATCoTxt)
-            .CellValue(0, 6) = "Generalized"
-            .CellValue(1, 6) = "Skew"
-            'grdSpecs.set_ColType(6, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 7) = "Gen Skew"
-            .CellValue(1, 7) = "Std Error"
-            'grdSpecs.set_ColType(7, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 8) = "Mean"
-            .CellValue(1, 8) = "Sqr Err"
-            'grdSpecs.set_ColType(8, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 9) = "Low Hist"
-            .CellValue(1, 9) = "Peak"
-            'grdSpecs.set_ColType(9, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 10) = "Lo-Outlier"
-            .CellValue(1, 10) = "Threshold"
-            'grdSpecs.set_ColType(10, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 11) = "High Sys"
-            .CellValue(1, 11) = "Peak"
-            'grdSpecs.set_ColType(11, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 12) = "Hi-Outlier"
-            .CellValue(1, 12) = "Threshold"
-            'grdSpecs.set_ColType(12, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 13) = "Gage Base"
-            .CellValue(1, 13) = "Discharge"
-            'grdSpecs.set_ColType(13, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 14) = "Urban/Reg"
-            .CellValue(1, 14) = "Peaks"
-            .CellValue(1, 15) = "Latitude"
-            'grdSpecs.set_ColType(15, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(1, 16) = "Longitude"
-            'grdSpecs.set_ColType(16, ATCoCtl.ATCoDataType.ATCoSng)
-            .CellValue(0, 17) = "Plot"
-            .CellValue(1, 17) = "Name"
-            'grdSpecs.set_ColType(17, ATCoCtl.ATCoDataType.ATCoTxt)
+            .CellValue(0, 4) = "Record"
+            .CellValue(1, 4) = "Length"
+            .CellValue(0, 5) = "Inc Hist"
+            .CellValue(1, 5) = "Peaks"
+            .CellValue(0, 6) = "Skew"
+            .CellValue(1, 6) = "Option"
+            .CellValue(0, 7) = "Generalized"
+            .CellValue(1, 7) = "Skew"
+            .CellValue(0, 8) = "Gen Skew"
+            .CellValue(1, 8) = "Std Error"
+            .CellValue(0, 9) = "Mean"
+            .CellValue(1, 9) = "Sqr Err"
+            .CellValue(0, 10) = "Low Hist"
+            .CellValue(1, 10) = "Peak"
+            .CellValue(0, 11) = "Lo-Outlier"
+            .CellValue(1, 11) = "Threshold"
+            .CellValue(0, 12) = "Lo Out"
+            .CellValue(1, 12) = "Test"
+            .CellValue(0, 13) = "High Sys"
+            .CellValue(1, 13) = "Peak"
+            .CellValue(0, 14) = "Hi-Outlier"
+            .CellValue(1, 14) = "Threshold"
+            .CellValue(0, 15) = "Gage Base"
+            .CellValue(1, 15) = "Discharge"
+            .CellValue(0, 16) = "Urban/Reg"
+            .CellValue(1, 16) = "Peaks"
+            .CellValue(1, 17) = "Latitude"
+            .CellValue(1, 18) = "Longitude"
+            .CellValue(0, 19) = "Plot"
+            .CellValue(1, 19) = "Name"
 
         End With
 
@@ -643,48 +635,6 @@ FileCancel:
         cmdSave.Enabled = False
     End Sub
 
-    'UPGRADE_WARNING: Event frmPeakfq.Resize may fire when form is initialized. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="88B12AE1-6DE0-48A0-86F1-60C0686C026A"'
-    'Private Sub frmPeakfq_Resize(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles MyBase.Resize
-    '    Dim w, h As Integer
-    '    w = VB6.PixelsToTwipsX(Me.ClientRectangle.Width)
-    '    h = VB6.PixelsToTwipsY(Me.ClientRectangle.Height)
-    '    If h < 5070 And h > 0 Then 'height too small
-    '        Me.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(Me.Height) - h + 5070)
-    '    End If
-    '    If w > 7300 Then
-    '        '    txtData.Width = w - txtData.Left - sstPfq.Left
-    '        '    txtSpec.Width = txtData.Width
-    '        lblData.Width = VB6.TwipsToPixelsX(w - VB6.PixelsToTwipsX(lblData.Left) - VB6.PixelsToTwipsX(sstPfq.Left))
-    '        lblSpec.Width = lblData.Width
-    '        sstPfq.Width = VB6.TwipsToPixelsX(w - (VB6.PixelsToTwipsX(sstPfq.Left) * 2))
-    '        fraButtons.Left = VB6.TwipsToPixelsX(w - VB6.PixelsToTwipsX(fraButtons.Width) - 120)
-    '        Select Case sstPfq.SelectedIndex
-    '            Case 0 : grdSpecs.Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - (VB6.PixelsToTwipsX(grdSpecs.Left) * 2))
-    '            Case 1
-    '            Case 2 : fraOutRight.Left = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - VB6.PixelsToTwipsX(fraOutRight.Width) - 120)
-    '                fraOutFile.Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutRight.Left) - (VB6.PixelsToTwipsX(fraOutFile.Left) * 3))
-    '                fraAddOut.Width = fraOutFile.Width
-    '                lblOutFile(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutFile.Width) - VB6.PixelsToTwipsX(lblOutFile(0).Left) - 120)
-    '                lblOutFile(1).Width = lblOutFile(0).Width
-    '            Case 3 : fraGraphics.Left = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(sstPfq.Width) - VB6.PixelsToTwipsX(fraGraphics.Width) - 120)
-    '                fraOutFileRes(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraGraphics.Left) - (VB6.PixelsToTwipsX(fraOutFileRes(0).Left) * 3))
-    '                fraOutFileRes(1).Width = fraOutFileRes(0).Width
-    '                lblOutFileView(0).Width = VB6.TwipsToPixelsX(VB6.PixelsToTwipsX(fraOutFileRes(0).Width) - VB6.PixelsToTwipsX(lblOutFileView(0).Left) - 120)
-    '                lblOutFileView(1).Width = lblOutFileView(0).Width
-    '        End Select
-    '    End If
-    '    If h > 5070 Then
-    '        fraButtons.Top = VB6.TwipsToPixelsY(h - VB6.PixelsToTwipsY(fraButtons.Height) - 120)
-    '        sstPfq.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraButtons.Top) - VB6.PixelsToTwipsY(sstPfq.Top) - 120)
-    '        Select Case sstPfq.SelectedIndex
-    '            Case 0 : grdSpecs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(grdSpecs.Top) - 120)
-    '            Case 3 : fraGraphics.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(sstPfq.Height) - VB6.PixelsToTwipsY(fraGraphics.Top) - 120)
-    '                lstGraphs.Height = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(fraGraphics.Height) - VB6.PixelsToTwipsY(lstGraphs.Top) - VB6.PixelsToTwipsY(cmdGraph.Height) - 240)
-    '                cmdGraph.Top = VB6.TwipsToPixelsY(VB6.PixelsToTwipsY(lstGraphs.Top) + VB6.PixelsToTwipsY(lstGraphs.Height) + 120)
-    '        End Select
-    '    End If
-    'End Sub
-
     Private Sub frmPeakfq_FormClosed(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
         'Dim i As Integer
 
@@ -708,27 +658,6 @@ FileCancel:
     End Sub
 
     Public Sub mnuFeedback_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mnuFeedback.Click
-        '        Dim stepname As String
-        '        On Error GoTo errmsg
-        '        stepname = "1: Dim feedback As clsATCoFeedback"
-        '        'UPGRADE_ISSUE: clsATCoFeedback object was not upgraded. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
-        '        Dim feedback As clsATCoFeedback
-        '        stepname = "2: Set feedback = New clsATCoFeedback"
-        '        feedback = New clsATCoFeedback
-        '        '                                     stepname = "3: feedback.AddText"
-        '        'feedback.AddText AboutString(False)
-        '        stepname = "4: feedback.AddFile"
-        '        'UPGRADE_WARNING: Couldn't resolve default property of object feedback.AddFile. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        '        feedback.AddFile(VB.Left(My.Application.Info.DirectoryPath, InStr(4, My.Application.Info.DirectoryPath, "\")) & "unins000.dat")
-        '        stepname = "5: feedback.Show"
-        '        'UPGRADE_ISSUE: App object was not upgraded. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6B85A2A7-FE9F-4FBE-AA0C-CF11AC86A305"'
-        '        'UPGRADE_WARNING: Couldn't resolve default property of object feedback.Show. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        '        feedback.Show(App, Me.Icon)
-
-        '        Exit Sub
-
-        'errmsg:
-        '        MsgBox("Error opening feedback in step " & stepname & vbCr & Err.Description, CDbl("Send Feedback"))
 
         '*********************
         'New feedback routine STARTS
@@ -771,10 +700,6 @@ FileCancel:
     End Sub
 
     Public Sub mnuHelpMain_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mnuHelpMain.Click
-        'Dim s As String
-        ''UPGRADE_ISSUE: MSComDlg.CommonDialog control cdlOpen was not upgraded. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E047632-2D91-44D6-B2A3-0801707AF686"'
-        ''UPGRADE_ISSUE: App property App.HelpFile was not upgraded. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
-        's = OpenFile(App.HelpFile, cdlOpen)
 
         Dim lHelpFilename As String
         lHelpFilename = FindFile("", "C:\Doc\Peakfq\Out\peakfq.chm")
@@ -840,7 +765,7 @@ FileCancel:
             Else
                 cboAnalysisOption.SelectedItem = "B17B"
             End If
-            cboLOTest.SelectedItem = LOTestType
+            cboLOTest.SelectedItem = "Single Grubbs-Beck"
             EnableGrid()
             PopulateGrid()
             PopulateOutput()
@@ -861,11 +786,11 @@ FileCancel:
 
     Private Sub EnableGrid()
         Dim i As Short
-        For i = 1 To 17
-            If i <> 8 And i <> 9 And i <> 11 Then
+        For i = 1 To 19
+            If i <> 4 AndAlso i <> 9 AndAlso i <> 10 AndAlso i <> 13 Then
                 'grdSpecs.set_ColEditable(i, True)
                 With grdSpecs.Source
-                    For lrow As Integer = 0 To .Rows - 1
+                    For lrow As Integer = .FixedRows To .Rows - 1
                         If lrow + 1 > .FixedRows Then
                             .CellEditable(lrow, i) = True
                         End If
@@ -980,11 +905,11 @@ FileCancel:
     End Sub
 
     Private Sub grdSpecs_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdSpecs.CellEdited
-        If aColumn = 7 Then 'changed std skew err, update mean sqr err
+        If aColumn = 8 Then 'changed std skew err, update mean sqr err
             With grdSpecs.Source
-                .CellValue(aRow, 8) = CSng(.CellValue(aRow, aColumn) ^ 2)
+                .CellValue(aRow, 9) = CSng(.CellValue(aRow, aColumn) ^ 2)
                 'grdSpecs.CellBackColor = grdSpecs.BackColorFixed
-                .CellColor(aRow, 8) = SystemColors.ControlDark
+                .CellColor(aRow, 9) = SystemColors.ControlDark
             End With
         End If
 
@@ -998,20 +923,20 @@ FileCancel:
             lUniqueValues.Add("B17B")
             lUniqueValues.Add("EMA")
             aGrid.AllowNewValidValues = True
-        ElseIf aColumn = 5 Then ' The Skew option column
-            'With aGrid.Source
-            '    For lRow As Integer = .FixedRows To .Rows - 1
-            '        Dim lRowValue As String = .CellValue(lRow, aColumn)
-            '        If Not lRowValue Is Nothing AndAlso Not lUniqueValues.Contains(lRowValue) Then
-            '            lUniqueValues.Add(lRowValue)
-            '        End If
-            '    Next
-            'End With
+        ElseIf aColumn = 5 Then 'Historic period option column
+            lUniqueValues.Add("Yes")
+            lUniqueValues.Add("No")
+            aGrid.AllowNewValidValues = True
+        ElseIf aColumn = 6 Then ' The Skew option column
             lUniqueValues.Add("Station")
             lUniqueValues.Add("Weighted")
             lUniqueValues.Add("Generalized")
             aGrid.AllowNewValidValues = True
-        ElseIf aColumn = 14 Then 'Urban/Reg Peaks column
+        ElseIf aColumn = 12 Then 'Low-outlier test option
+            lUniqueValues.Add("Single")
+            lUniqueValues.Add("Multiple")
+            aGrid.AllowNewValidValues = True
+        ElseIf aColumn = 16 Then 'Urban/Reg Peaks column
             lUniqueValues.Add("Yes")
             lUniqueValues.Add("No")
             aGrid.AllowNewValidValues = True
@@ -1273,6 +1198,13 @@ FileCancel:
         Dim lPk As Double
         Dim lCode As String
 
+        'build threshold symbol
+        Dim lThreshSymbol As New System.Drawing.Drawing2D.GraphicsPath
+        Dim lSize As Single = 0.5
+        lThreshSymbol.AddLine(0, 0, lSize, -2 * lSize)
+        lThreshSymbol.AddLine(lSize, -2 * lSize, -lSize, -2 * lSize)
+        lThreshSymbol.AddLine(-lSize, -2 * lSize, 0, 0)
+
         'clear previous curves
         lPane.CurveList.Clear()
 
@@ -1280,7 +1212,7 @@ FileCancel:
         For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
             If vThresh.SYear < lYearMin Then lYearMin = vThresh.SYear
             If vThresh.EYear > lYearMax Then lYearMax = vThresh.EYear
-            If vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
+            If vThresh.LowerLimit > 0 AndAlso vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
             If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
         Next
 
@@ -1365,6 +1297,20 @@ FileCancel:
                 lThrshDates(1) = vThresh.EYear
             End If
             i += 1
+            If vThresh.LowerLimit <= lYAxis.Scale.Min Then
+                'add marker to indicate lower threshold boundary
+                lX(0) = (vThresh.SYear + vThresh.EYear) / 2
+                lY(0) = lYAxis.Scale.Min
+                lCurve = lPane.AddCurve("Lower Threshold " & i, lX, lY, ThreshColors(i - 1), SymbolType.UserDefined)
+                If vThresh.LowerLimit > 0 Then
+                    lCurve.Symbol.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                Else
+                    lCurve.Symbol.Fill = New Fill(Color.White, Color.White)
+                End If
+                lCurve.Symbol.Size = 9
+                lCurve.Symbol.UserSymbol = lThreshSymbol
+                lCurve.Label.IsVisible = False
+            End If
             '1st curve is lower limit down to bottom of graph
             lThrshVals(0) = vThresh.LowerLimit
             lThrshVals(1) = vThresh.LowerLimit
@@ -2092,7 +2038,13 @@ FileCancel:
     End Sub
 
     Private Sub cboLOTest_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboLOTest.SelectedIndexChanged
-        LOTestType = cboLOTest.SelectedItem
+        Dim lStr As String = cboLOTest.SelectedItem
+        With grdSpecs.Source
+            For i As Integer = .FixedRows To .Rows - 1
+                .CellValue(i, 11) = lStr
+            Next
+        End With
+        grdSpecs.Refresh()
     End Sub
 
     Private Sub chkExport_CheckStateChanged(sender As Object, e As System.EventArgs) Handles chkExport.CheckStateChanged
