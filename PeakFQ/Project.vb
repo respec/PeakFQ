@@ -496,14 +496,14 @@ Friend Class pfqProject
                             CurStation.UrbanRegPeaks = 0
                         End If
                         If CommentPending Then CurStation.CUrban = lCom
-                    Case "LOTYPE"
-                        If UCase(Rec) <> "NONE" AndAlso LOTestType.Length = 0 Then
-                            If UCase(Rec) = "SINGLE" Then
-                                LOTestType = "Single Grubbs-Beck"
-                            ElseIf UCase(Rec) = "MULTIPLE" Then
-                                LOTestType = "Multiple Grubbs-Beck"
-                            End If
-                        End If
+                        'Case "LOTYPE"
+                        '    If UCase(Rec) <> "NONE" AndAlso LOTestType.Length = 0 Then
+                        '        If UCase(Rec) = "SINGLE" Then
+                        '            LOTestType = "Single Grubbs-Beck"
+                        '        ElseIf UCase(Rec) = "MULTIPLE" Then
+                        '            LOTestType = "Multiple Grubbs-Beck"
+                        '        End If
+                        '    End If
                     Case "LOTHRESH"
                         CurStation.LowOutlier = CSng(Rec)
                         If CommentPending Then CurStation.CLowOutlier = lCom

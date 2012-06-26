@@ -35,12 +35,12 @@ Friend Class pfqStation
     Private pEndYear As Integer
     Private pSkewOpt As Integer '0 - Station, 1 - Weighted, 2 - Generalized
     Private pUrbanRegPeaks As Boolean
-    Private pHistoricPeriod As Single
+    Private pHistoricPeriod As Boolean
     Private pGenSkew As Single
     Private pHighSysPeak As Single
     Private pHighOutlier As Single
     Private pLowHistPeak As Single
-    'Private pLOTestType As String
+    Private pLOTestType As String
     Private pLowOutlier As Single
     Private pGageBaseDischarge As Single
     Private pSESkew As Single
@@ -69,7 +69,7 @@ Friend Class pfqStation
     Private pCPlotName As String
     Private pCThresholds As String
     Private pCIntervals As String
-    'Private pCLOTestType As String
+    Private pCLOTestType As String
 
     'UPGRADE_ISSUE: Declaration type not supported: Array with lower bound less than zero. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="934BD4FF-1FF9-47BD-888F-D411E47E78FA"'
     'Private SOText(-1 To 1) As String
@@ -138,11 +138,11 @@ Friend Class pfqStation
         End Set
     End Property
 
-    Public Property HistoricPeriod() As Single
+    Public Property HistoricPeriod() As Boolean
         Get
             HistoricPeriod = pHistoricPeriod
         End Get
-        Set(ByVal Value As Single)
+        Set(ByVal Value As Boolean)
             pHistoricPeriod = Value
         End Set
     End Property
@@ -429,23 +429,23 @@ Friend Class pfqStation
         End Set
     End Property
 
-    'Public Property LOTestType() As String
-    '    Get
-    '        LOTestType = pLOTestType
-    '    End Get
-    '    Set(ByVal Value As String)
-    '        pLOTestType = Value
-    '    End Set
-    'End Property
+    Public Property LOTestType() As String
+        Get
+            LOTestType = pLOTestType
+        End Get
+        Set(ByVal Value As String)
+            pLOTestType = Value
+        End Set
+    End Property
 
-    'Public Property CLOTestType() As String
-    '    Get
-    '        CLOTestType = pCLOTestType
-    '    End Get
-    '    Set(ByVal Value As String)
-    '        pCLOTestType = Value
-    '    End Set
-    'End Property
+    Public Property CLOTestType() As String
+        Get
+            CLOTestType = pCLOTestType
+        End Get
+        Set(ByVal Value As String)
+            pCLOTestType = Value
+        End Set
+    End Property
 
     Public Function WriteSpecsVerbose() As String
 
@@ -472,7 +472,7 @@ Friend Class pfqStation
         If Len(pCEndYear) > 0 Then s = s & pad & pCEndYear & vbCrLf
         If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
         If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
-        If pHistoricPeriod > 0 Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
+        If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
         If pPeakData.Count > 0 Then 'write any interval data or updated peak data
             For Each vData As PeakDataType In pPeakData
                 'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
@@ -501,12 +501,11 @@ Friend Class pfqStation
             'when LO specified there's no need for LO Test type
             s = s & pad & "LOType FIXED" & vbCrLf
         Else 'need a low outlier test type
-            If LOTestType = "None" Then
-                s = s & pad & "LOType None" & vbCrLf
-            ElseIf LOTestType = "Single Grubbs-Beck" Then
-                s = s & pad & "LOType GBT" & vbCrLf
-            ElseIf LOTestType = "Multiple Grubbs-Beck" Then
+            If Len(pCLOTestType) > 0 Then s = s & pad & pCLOTestType & vbCrLf
+            If pLOTestType.StartsWith("Multiple") Then
                 s = s & pad & "LOType MGBT" & vbCrLf
+            Else
+                s = s & pad & "LOType GBT" & vbCrLf
             End If
         End If
         If Len(pCHighOutlier) > 0 Then s = s & pad & pCHighOutlier & vbCrLf
@@ -563,7 +562,7 @@ Friend Class pfqStation
         If Len(defsta.CEndYear) > 0 Then s = s & pad & defsta.CEndYear & vbCrLf
         If pEndYear <> defsta.EndYear Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
         If Len(defsta.CHistoric) > 0 Then s = s & pad & defsta.CHistoric & vbCrLf
-        If pHistoricPeriod <> defsta.HistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pHistoricPeriod) & vbCrLf
+        If pHistoricPeriod AndAlso pHistoricPeriod <> defsta.HistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
         If Len(defsta.CSkewOpt) > 0 Then s = s & pad & defsta.CSkewOpt & vbCrLf
         If pSkewOpt <> defsta.SkewOpt Then s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
         If Len(defsta.CGenSkew) > 0 Then s = s & pad & defsta.CGenSkew & vbCrLf
@@ -578,12 +577,11 @@ Friend Class pfqStation
             'when LO specified there's no need for LO Test type
             s = s & pad & "LOType FIXED" & vbCrLf
         Else 'need a low outlier test type
-            If LOTestType = "None" Then
-                s = s & pad & "LOType None" & vbCrLf
-            ElseIf LOTestType = "Single Grubbs-Beck" Then
-                s = s & pad & "LOType GBT" & vbCrLf
-            ElseIf LOTestType = "Multiple Grubbs-Beck" Then
+            If Len(pCLOTestType) > 0 Then s = s & pad & pCLOTestType & vbCrLf
+            If pLOTestType.StartsWith("Multiple") Then
                 s = s & pad & "LOType MGBT" & vbCrLf
+            Else 'assume Single GB
+                s = s & pad & "LOType GBT" & vbCrLf
             End If
         End If
         If Len(defsta.CHighOutlier) > 0 Then s = s & pad & defsta.CHighOutlier & vbCrLf
@@ -621,7 +619,7 @@ Friend Class pfqStation
         pUrbanRegPeaks = False
         pBegYear = 0
         pEndYear = 0
-        pHistoricPeriod = 0.0#
+        pHistoricPeriod = False
         pGenSkew = -0.5
         pHighOutlier = 0.0#
         pLowOutlier = 0.0#
