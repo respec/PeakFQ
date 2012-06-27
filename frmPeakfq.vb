@@ -99,16 +99,15 @@ Friend Class frmPeakfq
         With grdSpecs.Source
             .ColorCells = True
 
-            '.FixedRows = 2
-            '.FixedColumns = 0
-
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            .Columns = 19 ' already know there are 19 columns
+            .Columns = 20 ' already know there are 19 columns
             For Each vSta In PfqPrj.Stations
                 .Rows += 1
                 .CellValue(.Rows - 1, 0) = vSta.id
                 .CellEditable(.Rows - 1, 0) = False
                 .Alignment(.Rows - 1, 0) = atcAlignment.HAlignRight
+                .CellColor(.Rows - 1, 0) = SystemColors.ControlDark
+                .CellEditable(.Rows - 1, 0) = False
                 'add stations to pull-down list on Threshold tab
                 lName = vSta.id
                 i = 0
@@ -905,13 +904,15 @@ FileCancel:
     End Sub
 
     Private Sub grdSpecs_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdSpecs.CellEdited
-        If aColumn = 8 Then 'changed std skew err, update mean sqr err
-            With grdSpecs.Source
-                .CellValue(aRow, 9) = CSng(.CellValue(aRow, aColumn) ^ 2)
-                'grdSpecs.CellBackColor = grdSpecs.BackColorFixed
-                .CellColor(aRow, 9) = SystemColors.ControlDark
-            End With
-        End If
+        With grdSpecs.Source
+            If aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
+                .CellValue(aRow, 4) = Integer.Parse(.CellValue(aRow, 3)) - Integer.Parse(.CellValue(aRow, 2)) + 1
+            ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
+                .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
+                '.CellColor(aRow, 9) = SystemColors.ControlDark
+            End If
+        End With
+        grdSpecs.Refresh()
 
     End Sub
 
@@ -2041,7 +2042,7 @@ FileCancel:
         Dim lStr As String = cboLOTest.SelectedItem
         With grdSpecs.Source
             For i As Integer = .FixedRows To .Rows - 1
-                .CellValue(i, 11) = lStr
+                .CellValue(i, 12) = lStr
             Next
         End With
         grdSpecs.Refresh()
