@@ -88,6 +88,7 @@ Friend Class frmPeakfq
     Private Sub PopulateGrid()
 
         Dim ipos, j, i, ilen, Ind As Integer
+        Dim lRow As Integer = 1
         Dim vSta As pfqStation = Nothing
         Dim lName As String
 
@@ -99,15 +100,15 @@ Friend Class frmPeakfq
         With grdSpecs.Source
             .ColorCells = True
 
-            .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            .Columns = 20 ' already know there are 19 columns
+            '.Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
+            '.Columns = 20 ' already know there are 19 columns
             For Each vSta In PfqPrj.Stations
-                .Rows += 1
-                .CellValue(.Rows - 1, 0) = vSta.id
-                .CellEditable(.Rows - 1, 0) = False
-                .Alignment(.Rows - 1, 0) = atcAlignment.HAlignRight
-                .CellColor(.Rows - 1, 0) = SystemColors.ControlDark
-                .CellEditable(.Rows - 1, 0) = False
+                lRow += 1
+                .CellValue(lRow, 0) = vSta.id
+                .CellEditable(lRow, 0) = False
+                .Alignment(lRow, 0) = atcAlignment.HAlignRight
+                .CellColor(lRow, 0) = SystemColors.ControlDark
+                .CellEditable(lRow, 0) = False
                 'add stations to pull-down list on Threshold tab
                 lName = vSta.id
                 i = 0
@@ -117,92 +118,92 @@ Friend Class frmPeakfq
                 End While
                 cboStation.Items.Add(lName)
 
-                .CellValue(.Rows - 1, 1) = vSta.AnalysisOption
-                .CellEditable(.Rows - 1, 1) = True
+                .CellValue(lRow, 1) = vSta.AnalysisOption
+                .CellEditable(lRow, 1) = True
 
-                .CellValue(.Rows - 1, 2) = vSta.BegYear
-                .CellEditable(.Rows - 1, 2) = True
-                .Alignment(.Rows - 1, 2) = atcAlignment.HAlignRight
+                .CellValue(lRow, 2) = vSta.BegYear
+                .CellEditable(lRow, 2) = True
+                .Alignment(lRow, 2) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 3) = vSta.EndYear
-                .CellEditable(.Rows - 1, 3) = True
-                .Alignment(.Rows - 1, 3) = atcAlignment.HAlignRight
+                .CellValue(lRow, 3) = vSta.EndYear
+                .CellEditable(lRow, 3) = True
+                .Alignment(lRow, 3) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 4) = vSta.EndYear - vSta.BegYear + 1
-                .CellEditable(.Rows - 1, 4) = False
-                .CellColor(.Rows - 1, 4) = SystemColors.ControlDark
-                .Alignment(.Rows - 1, 4) = atcAlignment.HAlignRight
+                .CellValue(lRow, 4) = vSta.EndYear - vSta.BegYear + 1
+                .CellEditable(lRow, 4) = False
+                .CellColor(lRow, 4) = SystemColors.ControlDark
+                .Alignment(lRow, 4) = atcAlignment.HAlignRight
 
                 If vSta.HistoricPeriod Then
-                    .CellValue(.Rows - 1, 5) = "Yes"
+                    .CellValue(lRow, 5) = "Yes"
                 Else
-                    .CellValue(.Rows - 1, 5) = "No"
+                    .CellValue(lRow, 5) = "No"
                 End If
-                .CellEditable(.Rows - 1, 5) = True
+                .CellEditable(lRow, 5) = True
 
                 If vSta.SkewOpt = 0 Then
-                    .CellValue(.Rows - 1, 6) = "Station"
+                    .CellValue(lRow, 6) = "Station"
                 ElseIf vSta.SkewOpt = 1 Then
-                    .CellValue(.Rows - 1, 6) = "Weighted"
+                    .CellValue(lRow, 6) = "Weighted"
                 ElseIf vSta.SkewOpt = 2 Then
-                    .CellValue(.Rows - 1, 6) = "Generalized"
+                    .CellValue(lRow, 6) = "Generalized"
                 End If
-                .CellEditable(.Rows - 1, 6) = True
+                .CellEditable(lRow, 6) = True
 
-                .CellValue(.Rows - 1, 7) = vSta.GenSkew
-                .CellEditable(.Rows - 1, 7) = True
-                .Alignment(.Rows - 1, 7) = atcAlignment.HAlignRight
+                .CellValue(lRow, 7) = vSta.GenSkew
+                .CellEditable(lRow, 7) = True
+                .Alignment(lRow, 7) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 8) = vSta.SESkew
-                .CellEditable(.Rows - 1, 8) = True
-                .Alignment(.Rows - 1, 8) = atcAlignment.HAlignRight
+                .CellValue(lRow, 8) = vSta.SESkew
+                .CellEditable(lRow, 8) = True
+                .Alignment(lRow, 8) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 9) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
-                .CellColor(.Rows - 1, 9) = SystemColors.ControlDark
-                .CellEditable(.Rows - 1, 9) = False
+                .CellValue(lRow, 9) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
+                .CellColor(lRow, 9) = SystemColors.ControlDark
+                .CellEditable(lRow, 9) = False
 
-                .CellValue(.Rows - 1, 10) = vSta.LowHistPeak
-                .CellColor(.Rows - 1, 10) = SystemColors.ControlDark
-                .CellEditable(.Rows - 1, 10) = False
-                .Alignment(.Rows - 1, 10) = atcAlignment.HAlignRight
+                .CellValue(lRow, 10) = vSta.LowHistPeak
+                .CellColor(lRow, 10) = SystemColors.ControlDark
+                .CellEditable(lRow, 10) = False
+                .Alignment(lRow, 10) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 11) = vSta.LowOutlier
-                .CellEditable(.Rows - 1, 11) = True
-                .Alignment(.Rows - 1, 11) = atcAlignment.HAlignRight
+                .CellValue(lRow, 11) = vSta.LowOutlier
+                .CellEditable(lRow, 11) = True
+                .Alignment(lRow, 11) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 12) = vSta.LOTestType
-                .CellEditable(.Rows - 1, 12) = True
+                .CellValue(lRow, 12) = vSta.LOTestType
+                .CellEditable(lRow, 12) = True
 
-                .CellValue(.Rows - 1, 13) = vSta.HighSysPeak
-                .CellColor(.Rows - 1, 13) = SystemColors.ControlDark
-                .CellEditable(.Rows - 1, 13) = False
-                .Alignment(.Rows - 1, 13) = atcAlignment.HAlignRight
+                .CellValue(lRow, 13) = vSta.HighSysPeak
+                .CellColor(lRow, 13) = SystemColors.ControlDark
+                .CellEditable(lRow, 13) = False
+                .Alignment(lRow, 13) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 14) = vSta.HighOutlier
-                .CellEditable(.Rows - 1, 14) = True
-                .Alignment(.Rows - 1, 14) = atcAlignment.HAlignRight
+                .CellValue(lRow, 14) = vSta.HighOutlier
+                .CellEditable(lRow, 14) = True
+                .Alignment(lRow, 14) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 15) = vSta.GageBaseDischarge
-                .CellEditable(.Rows - 1, 15) = True
-                .Alignment(.Rows - 1, 15) = atcAlignment.HAlignRight
+                .CellValue(lRow, 15) = vSta.GageBaseDischarge
+                .CellEditable(lRow, 15) = True
+                .Alignment(lRow, 15) = atcAlignment.HAlignRight
 
                 If vSta.UrbanRegPeaks Then
-                    .CellValue(.Rows - 1, 16) = "Yes"
+                    .CellValue(lRow, 16) = "Yes"
                 Else
-                    .CellValue(.Rows - 1, 16) = "No"
+                    .CellValue(lRow, 16) = "No"
                 End If
-                .CellEditable(.Rows - 1, 16) = True
+                .CellEditable(lRow, 16) = True
 
-                .CellValue(.Rows - 1, 17) = vSta.Lat
-                .CellEditable(.Rows - 1, 17) = True
-                .Alignment(.Rows - 1, 17) = atcAlignment.HAlignRight
+                .CellValue(lRow, 17) = vSta.Lat
+                .CellEditable(lRow, 17) = True
+                .Alignment(lRow, 17) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 18) = vSta.Lng
-                .CellEditable(.Rows - 1, 18) = True
-                .Alignment(.Rows - 1, 18) = atcAlignment.HAlignRight
+                .CellValue(lRow, 18) = vSta.Lng
+                .CellEditable(lRow, 18) = True
+                .Alignment(lRow, 18) = atcAlignment.HAlignRight
 
-                .CellValue(.Rows - 1, 19) = vSta.PlotName
-                .CellEditable(.Rows - 1, 19) = True
+                .CellValue(lRow, 19) = vSta.PlotName
+                .CellEditable(lRow, 19) = True
 
                 ilen = Len(vSta.PlotName)
                 For j = .Rows - 2 To .FixedRows Step -1 'look for duplicate plot names and adjust as needed
@@ -211,13 +212,13 @@ Friend Class frmPeakfq
                     ElseIf VB.Left(.CellValue(j, 19), ilen) = vSta.PlotName Then 'duplicate found
                         ipos = InStr(.CellValue(j, 19), "-")
                         If ipos > 0 Then 'not first duplicate, increase index number
-                            Dim larr() As String = .CellValue(.Rows - 1, 19).Split("-")
+                            Dim larr() As String = .CellValue(lRow, 19).Split("-")
                             Dim lastInd As Integer = Integer.Parse(larr(larr.Length - 1))
                             Ind = lastInd
                             'Ind = CInt(Mid(.CellValue(j, 17), ipos + 1))
-                            .CellValue(.Rows - 1, 19) = vSta.PlotName & "-" & CStr(Ind + 1)
+                            .CellValue(lRow, 19) = vSta.PlotName & "-" & CStr(Ind + 1)
                         Else 'first duplicate
-                            .CellValue(.Rows - 1, 19) = vSta.PlotName & "-1"
+                            .CellValue(lRow, 19) = vSta.PlotName & "-1"
                         End If
                     End If
                 Next j
@@ -257,12 +258,12 @@ Friend Class frmPeakfq
                 ElseIf .CellValue(i, 6) = "Generalized" Then
                     curSta.SkewOpt = 2
                 End If
-                If IsNumeric(.CellValue(i, 7)) Then curSta.GenSkew = CSng(.CellValue(i, 6))
-                If IsNumeric(.CellValue(i, 8)) Then curSta.SESkew = CSng(.CellValue(i, 7))
-                If IsNumeric(.CellValue(i, 11)) Then curSta.LowOutlier = CSng(.CellValue(i, 10))
+                If IsNumeric(.CellValue(i, 7)) Then curSta.GenSkew = CSng(.CellValue(i, 7))
+                If IsNumeric(.CellValue(i, 8)) Then curSta.SESkew = CSng(.CellValue(i, 8))
+                If IsNumeric(.CellValue(i, 11)) Then curSta.LowOutlier = CSng(.CellValue(i, 11))
                 curSta.LOTestType = .CellValue(i, 12)
-                If IsNumeric(.CellValue(i, 14)) Then curSta.HighOutlier = CSng(.CellValue(i, 13))
-                If IsNumeric(.CellValue(i, 15)) Then curSta.GageBaseDischarge = CSng(.CellValue(i, 14))
+                If IsNumeric(.CellValue(i, 14)) Then curSta.HighOutlier = CSng(.CellValue(i, 14))
+                If IsNumeric(.CellValue(i, 15)) Then curSta.GageBaseDischarge = CSng(.CellValue(i, 15))
                 If .CellValue(i, 16) = "Yes" Then
                     curSta.UrbanRegPeaks = True
                 Else
@@ -904,15 +905,26 @@ FileCancel:
     End Sub
 
     Private Sub grdSpecs_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdSpecs.CellEdited
-        With grdSpecs.Source
-            If aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
-                .CellValue(aRow, 4) = Integer.Parse(.CellValue(aRow, 3)) - Integer.Parse(.CellValue(aRow, 2)) + 1
-            ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
-                .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
-                '.CellColor(aRow, 9) = SystemColors.ControlDark
-            End If
-        End With
-        grdSpecs.Refresh()
+        Try
+            With grdSpecs.Source
+                If aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
+                    .CellValue(aRow, 4) = Integer.Parse(.CellValue(aRow, 3)) - Integer.Parse(.CellValue(aRow, 2)) + 1
+                ElseIf aColumn = 5 AndAlso .CellValue(aRow, aColumn) = "No" Then
+                    'Must use historic period if EMA is analysis option
+                    If .CellValue(aRow, 1) = "EMA" Then
+                        MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
+                        .CellValue(aRow, aColumn) = "Yes"
+                    End If
+                ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
+                    .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
+                    .Alignment(aRow, 9) = atcAlignment.HAlignRight
+                    '.CellColor(aRow, 9) = SystemColors.ControlDark
+                End If
+            End With
+            grdSpecs.Refresh()
+        Catch ex As Exception
+
+        End Try
 
     End Sub
 
@@ -1857,11 +1869,21 @@ FileCancel:
 
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
-        Dim lWarning As String = "Peakfq 6 run " & System.DateTime.Now & vbCrLf & _
-                                 "Gg = " & lSkew & vbCrLf & _
-                                 "MSEg = " & lRMSegs & vbCrLf & _
+        Dim lSkewOptionText As String
+        If PfqPrj.Stations(aStnInd).SkewOpt = 0 Then
+            lSkewOptionText = "Station"
+        ElseIf PfqPrj.Stations(aStnInd).SkewOpt = 1 Then
+            lSkewOptionText = "Weighted"
+        ElseIf PfqPrj.Stations(aStnInd).SkewOpt = 2 Then
+            lSkewOptionText = "Generalized"
+        End If
+
+        Dim lWarning As String = "Peakfq v 7.0 run " & System.DateTime.Now & vbCrLf & _
+                                 PfqPrj.Stations(aStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
+                                 lSkew & " = Skew (G sub g)" & vbCrLf & _
+                                 lRMSegs & " = Mean Sq Error (MSE sub g)" & vbCrLf & _
                                  lNZero & " Zeroes not displayed" & vbCrLf & _
-                                 lNLow & " Peaks below Low Outlier Threshold"
+                                 lNLow & " Peaks below Low Outlier Threshold" & PfqPrj.Stations(aStnInd).LOTestType & " Grubbs-Beck"
         Dim lText As New TextObj(lWarning, 0.5, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
@@ -1912,6 +1934,7 @@ FileCancel:
         With grdSpecs.Source
             For i As Integer = .FixedRows To .Rows - 1
                 .CellValue(i, 1) = lstr
+                .CellValue(i, 5) = "Yes"
             Next
         End With
         'post population settings

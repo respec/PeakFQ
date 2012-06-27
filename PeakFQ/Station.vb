@@ -623,6 +623,7 @@ Friend Class pfqStation
         pGenSkew = -0.5
         pHighOutlier = 0.0#
         pLowOutlier = 0.0#
+        pLOTestType = "Single"
         pGageBaseDischarge = 0.0#
         pSESkew = 0.55
         pLat = 0.0#
