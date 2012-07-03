@@ -348,7 +348,7 @@
         '
         Me.lblLOTest.AutoSize = True
         Me.lblLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblLOTest.Location = New System.Drawing.Point(498, 23)
+        Me.lblLOTest.Location = New System.Drawing.Point(495, 23)
         Me.lblLOTest.Name = "lblLOTest"
         Me.lblLOTest.Size = New System.Drawing.Size(154, 13)
         Me.lblLOTest.TabIndex = 8
@@ -1304,7 +1304,7 @@
         Me.Location = New System.Drawing.Point(11, 49)
         Me.Name = "frmPeakfq"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Text = "PKFQWin"
+        Me.Text = "PKFQWin Beta Provisional 7.0"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.fraButtons.ResumeLayout(False)

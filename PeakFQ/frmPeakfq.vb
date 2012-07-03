@@ -16,7 +16,7 @@ Friend Class frmPeakfq
 
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
-    Friend ThreshColors() As System.Drawing.Color = {Color.CornflowerBlue, Color.DarkSeaGreen, Color.DeepPink, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
+    Friend ThreshColors(255) As System.Drawing.Color '= {Color.CornflowerBlue, Color.DarkSeaGreen, Color.DeepPink, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -625,6 +625,17 @@ FileCancel:
         grdInterval.SizeAllColumnsToContents(grdInterval.Width)
 
         InitGraph(zgcThresh, "T")
+        Dim lRed As Integer
+        Dim lGreen As Integer
+        Dim lBlue As Integer
+        Dim lOffset As Integer
+        For i = 0 To 255
+            lOffset = 5 * i
+            lRed = (20 * lOffset + 20) Mod 255
+            lGreen = (130 * lOffset + 130) Mod 255
+            lBlue = (240 * lOffset + 240) Mod 255
+            ThreshColors(i) = Color.FromArgb(255, lRed, lGreen, lBlue)
+        Next
 
         sstPfq.SelectedIndex = 0
         sstPfq.TabPages.Item(0).Enabled = False
@@ -858,7 +869,7 @@ FileCancel:
                 If .CellValue(i + 1, 1) <> "Skip" Then
                     j = j + 1
                     'oldName = "PKFQ-" & j & ".BMP"
-                    newName = .CellValue(i + 1, 17)
+                    newName = .CellValue(i + 1, 19)
                     If i > 1 Then 'look for repeating station IDs
                         ilen = Len(newName)
                         For k = i - 1 To 1 Step -1
@@ -1614,6 +1625,7 @@ FileCancel:
         Dim lNZero As Integer
         Dim lSkew As Single
         Dim lRMSegs As Single
+        Dim lLOTestStr As String
         Dim lSysRFC(31) As Single
         Dim lWrcFC(31) As Single
         Dim lTxProb(31) As Single
@@ -1877,13 +1889,18 @@ FileCancel:
         ElseIf PfqPrj.Stations(aStnInd).SkewOpt = 2 Then
             lSkewOptionText = "Generalized"
         End If
+        If PfqPrj.Stations(aStnInd).LOTestType.StartsWith("Single") Then
+            lLOTestStr = "SGB"
+        Else
+            lLOTestStr = "MGB"
+        End If
 
         Dim lWarning As String = "Peakfq v 7.0 run " & System.DateTime.Now & vbCrLf & _
                                  PfqPrj.Stations(aStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
                                  lSkew & " = Skew (G sub g)" & vbCrLf & _
                                  lRMSegs & " = Mean Sq Error (MSE sub g)" & vbCrLf & _
                                  lNZero & " Zeroes not displayed" & vbCrLf & _
-                                 lNLow & " Peaks below Low Outlier Threshold" & PfqPrj.Stations(aStnInd).LOTestType & " Grubbs-Beck"
+                                 lNLow & " Peaks below Low Outlier Threshold " & lLOTestStr
         Dim lText As New TextObj(lWarning, 0.5, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
