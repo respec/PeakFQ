@@ -610,8 +610,54 @@ Friend Class pfqStation
         Return False
     End Function
 
-    'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-    Private Sub Class_Initialize_Renamed()
+    Public Sub SetDefaultThresholds()
+        'sets initial default thresholds for a station that has just read its peaks
+        Dim lThresh As ThresholdType
+        Dim inHistoric As Boolean = False
+
+        Thresholds = New Generic.List(Of ThresholdType)
+        'set default for all peaks
+        lThresh = New ThresholdType
+        lThresh.SYear = PeakData(0).Year
+        lThresh.EYear = PeakData(PeakData.Count - 1).Year
+        lThresh.LowerLimit = 0.0
+        lThresh.UpperLimit = 1.0E+20
+        lThresh.Comment = "Default"
+        Thresholds.Add(lThresh)
+
+        lThresh = New ThresholdType
+        For Each lPk As PeakDataType In PeakData
+            If lPk.Code = "H" Then
+                If inHistoric Then 'continuing historic period
+                    lThresh.EYear = lPk.Year
+                    If Math.Abs(lPk.Value) < lThresh.LowerLimit Then
+                        lThresh.LowerLimit = Math.Abs(lPk.Value)
+                    End If
+                Else 'start of historic period
+                    lThresh = New ThresholdType
+                    lThresh.SYear = lPk.Year
+                    lThresh.EYear = lPk.Year
+                    lThresh.Comment = "Historic " & Thresholds.Count
+                    lThresh.LowerLimit = Math.Abs(lPk.Value)
+                    lThresh.UpperLimit = 1.0E+20
+                    inHistoric = True
+                End If
+            ElseIf inHistoric Then 'end of historic
+                lThresh.EYear = lPk.Year - 1
+                Thresholds.Add(lThresh)
+                lThresh = New ThresholdType
+                inHistoric = False
+            End If
+        Next
+        If lThresh.SYear > 0 Then
+            'start of historic period found, but didn't reach end so need to add to collection
+            Thresholds.Add(lThresh)
+        End If
+        'Return lThresholds
+    End Sub
+
+    Public Sub New()
+        MyBase.New()
 
         pAnalysisOption = "B17B" 'init all stations to use EMA analysis
         'pSkewOpt = 0 'Weighted skew option (middle of -1, 0, 1)
@@ -637,10 +683,5 @@ Friend Class pfqStation
 
         pThresholds = New Generic.List(Of ThresholdType)
         pPeakData = New Generic.List(Of PeakDataType)
-
-    End Sub
-    Public Sub New()
-        MyBase.New()
-        Class_Initialize_Renamed()
     End Sub
 End Class

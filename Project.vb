@@ -991,6 +991,9 @@ Friend Class pfqProject
             lPeaks.Sort()
             lStn.PeakDataOrig = lPeaks
             lStn.PeakData = lPeaks
+            If lStn.Thresholds.Count = 0 Then
+                lStn.SetDefaultThresholds()
+            End If
         Next
     End Sub
 
