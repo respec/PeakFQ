@@ -51,6 +51,7 @@ Friend Class pfqStation
     Private pThresholds As Generic.List(Of ThresholdType)
     Private pPeakDataOrig As Generic.List(Of PeakDataType)
     Private pPeakData As Generic.List(Of PeakDataType)
+    Private pMissingYears As Generic.List(Of Integer)
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCAnalysisOption As String
@@ -273,6 +274,16 @@ Friend Class pfqStation
         End Get
         Set(ByVal Value As Generic.List(Of pfqStation.PeakDataType))
             pPeakData = Value
+        End Set
+    End Property
+
+    Public Property MissingYears() As Generic.List(Of Integer)
+        Get
+            If pMissingYears Is Nothing Then pMissingYears = FindMissingYears()
+            MissingYears = pMissingYears
+        End Get
+        Set(ByVal Value As Generic.List(Of Integer))
+            pMissingYears = Value
         End Set
     End Property
 
@@ -656,6 +667,28 @@ Friend Class pfqStation
         'Return lThresholds
     End Sub
 
+    Private Function FindMissingYears() As Generic.List(Of Integer)
+        Dim lMissingYears As New Generic.List(Of Integer)
+        Dim lPrevYear As Integer = PeakData(0).Year - 1
+        Dim inHistoric As Boolean = False
+
+        For Each lPk As PeakDataType In PeakData
+            If lPk.Code = "H" Then
+                inHistoric = True
+            Else
+                If inHistoric Then 'leaving historic period
+                    inHistoric = False
+                ElseIf lPk.Year > lPrevYear + 1 Then 'missing years
+                    For i As Integer = lPrevYear + 1 To lPk.Year - 1
+                        lMissingYears.Add(i)
+                    Next
+                End If
+                lPrevYear = lPk.Year
+            End If
+        Next
+        Return lMissingYears
+    End Function
+
     Public Sub New()
         MyBase.New()
 
@@ -674,14 +707,12 @@ Friend Class pfqStation
         pSESkew = 0.55
         pLat = 0.0#
         pLng = 0.0#
-        'SOText(-1) = "Station"
-        'SOText(0) = "Weighted"
-        'SOText(1) = "Generalized"
         SOText(0) = "Station"
         SOText(1) = "Weighted"
         SOText(2) = "Generalized"
 
         pThresholds = New Generic.List(Of ThresholdType)
         pPeakData = New Generic.List(Of PeakDataType)
+        pMissingYears = Nothing
     End Sub
 End Class

@@ -230,6 +230,7 @@ Friend Class frmPeakfq
             .AllowHorizontalScrolling = True
             .Visible = True
             .SizeAllColumnsToContents()
+            .Refresh()
         End With
 
     End Sub
@@ -630,10 +631,13 @@ FileCancel:
         Dim lBlue As Integer
         Dim lOffset As Integer
         For i = 0 To 255
-            lOffset = 5 * i
+            lOffset = 10 * i
             lRed = (20 * lOffset + 20) Mod 255
+            If lRed < 150 Then lRed += 100
             lGreen = (130 * lOffset + 130) Mod 255
+            If lGreen < 150 Then lGreen += 100
             lBlue = (240 * lOffset + 240) Mod 255
+            If lBlue < 150 Then lBlue += 100
             ThreshColors(i) = Color.FromArgb(255, lRed, lGreen, lBlue)
         Next
 
@@ -738,6 +742,8 @@ FileCancel:
         PfqPrj.Stations.Clear()
         PfqPrj.InputDir = PathNameOnly(FName)
         PfqPrj.OutputDir = PathNameOnly(FName) 'default output directory to same as input
+        grdSpecs.Source.Rows = grdSpecs.Source.FixedRows
+        cboStation.Items.Clear()
         'set to current directory
         ChDriveDir(PfqPrj.InputDir)
         sstPfq.SelectedIndex = 0
@@ -1008,7 +1014,11 @@ FileCancel:
                     .CellEditable(j, 2) = True
                     .Alignment(j, 2) = atcAlignment.HAlignRight
                     .CellColor(j, 2) = ThreshColors(j - 1)
-                    .CellValue(j, 3) = lThresh.UpperLimit
+                    If lThresh.UpperLimit >= 1.0E+20 Then
+                        .CellValue(j, 3) = "inf"
+                    Else
+                        .CellValue(j, 3) = lThresh.UpperLimit
+                    End If
                     .CellEditable(j, 3) = True
                     .Alignment(j, 3) = atcAlignment.HAlignRight
                     .CellColor(j, 3) = ThreshColors(j - 1)
@@ -1198,6 +1208,7 @@ FileCancel:
 
     Private Sub UpdateInputGraph(Optional ByVal aSaveToFile As Boolean = False)
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
+        Dim vThresh As pfqStation.ThresholdType
         Dim lYearMin As Double = 10000
         Dim lYearMax As Double = -10000
         Dim lPkVals(lStn.PeakData.Count - 1) As Double
@@ -1233,7 +1244,7 @@ FileCancel:
         lPane.CurveList.Clear()
 
         'find ranges for axes
-        For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+        For Each vThresh In lStn.Thresholds
             If vThresh.SYear < lYearMin Then lYearMin = vThresh.SYear
             If vThresh.EYear > lYearMax Then lYearMax = vThresh.EYear
             If vThresh.LowerLimit > 0 AndAlso vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
@@ -1313,13 +1324,14 @@ FileCancel:
 
         'thresholds
         i = 0
-        For Each vThresh As pfqStation.ThresholdType In lStn.Thresholds
+        For Each vThresh In lStn.Thresholds
             lThrshDates(0) = vThresh.SYear
-            If vThresh.EYear = vThresh.SYear Then 'increase end date a bit to give line some width
-                lThrshDates(1) = vThresh.EYear + 1
-            Else
-                lThrshDates(1) = vThresh.EYear
-            End If
+            'If vThresh.EYear = vThresh.SYear Then 'increase end date a bit to give line some width
+            '    lThrshDates(1) = vThresh.EYear + 1
+            'Else
+            '    lThrshDates(1) = vThresh.EYear
+            'End If
+            lThrshDates(1) = vThresh.EYear + 0.75
             i += 1
             If vThresh.LowerLimit <= lYAxis.Scale.Min Then
                 'add marker to indicate lower threshold boundary
@@ -1353,6 +1365,34 @@ FileCancel:
                 lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
                 lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
                 lCurve.Label.IsVisible = False
+            End If
+        Next
+
+        'check for missing years with no non-default threshold specified
+        Dim lThreshDefined As Boolean
+        Dim lPrevYear As Integer = 0
+        lThrshVals(0) = 1.0E+20
+        lThrshVals(1) = 1.0E+20
+        For Each i In lStn.MissingYears
+            lThreshDefined = False
+            For Each vThresh In lStn.Thresholds
+                If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso _
+                    (vThresh.LowerLimit <> 0 Or vThresh.UpperLimit < 1.0E+20) Then
+                    'valid threshold for this missing year
+                    lThreshDefined = True
+                    Exit For
+                End If
+            Next
+            If Not lThreshDefined Then 'indicate problem for this year
+                If i = lPrevYear + 1 Then 'continuation of missing period
+                    lCurve.AddPoint(CDbl(i + 0.75), lThrshVals(0))
+                Else 'new missing period
+                    lThrshDates(0) = i
+                    lThrshDates(1) = i + 0.75
+                    lCurve = lPane.AddCurve("Missing Year(s)", lThrshDates, lThrshVals, Color.Red, SymbolType.None)
+                    lCurve.Line.Fill = New Fill(Color.Red, Color.Red)
+                End If
+                lPrevYear = i
             End If
         Next
 
@@ -1993,9 +2033,9 @@ FileCancel:
                 If aRow = .Rows - 1 Then 'add another blank row
                     AddThreshRow()
                 End If
+                ProcessThresholds()
+                UpdateInputGraph()
             End If
-            ProcessThresholds()
-            UpdateInputGraph()
         End With
         aGrid.SizeAllColumnsToContents(aGrid.Width)
         aGrid.Refresh()
@@ -2035,8 +2075,8 @@ FileCancel:
                     AddIntervalRow()
                 End If
             End If
-                'ProcessThresholds()
-                'UpdateInputGraph()
+            'ProcessThresholds()
+            'UpdateInputGraph()
         End With
         aGrid.SizeAllColumnsToContents(aGrid.Width)
         aGrid.Refresh()
@@ -2167,4 +2207,5 @@ FileCancel:
             MsgBox("No Empirical Frequency Curve file is available for viewing.", MsgBoxStyle.Information, "PeakFQ")
         End If
     End Sub
+
 End Class
