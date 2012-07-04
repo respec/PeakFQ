@@ -473,7 +473,7 @@ Friend Class pfqStation
         Else
             s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
         End If
-        If pThresholds.Count > 0 Then 'using perception threshholds, not beg/end years and hist. period
+        If pThresholds.Count > 0 AndAlso pAnalysisOption.ToUpper = "EMA" Then 'using perception threshholds, not beg/end years and hist. period
             For Each vPT As ThresholdType In pThresholds
                 s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
@@ -549,7 +549,7 @@ Friend Class pfqStation
         End If
         If Len(defsta.CAnalysisOption) > 0 Then s = s & pad & defsta.CAnalysisOption & vbCrLf
         If pAnalysisOption <> defsta.AnalysisOption Then s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
-        If pThresholds.Count > 0 Then 'using perception threshholds
+        If pThresholds.Count > 0 AndAlso pAnalysisOption.ToUpper = "EMA" Then 'using perception threshholds
             For Each vPT As ThresholdType In pThresholds
                 s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
