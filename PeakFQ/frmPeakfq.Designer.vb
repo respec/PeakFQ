@@ -106,17 +106,18 @@
         Me.lblGlobalAnalysis = New System.Windows.Forms.Label()
         Me.grdSpecs = New atcControls.atcGrid()
         Me.tabThresholds = New System.Windows.Forms.TabPage()
+        Me.spltThreshIntervalGrids = New System.Windows.Forms.SplitContainer()
+        Me.lblThresholds = New System.Windows.Forms.Label()
+        Me.grdThresh = New atcControls.atcGrid()
+        Me.lblIntervals = New System.Windows.Forms.Label()
+        Me.grdInterval = New atcControls.atcGrid()
         Me.cboDataGraphFormat = New System.Windows.Forms.ComboBox()
         Me.lblDataGraphFormat = New System.Windows.Forms.Label()
         Me.zgcThresh = New ZedGraph.ZedGraphControl()
-        Me.lblIntervals = New System.Windows.Forms.Label()
-        Me.lblThresholds = New System.Windows.Forms.Label()
         Me.cmdAddInt = New System.Windows.Forms.Button()
         Me.cmdAddThr = New System.Windows.Forms.Button()
         Me.lblStation = New System.Windows.Forms.Label()
         Me.cboStation = New System.Windows.Forms.ComboBox()
-        Me.grdInterval = New atcControls.atcGrid()
-        Me.grdThresh = New atcControls.atcGrid()
         Me.tabOutput = New System.Windows.Forms.TabPage()
         Me.fraOutFile = New System.Windows.Forms.GroupBox()
         Me._cmdOpenOut_0 = New System.Windows.Forms.Button()
@@ -176,6 +177,9 @@
         Me.sstPfq.SuspendLayout()
         Me.tabStationSpecs.SuspendLayout()
         Me.tabThresholds.SuspendLayout()
+        Me.spltThreshIntervalGrids.Panel1.SuspendLayout()
+        Me.spltThreshIntervalGrids.Panel2.SuspendLayout()
+        Me.spltThreshIntervalGrids.SuspendLayout()
         Me.tabOutput.SuspendLayout()
         Me.fraOutFile.SuspendLayout()
         Me.fraAddOut.SuspendLayout()
@@ -416,17 +420,14 @@
         '
         'tabThresholds
         '
+        Me.tabThresholds.Controls.Add(Me.spltThreshIntervalGrids)
         Me.tabThresholds.Controls.Add(Me.cboDataGraphFormat)
         Me.tabThresholds.Controls.Add(Me.lblDataGraphFormat)
         Me.tabThresholds.Controls.Add(Me.zgcThresh)
-        Me.tabThresholds.Controls.Add(Me.lblIntervals)
-        Me.tabThresholds.Controls.Add(Me.lblThresholds)
         Me.tabThresholds.Controls.Add(Me.cmdAddInt)
         Me.tabThresholds.Controls.Add(Me.cmdAddThr)
         Me.tabThresholds.Controls.Add(Me.lblStation)
         Me.tabThresholds.Controls.Add(Me.cboStation)
-        Me.tabThresholds.Controls.Add(Me.grdInterval)
-        Me.tabThresholds.Controls.Add(Me.grdThresh)
         Me.tabThresholds.Font = New System.Drawing.Font("Arial", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tabThresholds.Location = New System.Drawing.Point(4, 22)
         Me.tabThresholds.Name = "tabThresholds"
@@ -435,6 +436,78 @@
         Me.tabThresholds.TabIndex = 3
         Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
+        '
+        'spltThreshIntervalGrids
+        '
+        Me.spltThreshIntervalGrids.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.spltThreshIntervalGrids.Location = New System.Drawing.Point(6, 37)
+        Me.spltThreshIntervalGrids.Name = "spltThreshIntervalGrids"
+        Me.spltThreshIntervalGrids.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'spltThreshIntervalGrids.Panel1
+        '
+        Me.spltThreshIntervalGrids.Panel1.Controls.Add(Me.lblThresholds)
+        Me.spltThreshIntervalGrids.Panel1.Controls.Add(Me.grdThresh)
+        '
+        'spltThreshIntervalGrids.Panel2
+        '
+        Me.spltThreshIntervalGrids.Panel2.Controls.Add(Me.lblIntervals)
+        Me.spltThreshIntervalGrids.Panel2.Controls.Add(Me.grdInterval)
+        Me.spltThreshIntervalGrids.Size = New System.Drawing.Size(473, 307)
+        Me.spltThreshIntervalGrids.SplitterDistance = 99
+        Me.spltThreshIntervalGrids.TabIndex = 44
+        '
+        'lblThresholds
+        '
+        Me.lblThresholds.AutoSize = True
+        Me.lblThresholds.Location = New System.Drawing.Point(178, 0)
+        Me.lblThresholds.Name = "lblThresholds"
+        Me.lblThresholds.Size = New System.Drawing.Size(115, 14)
+        Me.lblThresholds.TabIndex = 12
+        Me.lblThresholds.Text = "Perception Thresholds"
+        '
+        'grdThresh
+        '
+        Me.grdThresh.AllowHorizontalScrolling = False
+        Me.grdThresh.AllowNewValidValues = False
+        Me.grdThresh.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.grdThresh.CellBackColor = System.Drawing.SystemColors.Window
+        Me.grdThresh.Fixed3D = False
+        Me.grdThresh.LineColor = System.Drawing.SystemColors.Control
+        Me.grdThresh.LineWidth = 1.0!
+        Me.grdThresh.Location = New System.Drawing.Point(0, 17)
+        Me.grdThresh.Name = "grdThresh"
+        Me.grdThresh.Size = New System.Drawing.Size(473, 82)
+        Me.grdThresh.Source = Nothing
+        Me.grdThresh.TabIndex = 11
+        '
+        'lblIntervals
+        '
+        Me.lblIntervals.AutoSize = True
+        Me.lblIntervals.Location = New System.Drawing.Point(219, 0)
+        Me.lblIntervals.Name = "lblIntervals"
+        Me.lblIntervals.Size = New System.Drawing.Size(29, 14)
+        Me.lblIntervals.TabIndex = 13
+        Me.lblIntervals.Text = "Data"
+        '
+        'grdInterval
+        '
+        Me.grdInterval.AllowHorizontalScrolling = False
+        Me.grdInterval.AllowNewValidValues = False
+        Me.grdInterval.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.grdInterval.CellBackColor = System.Drawing.SystemColors.Window
+        Me.grdInterval.Fixed3D = False
+        Me.grdInterval.LineColor = System.Drawing.SystemColors.Control
+        Me.grdInterval.LineWidth = 1.0!
+        Me.grdInterval.Location = New System.Drawing.Point(0, 17)
+        Me.grdInterval.Name = "grdInterval"
+        Me.grdInterval.Size = New System.Drawing.Size(473, 187)
+        Me.grdInterval.Source = Nothing
+        Me.grdInterval.TabIndex = 12
         '
         'cboDataGraphFormat
         '
@@ -471,24 +544,6 @@
         Me.zgcThresh.ScrollMinY2 = 0.0R
         Me.zgcThresh.Size = New System.Drawing.Size(521, 367)
         Me.zgcThresh.TabIndex = 12
-        '
-        'lblIntervals
-        '
-        Me.lblIntervals.AutoSize = True
-        Me.lblIntervals.Location = New System.Drawing.Point(227, 133)
-        Me.lblIntervals.Name = "lblIntervals"
-        Me.lblIntervals.Size = New System.Drawing.Size(29, 14)
-        Me.lblIntervals.TabIndex = 11
-        Me.lblIntervals.Text = "Data"
-        '
-        'lblThresholds
-        '
-        Me.lblThresholds.AutoSize = True
-        Me.lblThresholds.Location = New System.Drawing.Point(185, 45)
-        Me.lblThresholds.Name = "lblThresholds"
-        Me.lblThresholds.Size = New System.Drawing.Size(115, 14)
-        Me.lblThresholds.TabIndex = 10
-        Me.lblThresholds.Text = "Perception Thresholds"
         '
         'cmdAddInt
         '
@@ -530,36 +585,6 @@
         Me.cboStation.Name = "cboStation"
         Me.cboStation.Size = New System.Drawing.Size(155, 22)
         Me.cboStation.TabIndex = 5
-        '
-        'grdInterval
-        '
-        Me.grdInterval.AllowHorizontalScrolling = False
-        Me.grdInterval.AllowNewValidValues = False
-        Me.grdInterval.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.grdInterval.CellBackColor = System.Drawing.SystemColors.Window
-        Me.grdInterval.Fixed3D = False
-        Me.grdInterval.LineColor = System.Drawing.SystemColors.Control
-        Me.grdInterval.LineWidth = 1.0!
-        Me.grdInterval.Location = New System.Drawing.Point(1, 150)
-        Me.grdInterval.Name = "grdInterval"
-        Me.grdInterval.Size = New System.Drawing.Size(479, 194)
-        Me.grdInterval.Source = Nothing
-        Me.grdInterval.TabIndex = 4
-        '
-        'grdThresh
-        '
-        Me.grdThresh.AllowHorizontalScrolling = False
-        Me.grdThresh.AllowNewValidValues = False
-        Me.grdThresh.CellBackColor = System.Drawing.SystemColors.Window
-        Me.grdThresh.Fixed3D = False
-        Me.grdThresh.LineColor = System.Drawing.SystemColors.Control
-        Me.grdThresh.LineWidth = 1.0!
-        Me.grdThresh.Location = New System.Drawing.Point(1, 62)
-        Me.grdThresh.Name = "grdThresh"
-        Me.grdThresh.Size = New System.Drawing.Size(479, 57)
-        Me.grdThresh.Source = Nothing
-        Me.grdThresh.TabIndex = 3
         '
         'tabOutput
         '
@@ -1313,6 +1338,11 @@
         Me.tabStationSpecs.PerformLayout()
         Me.tabThresholds.ResumeLayout(False)
         Me.tabThresholds.PerformLayout()
+        Me.spltThreshIntervalGrids.Panel1.ResumeLayout(False)
+        Me.spltThreshIntervalGrids.Panel1.PerformLayout()
+        Me.spltThreshIntervalGrids.Panel2.ResumeLayout(False)
+        Me.spltThreshIntervalGrids.Panel2.PerformLayout()
+        Me.spltThreshIntervalGrids.ResumeLayout(False)
         Me.tabOutput.ResumeLayout(False)
         Me.fraOutFile.ResumeLayout(False)
         Me.fraAddOut.ResumeLayout(False)
@@ -1335,14 +1365,10 @@
 
     End Sub
     Friend WithEvents tabThresholds As System.Windows.Forms.TabPage
-    Friend WithEvents grdThresh As atcControls.atcGrid
-    Friend WithEvents grdInterval As atcControls.atcGrid
     Friend WithEvents cboStation As System.Windows.Forms.ComboBox
     Friend WithEvents lblStation As System.Windows.Forms.Label
     Friend WithEvents cmdAddInt As System.Windows.Forms.Button
     Friend WithEvents cmdAddThr As System.Windows.Forms.Button
-    Friend WithEvents lblThresholds As System.Windows.Forms.Label
-    Friend WithEvents lblIntervals As System.Windows.Forms.Label
     Friend WithEvents zgcThresh As ZedGraph.ZedGraphControl
     Friend WithEvents lblGlobalAnalysis As System.Windows.Forms.Label
     Friend WithEvents cboAnalysisOption As System.Windows.Forms.ComboBox
@@ -1362,5 +1388,10 @@
     Public WithEvents lblExportFileView As System.Windows.Forms.Label
     Friend WithEvents cboDataGraphFormat As System.Windows.Forms.ComboBox
     Friend WithEvents lblDataGraphFormat As System.Windows.Forms.Label
+    Friend WithEvents spltThreshIntervalGrids As System.Windows.Forms.SplitContainer
+    Friend WithEvents lblThresholds As System.Windows.Forms.Label
+    Friend WithEvents grdThresh As atcControls.atcGrid
+    Friend WithEvents lblIntervals As System.Windows.Forms.Label
+    Friend WithEvents grdInterval As atcControls.atcGrid
 #End Region
 End Class
