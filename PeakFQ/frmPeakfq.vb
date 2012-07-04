@@ -1710,6 +1710,7 @@ FileCancel:
         Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
 
+        'for GETDATA, lStnInd is sequence index of stations that were run (i.e. not skipped)
         Dim lStnInd As Integer = aStnInd + 1
         Dim lHeader As String = " ".PadLeft(80)
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
@@ -1722,7 +1723,9 @@ FileCancel:
 
         If lGBCrit > 0 Then lGBCrit = 10 ^ lGBCrit 'convert low outlier threshold from log to base 10
 
-        If PfqPrj.Stations(aStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
+        'for project stations, need overall station index found in lstGraph Items
+        lStnInd = lstGraphs.Items(aStnInd).index
+        If PfqPrj.Stations(lStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
             lThrDef = True
         Else
             lThrDef = False
@@ -1922,21 +1925,21 @@ FileCancel:
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
         Dim lSkewOptionText As String
-        If PfqPrj.Stations(aStnInd).SkewOpt = 0 Then
+        If PfqPrj.Stations(lStnInd).SkewOpt = 0 Then
             lSkewOptionText = "Station"
-        ElseIf PfqPrj.Stations(aStnInd).SkewOpt = 1 Then
+        ElseIf PfqPrj.Stations(lStnInd).SkewOpt = 1 Then
             lSkewOptionText = "Weighted"
-        ElseIf PfqPrj.Stations(aStnInd).SkewOpt = 2 Then
+        ElseIf PfqPrj.Stations(lStnInd).SkewOpt = 2 Then
             lSkewOptionText = "Generalized"
         End If
-        If PfqPrj.Stations(aStnInd).LOTestType.StartsWith("Single") Then
+        If PfqPrj.Stations(lStnInd).LOTestType.StartsWith("Single") Then
             lLOTestStr = "SGB"
         Else
             lLOTestStr = "MGB"
         End If
 
         Dim lWarning As String = "Peakfq v 7.0 run " & System.DateTime.Now & vbCrLf & _
-                                 PfqPrj.Stations(aStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
+                                 PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
                                  lSkew & " = Skew (G sub g)" & vbCrLf & _
                                  lRMSegs & " = Mean Sq Error (MSE sub g)" & vbCrLf & _
                                  lNZero & " Zeroes not displayed" & vbCrLf & _
