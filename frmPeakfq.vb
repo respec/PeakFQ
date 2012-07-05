@@ -744,6 +744,7 @@ FileCancel:
         PfqPrj.OutputDir = PathNameOnly(FName) 'default output directory to same as input
         grdSpecs.Source.Rows = grdSpecs.Source.FixedRows
         cboStation.Items.Clear()
+        CurStationIndex = -1
         'set to current directory
         ChDriveDir(PfqPrj.InputDir)
         sstPfq.SelectedIndex = 0
@@ -1068,7 +1069,7 @@ FileCancel:
                     .CellValue(j, 0) = Math.Abs(lData.Year)
                     .CellEditable(j, 0) = True
                     .Alignment(j, 0) = atcAlignment.HAlignRight
-                    .CellValue(j, 1) = lData.Value
+                    .CellValue(j, 1) = DoubleToString(lData.Value, , "########.", "#######0.")
                     .CellEditable(j, 1) = True
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
@@ -1370,6 +1371,7 @@ FileCancel:
 
         'check for missing years with no non-default threshold specified
         Dim lThreshDefined As Boolean
+        Dim lAlreadyOnLegend As Boolean = False
         Dim lPrevYear As Integer = 0
         lThrshVals(0) = 1.0E+20
         lThrshVals(1) = 1.0E+20
@@ -1391,6 +1393,10 @@ FileCancel:
                     lThrshDates(1) = i + 0.75
                     lCurve = lPane.AddCurve("Missing Year(s)", lThrshDates, lThrshVals, Color.Red, SymbolType.None)
                     lCurve.Line.Fill = New Fill(Color.Red, Color.Red)
+                    If lAlreadyOnLegend Then
+                        lCurve.Label.IsVisible = False
+                    End If
+                    lAlreadyOnLegend = True
                 End If
                 lPrevYear = i
             End If
@@ -1641,21 +1647,21 @@ FileCancel:
         Dim i As Integer
         Dim j As Integer
         Dim lNPkPlt As Integer
-        Dim lPkLog(199) As Single
-        Dim lSysPP(199) As Single
-        Dim lWrcPP(199) As Single
-        Dim lIQual(199, 4) As Integer
-        Dim lXQual(199) As String
-        Dim lPkYear(199) As Integer
-        Dim lThr(199) As Single
-        Dim lPPTh(199) As Single
-        Dim lNObsTh(199) As Integer
-        Dim lThrSYr(199) As Integer
-        Dim lThrEYr(199) As Integer
+        Dim lPkLog(499) As Single
+        Dim lSysPP(499) As Single
+        Dim lWrcPP(499) As Single
+        Dim lIQual(499, 4) As Integer
+        Dim lXQual(499) As String
+        Dim lPkYear(499) As Integer
+        Dim lThr(499) As Single
+        Dim lPPTh(499) As Single
+        Dim lNObsTh(499) As Integer
+        Dim lThrSYr(499) As Integer
+        Dim lThrEYr(499) As Integer
         Dim lNInt As Integer
-        Dim lIntLwr(199) As Single
-        Dim lIntUpr(199) As Single
-        Dim lIntPPos(199) As Single
+        Dim lIntLwr(499) As Single
+        Dim lIntUpr(499) As Single
+        Dim lIntPPos(499) As Single
         Dim lNT As Integer
         Dim lThrDef As Boolean
         Dim lWeiba As Single
@@ -1724,7 +1730,7 @@ FileCancel:
         If lGBCrit > 0 Then lGBCrit = 10 ^ lGBCrit 'convert low outlier threshold from log to base 10
 
         'for project stations, need overall station index found in lstGraph Items
-        lStnInd = lstGraphs.Items(aStnInd).index
+        lStnInd = lstGraphs.Items(aStnInd).index - 1
         If PfqPrj.Stations(lStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
             lThrDef = True
         Else
@@ -1747,9 +1753,13 @@ FileCancel:
         Dim lXVals(lNPlot2 - lNPlot1) As Double
         For i = lNPlot1 To lNPlot2
             j = i - lNPlot1
-            lYVals(j) = 10 ^ lWrcFC(i)
-            If lYVals(j) > lPMax Then lPMax = lYVals(j)
-            If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            If lWrcFC(i) >= 29.0 Then 'problem with this value
+                lYVals(j) = 0.0
+            Else
+                lYVals(j) = 10 ^ lWrcFC(i)
+                If lYVals(j) > lPMax Then lPMax = lYVals(j)
+                If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            End If
             lXVals(j) = lTxProb(i)
         Next
         lYAxis.IsVisible = True
@@ -1861,18 +1871,26 @@ FileCancel:
         ReDim lXVals(lNPlot2 - lNPlot1)
         For i = lNPlCL1 To lNPlCL2
             j = i - lNPlCL1
-            lYVals(j) = 10 ^ lCLimL(i)
-            If lYVals(j) > lPMax Then lPMax = lYVals(j)
-            If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            If lCLimL(i) >= 29.0 Then 'problem with this value
+                lYVals(j) = 0
+            Else
+                lYVals(j) = 10 ^ lCLimL(i)
+                If lYVals(j) > lPMax Then lPMax = lYVals(j)
+                If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            End If
             lXVals(j) = lTxProb(i)
         Next
         lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
             j = i - lNPlCL1
-            lYVals(j) = 10 ^ lCLimU(i)
-            If lYVals(j) > lPMax Then lPMax = lYVals(j)
-            If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            If lCLimU(i) >= 29.0 Then 'problem with this value
+                lYVals(j) = 0
+            Else
+                lYVals(j) = 10 ^ lCLimU(i)
+                If lYVals(j) > lPMax Then lPMax = lYVals(j)
+                If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            End If
             lXVals(j) = lTxProb(i)
         Next
         lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Blue, SymbolType.None)
