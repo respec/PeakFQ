@@ -969,10 +969,10 @@ Friend Class pfqProject
     Public Sub ReadPeaks()
         Dim lInd As Integer = 0
         Dim lNPks As Integer
-        Dim lPks(199) As Single
-        Dim lPksSeq(199) As Integer
-        Dim lIQual(199, 4) As Integer
-        Dim lXQual(199) As String
+        Dim lPks(499) As Single
+        Dim lPksSeq(499) As Integer
+        Dim lIQual(499, 4) As Integer
+        Dim lXQual(499) As String
         Dim lPeak As pfqStation.PeakDataType
         Dim lPeaks As Generic.List(Of pfqStation.PeakDataType)
 
@@ -980,7 +980,7 @@ Friend Class pfqProject
             lPeaks = New Generic.List(Of pfqStation.PeakDataType)
             lInd += 1
             GETPEAKS(lInd, lNPks, lPks, lIQual, lPksSeq)
-            NumChr(5, 200, lIQual, lXQual)
+            NumChr(5, 500, lIQual, lXQual)
             For i As Integer = 0 To lNPks - 1
                 lPeak = New pfqStation.PeakDataType
                 lPeak.Year = Math.Abs(lPksSeq(i))

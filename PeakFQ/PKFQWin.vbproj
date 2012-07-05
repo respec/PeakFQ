@@ -147,6 +147,7 @@
     </Compile>
     <EmbeddedResource Include="frmPeakfq.resX">
       <DependentUpon>frmPeakfq.vb</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="PKFQWin.ico" />
   </ItemGroup>
