@@ -51,7 +51,6 @@ Friend Class pfqStation
     Private pThresholds As Generic.List(Of ThresholdType)
     Private pPeakDataOrig As Generic.List(Of PeakDataType)
     Private pPeakData As Generic.List(Of PeakDataType)
-    Private pMissingYears As Generic.List(Of Integer)
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCAnalysisOption As String
@@ -260,7 +259,7 @@ Friend Class pfqStation
     Public Property PeakDataOrig() As Generic.List(Of pfqStation.PeakDataType)
         Get
             If pPeakDataOrig Is Nothing Then pPeakDataOrig = New Generic.List(Of pfqStation.PeakDataType)
-            PeakDataOrig = pPeakDataOrig
+            Return pPeakDataOrig
         End Get
         Set(ByVal Value As Generic.List(Of pfqStation.PeakDataType))
             pPeakDataOrig = Value
@@ -270,20 +269,10 @@ Friend Class pfqStation
     Public Property PeakData() As Generic.List(Of pfqStation.PeakDataType)
         Get
             If pPeakData Is Nothing Then pPeakData = New Generic.List(Of pfqStation.PeakDataType)
-            PeakData = pPeakData
+            Return pPeakData
         End Get
         Set(ByVal Value As Generic.List(Of pfqStation.PeakDataType))
             pPeakData = Value
-        End Set
-    End Property
-
-    Public Property MissingYears() As Generic.List(Of Integer)
-        Get
-            If pMissingYears Is Nothing Then pMissingYears = FindMissingYears()
-            MissingYears = pMissingYears
-        End Get
-        Set(ByVal Value As Generic.List(Of Integer))
-            pMissingYears = Value
         End Set
     End Property
 
@@ -484,20 +473,19 @@ Friend Class pfqStation
         If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
         If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
         If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
-        If pPeakData.Count > 0 Then 'write any interval data or updated peak data
-            For Each vData As PeakDataType In pPeakData
-                'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
-                '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                'End If
-                If Not PeakDataOrigContains(vData) Then 'new or revised peak
-                    If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 Then 'interval data
-                        s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                    Else 'just revised peak data
-                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
-                    End If
+        'write any interval data or updated peak data
+        For Each vData As PeakDataType In pPeakData
+            'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+            '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+            'End If
+            If Not PeakDataOrigContains(vData) Then 'new or revised peak
+                If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 Then 'interval data
+                    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                Else 'just revised peak data
+                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
                 End If
-            Next
-        End If
+            End If
+        Next
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
         s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
         If Len(pCGenSkew) > 0 Then s = s & pad & pCGenSkew & vbCrLf
@@ -554,20 +542,19 @@ Friend Class pfqStation
                 s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
         End If
-        If pPeakData.Count > 0 Then 'write any interval data or updated peak data
-            For Each vData As PeakDataType In pPeakData
-                'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
-                '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                'End If
-                If Not PeakDataOrigContains(vData) Then 'new or revised peak/interval
-                    If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then 'interval data
-                        s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                    Else 'just revised peak data
-                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
-                    End If
+        'write any interval data or updated peak data
+        For Each vData As PeakDataType In pPeakData
+            'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+            '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+            'End If
+            If Not PeakDataOrigContains(vData) Then 'new or revised peak/interval
+                If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then 'interval data
+                    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                Else 'just revised peak data
+                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
                 End If
-            Next
-        End If
+            End If
+        Next
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
         If pBegYear <> defsta.BegYear Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
         If Len(defsta.CEndYear) > 0 Then s = s & pad & defsta.CEndYear & vbCrLf
@@ -667,7 +654,7 @@ Friend Class pfqStation
         'Return lThresholds
     End Sub
 
-    Private Function FindMissingYears() As Generic.List(Of Integer)
+    Public Function FindMissingYears() As Generic.List(Of Integer)
         Dim lMissingYears As New Generic.List(Of Integer)
         Dim lPrevYear As Integer = PeakData(0).Year - 1
         Dim inHistoric As Boolean = False
@@ -713,6 +700,5 @@ Friend Class pfqStation
 
         pThresholds = New Generic.List(Of ThresholdType)
         pPeakData = New Generic.List(Of PeakDataType)
-        pMissingYears = Nothing
     End Sub
 End Class
