@@ -61,26 +61,10 @@ Friend Class frmPeakfq
     End Sub
 
     Private Sub cmdGraph_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles cmdGraph.Click
-        Dim i As Integer
-        'Dim GraphName As String
-        'Dim newform As frmGraph
-        'For Each lItem As GraphListItem In lstGraphs.SelectedItems
-        '    GenFrequencyGraph(lItem.Index)
-        'Next
-        For i = 0 To lstGraphs.Items.Count - 1
+
+        For i As Integer = 0 To lstGraphs.Items.Count - 1
             If lstGraphs.GetSelected(i) Then
                 GenFrequencyGraph(i)
-                'GraphName = VB6.GetItemString(lstGraphs, i) & ".BMP"
-                'If FileExists(GraphName) Then
-                '    newform = New frmGraph
-                '    newform.Height = VB6.TwipsToPixelsY(7600)
-                '    newform.Width = VB6.TwipsToPixelsX(9700)
-                '    newform.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
-                '    newform.BackgroundImage = System.Drawing.Image.FromFile(GraphName)
-                '    newform.Show()
-                'Else
-                '    MsgBox("No graph available for station " & VB6.GetItemString(lstGraphs, i) & "." & vbCrLf & "This station was likely skipped due to faulty data - see PeakFQ output file for details.", MsgBoxStyle.Exclamation, "PeakFQ")
-                'End If
             End If
         Next i
     End Sub
@@ -100,8 +84,6 @@ Friend Class frmPeakfq
         With grdSpecs.Source
             .ColorCells = True
 
-            '.Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            '.Columns = 20 ' already know there are 19 columns
             For Each vSta In PfqPrj.Stations
                 lRow += 1
                 .CellValue(lRow, 0) = vSta.id
@@ -519,18 +501,12 @@ FileCancel:
             Application.DoEvents()
             PfqPrj.RunBatchModel()
             Application.DoEvents()
-            'If PfqPrj.Graphic Then
+
             SetGraphNames()
             cmdGraph.Enabled = True
-            'Else
-            '    lstGraphs.Items.Clear()
-            '    cmdGraph.Enabled = False
-            'End If
             Me.Cursor = System.Windows.Forms.Cursors.Default
             sstPfq.TabPages.Item(3).Enabled = True
             sstPfq.SelectedIndex = 3
-            '    cmdSave.Enabled = True
-            '    mnuSaveSpecs.Enabled = True
         Else
             MsgBox("PeakFQ Specfication or Data File must be opened before viewing results.", MsgBoxStyle.Information, "PeakFQ Results")
         End If
@@ -598,32 +574,33 @@ FileCancel:
 
         grdThresh.Source = New atcControls.atcGridSource
         With grdThresh.Source
-            .FixedRows = 2
-            .Rows = 1
-            .Columns = 4
-            .CellValue(0, 0) = "Start"
-            .CellValue(1, 0) = "Year"
-            .CellValue(0, 1) = "End"
-            .CellValue(1, 1) = "Year"
-            .CellValue(0, 2) = "Low"
-            .CellValue(1, 2) = "Threshold"
-            .CellValue(0, 3) = "High"
-            .CellValue(1, 3) = "Threshold"
+            .FixedRows = 1
+            .CellValue(0, 0) = "Start Year"
+            .CellValue(0, 1) = "End Year"
+            .CellValue(0, 2) = "Low Threshold"
+            .CellValue(0, 3) = "High Threshold"
+            .CellValue(0, 4) = "Comment (Required)"
+            .ColorCells = True
+            For i = 0 To .Columns - 1
+                grdThresh.SizeColumnToString(i, .CellValue(0, i))
+            Next
         End With
-        grdThresh.SizeAllColumnsToContents(grdThresh.Width)
 
         grdInterval.Source = New atcControls.atcGridSource
         With grdInterval.Source
-            .FixedRows = 2
-            .Rows = 1
-            .Columns = 3
-            .CellValue(1, 0) = "Year"
-            .CellValue(0, 1) = "Low"
-            .CellValue(1, 1) = "Interval"
-            .CellValue(0, 2) = "High"
-            .CellValue(1, 2) = "Interval"
+            .FixedRows = 1
+            .CellValue(0, 0) = "Year"
+            .CellValue(0, 1) = "Peak"
+            .CellValue(0, 2) = "Remark Codes"
+            .CellValue(0, 3) = "Low Value"
+            .CellValue(0, 4) = "High Value"
+            .CellValue(0, 5) = "Comment (Required)"
+            .ColorCells = True
+            For i = 0 To .Columns - 1
+                grdInterval.SizeColumnToString(i, .CellValue(0, i))
+            Next
+            grdInterval.SizeColumnToString(1, .CellValue(0, 1) & .CellValue(0, 1))
         End With
-        grdInterval.SizeAllColumnsToContents(grdInterval.Width)
 
         InitGraph(zgcThresh, "T")
         Dim lRed As Integer
@@ -651,10 +628,6 @@ FileCancel:
     End Sub
 
     Private Sub frmPeakfq_FormClosed(ByVal eventSender As System.Object, ByVal eventArgs As System.Windows.Forms.FormClosedEventArgs) Handles Me.FormClosed
-        'Dim i As Integer
-
-        'On Error Resume Next
-
         Logger.Flush()
 
         End
@@ -816,10 +789,6 @@ FileCancel:
                 End With
             End If
         Next i
-        '  grdSpecs.ColEditable(0) = False 'station number not editable
-        '  grdSpecs.ColEditable(8) = False 'low historic peak not editable
-        '  grdspecs.ColEditable(9) = False 'root mean square error not editable
-        '  grdSpecs.ColEditable(10) = False 'high historic peak not editable
     End Sub
 
     Public Sub mnuSaveSpecs_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mnuSaveSpecs.Click
@@ -893,9 +862,6 @@ FileCancel:
                             End If
                         Next k
                     End If
-                    'newName = newName & ".BMP"
-                    'RenameGraph(oldName, newName)
-                    'lstGraphs.Items.Add(FilenameNoExt(newName))
                     lstGraphs.Items.Add(New GraphListItem(newName, i))
                     If PfqPrj.Graphic Then 'save graph to file
                         GenFrequencyGraph(lstGraphs.Items.Count - 1, True)
@@ -925,7 +891,11 @@ FileCancel:
     Private Sub grdSpecs_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdSpecs.CellEdited
         Try
             With grdSpecs.Source
-                If aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
+                If aColumn = 1 Then 'check to see if switching to EMA
+                    If .CellValue(aRow, aColumn) = "EMA" Then 'for inclusion of historic peaks
+                        .CellValue(aRow, 5) = "Yes"
+                    End If
+                ElseIf aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
                     .CellValue(aRow, 4) = Integer.Parse(.CellValue(aRow, 3)) - Integer.Parse(.CellValue(aRow, 2)) + 1
                 ElseIf aColumn = 5 AndAlso .CellValue(aRow, aColumn) = "No" Then
                     'Must use historic period if EMA is analysis option
@@ -986,35 +956,34 @@ FileCancel:
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = lStn.Thresholds
         Dim lDataColl As Generic.List(Of pfqStation.PeakDataType) = lStn.PeakData
-        Dim lNewSource As New atcControls.atcGridSource
+        Dim lColor As System.Drawing.Color
         Dim j As Integer
 
-        With lNewSource
+        With grdThresh.Source ' lNewSource
             .FixedRows = 1
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            .Columns = 5 'start/end year followed by low/high thresholds
-            .CellValue(0, 0) = "Start Year"
-            .CellValue(0, 1) = "End Year"
-            .CellValue(0, 2) = "Low Threshold"
-            .CellValue(0, 3) = "High Threshold"
-            .CellValue(0, 4) = "Comment"
-            .ColorCells = True
             If lThrColl.Count > 0 Then
                 j = 0
                 For Each lThresh As pfqStation.ThresholdType In lThrColl
+                    If j = 0 AndAlso lThresh.LowerLimit = 0 AndAlso lThresh.UpperLimit >= 1.0E+20 Then
+                        'default threshold, use white background
+                        lColor = Color.White
+                    Else
+                        lColor = ThreshColors(j)
+                    End If
                     j += 1
                     .CellValue(j, 0) = lThresh.SYear
                     .CellEditable(j, 0) = True
                     .Alignment(j, 0) = atcAlignment.HAlignRight
-                    .CellColor(j, 0) = ThreshColors(j - 1)
+                    .CellColor(j, 0) = lColor
                     .CellValue(j, 1) = lThresh.EYear
                     .CellEditable(j, 1) = True
                     .Alignment(j, 1) = atcAlignment.HAlignRight
-                    .CellColor(j, 1) = ThreshColors(j - 1)
+                    .CellColor(j, 1) = lColor
                     .CellValue(j, 2) = lThresh.LowerLimit
                     .CellEditable(j, 2) = True
                     .Alignment(j, 2) = atcAlignment.HAlignRight
-                    .CellColor(j, 2) = ThreshColors(j - 1)
+                    .CellColor(j, 2) = lColor
                     If lThresh.UpperLimit >= 1.0E+20 Then
                         .CellValue(j, 3) = "inf"
                     Else
@@ -1022,46 +991,18 @@ FileCancel:
                     End If
                     .CellEditable(j, 3) = True
                     .Alignment(j, 3) = atcAlignment.HAlignRight
-                    .CellColor(j, 3) = ThreshColors(j - 1)
+                    .CellColor(j, 3) = lColor
                     .CellValue(j, 4) = lThresh.Comment
                     .CellEditable(j, 4) = True
                     .Alignment(j, 4) = atcAlignment.HAlignLeft
-                    .CellColor(j, 4) = ThreshColors(j - 1)
+                    .CellColor(j, 4) = lColor
                 Next
-                'Else 'add one blank row
-                '    For i As Integer = 0 To .Columns - 1
-                '        .CellEditable(1, i) = True
-                '        If i = .Columns - 1 Then
-                '            .Alignment(1, i) = atcAlignment.HAlignLeft
-                '        Else
-                '            .Alignment(1, i) = atcAlignment.HAlignRight
-                '        End If
-                '        If i = .Columns - 2 Then
-                '            .CellValue(1, i) = "1.0e20"
-                '            .CellColor(1, i) = ThreshColors(0)
-                '        End If
-                '    Next
-                '    '.Rows += 1
             End If
         End With
-        grdThresh.Initialize(lNewSource)
-        grdThresh.Visible = True
         AddThreshRow()
-        'grdThresh.SizeAllColumnsToContents(grdThresh.Width, True)
-        'grdThresh.Refresh()
 
-        lNewSource = New atcControls.atcGridSource
-        With lNewSource
-            .FixedRows = 1
+        With grdInterval.Source ' lNewSource
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
-            .Columns = 6 'year, peak, remark, followed by low/high intervals and comment
-            .CellValue(0, 0) = "Year"
-            .CellValue(0, 1) = "Peak"
-            .CellValue(0, 2) = "Remark Codes"
-            .CellValue(0, 3) = "Low Value"
-            .CellValue(0, 4) = "High Value"
-            .CellValue(0, 5) = "Comment"
-            .ColorCells = True
             If lDataColl.Count > 0 Then
                 j = 0
                 For Each lData As pfqStation.PeakDataType In lDataColl
@@ -1085,20 +1026,8 @@ FileCancel:
                     .CellEditable(j, 5) = True
                     .Alignment(j, 5) = atcAlignment.HAlignLeft
                 Next
-                'Else 'add one blank row
-                '    For i As Integer = 0 To .Columns - 1
-                '        .CellEditable(1, i) = True
-                '        If i = 2 Or i = 5 Then
-                '            .Alignment(1, i) = atcAlignment.HAlignLeft
-                '        Else
-                '            .Alignment(1, i) = atcAlignment.HAlignRight
-                '        End If
-                '    Next
-                '    '.Rows += 1
             End If
         End With
-        grdInterval.Initialize(lNewSource)
-        grdInterval.Visible = True
         AddIntervalRow()
 
         UpdateInputGraph()
@@ -1107,8 +1036,6 @@ FileCancel:
     Private Sub ProcessThresholds()
         Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = Nothing
         Dim lDataColl As Generic.List(Of pfqStation.PeakDataType) = Nothing
-        'Dim lThresh As pfqStation.ThresholdType
-        'Dim lInterval As pfqStation.IntervalType
         Dim i As Integer
 
         With grdThresh.Source
@@ -1149,6 +1076,7 @@ FileCancel:
                     lDataColl.Add(lData)
                 End If
             Next
+            lDataColl.Sort()
         End With
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         lStn.Thresholds = lThrColl
@@ -1161,16 +1089,10 @@ FileCancel:
         With grdThresh 'At this point, there should already be one instantiated with header rows
             .Enabled = True
             .BackColor = SystemColors.Control
-            .AllowHorizontalScrolling = False
-            .Visible = True
-            .SizeAllColumnsToContents(.Width, True)
         End With
         With grdInterval 'At this point, there should already be one instantiated with header rows
             .Enabled = True
             .BackColor = SystemColors.Control
-            .AllowHorizontalScrolling = False
-            .Visible = True
-            .SizeAllColumnsToContents(.Width, True)
         End With
     End Sub
 
@@ -1326,46 +1248,43 @@ FileCancel:
         'thresholds
         i = 0
         For Each vThresh In lStn.Thresholds
-            lThrshDates(0) = vThresh.SYear
-            'If vThresh.EYear = vThresh.SYear Then 'increase end date a bit to give line some width
-            '    lThrshDates(1) = vThresh.EYear + 1
-            'Else
-            '    lThrshDates(1) = vThresh.EYear
-            'End If
-            lThrshDates(1) = vThresh.EYear + 0.75
             i += 1
-            If vThresh.LowerLimit <= lYAxis.Scale.Min Then
-                'add marker to indicate lower threshold boundary
-                lX(0) = (vThresh.SYear + vThresh.EYear) / 2
-                lY(0) = lYAxis.Scale.Min
-                lCurve = lPane.AddCurve("Lower Threshold " & i, lX, lY, ThreshColors(i - 1), SymbolType.UserDefined)
-                If vThresh.LowerLimit > 0 Then
-                    lCurve.Symbol.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                Else
-                    lCurve.Symbol.Fill = New Fill(Color.White, Color.White)
-                End If
-                lCurve.Symbol.Size = 9
-                lCurve.Symbol.UserSymbol = lThreshSymbol
-                lCurve.Label.IsVisible = False
-            End If
-            '1st curve is lower limit down to bottom of graph
-            lThrshVals(0) = vThresh.LowerLimit
-            lThrshVals(1) = vThresh.LowerLimit
-            lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-            lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-            If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
-                '2nd curve fills gap between threshold limits with white fill
-                lThrshVals(0) = vThresh.UpperLimit
-                lThrshVals(1) = vThresh.UpperLimit
-                lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-                lCurve.Line.Fill = New Fill(Color.White, Color.White)
-                lCurve.Label.IsVisible = False
-                '3rd curve shows upper limit to top of graph
-                lThrshVals(0) = 1.0E+20
-                lThrshVals(1) = 1.0E+20
+            If i > 1 OrElse (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+19) Then
+                'If vThresh.LowerLimit <= lYAxis.Scale.Min Then
+                '    'add marker to indicate lower threshold boundary
+                '    lX(0) = (vThresh.SYear + vThresh.EYear) / 2
+                '    lY(0) = lYAxis.Scale.Min
+                '    lCurve = lPane.AddCurve("Lower Threshold " & i, lX, lY, ThreshColors(i - 1), SymbolType.UserDefined)
+                '    If vThresh.LowerLimit > 0 Then
+                '        lCurve.Symbol.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                '    Else
+                '        lCurve.Symbol.Fill = New Fill(Color.White, Color.White)
+                '    End If
+                '    lCurve.Symbol.Size = 9
+                '    lCurve.Symbol.UserSymbol = lThreshSymbol
+                '    lCurve.Label.IsVisible = False
+                'End If
+                '1st curve is lower limit down to bottom of graph
+                lThrshDates(0) = vThresh.SYear
+                lThrshDates(1) = vThresh.EYear + 0.75
+                lThrshVals(0) = vThresh.LowerLimit
+                lThrshVals(1) = vThresh.LowerLimit
                 lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
                 lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                lCurve.Label.IsVisible = False
+                If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
+                    '2nd curve fills gap between threshold limits with white fill
+                    lThrshVals(0) = vThresh.UpperLimit
+                    lThrshVals(1) = vThresh.UpperLimit
+                    lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                    lCurve.Line.Fill = New Fill(Color.White, Color.White)
+                    lCurve.Label.IsVisible = False
+                    '3rd curve shows upper limit to top of graph
+                    lThrshVals(0) = 1.0E+20
+                    lThrshVals(1) = 1.0E+20
+                    lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                    lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                    lCurve.Label.IsVisible = False
+                End If
             End If
         Next
 
@@ -1375,7 +1294,7 @@ FileCancel:
         Dim lPrevYear As Integer = 0
         lThrshVals(0) = 1.0E+20
         lThrshVals(1) = 1.0E+20
-        For Each i In lStn.MissingYears
+        For Each i In lStn.FindMissingYears
             lThreshDefined = False
             For Each vThresh In lStn.Thresholds
                 If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso _
@@ -1830,41 +1749,6 @@ FileCancel:
                 lCurves.Add(lKey, lCurve)
             End If
         Next
-        'lCurve = lPane.AddCurve("Systematic peaks", lXVals, lYVals, Color.Black, SymbolType.Circle)
-        'lCurve.Line.IsVisible = False
-
-        'If lHistFlg = 0 Then 'include historical peaks
-        '    ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
-        '    For i = 0 To lNPkPlt - 1
-        '        lYVals(i) = 10 ^ lPkLog(i)
-        '        If lYVals(i) > lPMax Then lPMax = lYVals(i)
-        '        If lYVals(i) < lPMin Then lPMin = lYVals(i)
-        '        lXVals(i) = lWrcPP(i)
-        '    Next
-        '    lCurve = lPane.AddCurve("Historical adjusted", lXVals, lYVals, Color.Black, SymbolType.XCross)
-        '    lCurve.Line.IsVisible = False
-        'End If
-
-        'from DO 16 (May 2011), remove systematic curve
-        ''Systematic record
-        'lNPlot1 = 0
-        'lNPlot2 = lNPlot - 1
-        'For i = 0 To lNPlot - 1
-        '    If lTxProb(i) < lPP0 Then lNPlot2 = i
-        '    j = lNPlot - i - 1 ' + 1 - i
-        '    If lTxProb(j) > lPP1 AndAlso lSysRFC(j) > -1.0 Then lNPlot1 = j
-        'Next
-        'ReDim lYVals(lNPlot2 - lNPlot1)
-        'ReDim lXVals(lNPlot2 - lNPlot1)
-        'For i = lNPlot1 To lNPlot2
-        '    j = i - lNPlot1
-        '    lYVals(j) = 10 ^ lSysRFC(i)
-        '    If lYVals(j) > lPMax Then lPMax = lYVals(j)
-        '    If lYVals(j) < lPMin Then lPMin = lYVals(j)
-        '    lXVals(j) = lTxProb(i)
-        'Next
-        'lCurve = lPane.AddCurve("Systematic frequency", lXVals, lYVals, Color.Blue, SymbolType.None)
-        'lCurve.Line.Style = Drawing2D.DashStyle.Dash
 
         'confidence limits
         ReDim lYVals(lNPlot2 - lNPlot1)
@@ -1951,17 +1835,17 @@ FileCancel:
             lSkewOptionText = "Generalized"
         End If
         If PfqPrj.Stations(lStnInd).LOTestType.StartsWith("Single") Then
-            lLOTestStr = "SGB"
+            lLOTestStr = "Single Grubbs-Beck"
         Else
-            lLOTestStr = "MGB"
+            lLOTestStr = "Multiple Grubbs-Beck"
         End If
 
         Dim lWarning As String = "Peakfq v 7.0 run " & System.DateTime.Now & vbCrLf & _
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
-                                 lSkew & " = Skew (G sub g)" & vbCrLf & _
-                                 lRMSegs & " = Mean Sq Error (MSE sub g)" & vbCrLf & _
+                                 DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G sub g)" & vbCrLf & _
+                                 DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub g)" & vbCrLf & _
                                  lNZero & " Zeroes not displayed" & vbCrLf & _
-                                 lNLow & " Peaks below Low Outlier Threshold " & lLOTestStr
+                                 lNLow & " Peaks below Low Outlier Threshold " & vbCrLf & lLOTestStr
         Dim lText As New TextObj(lWarning, 0.5, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
@@ -2003,7 +1887,7 @@ FileCancel:
         Next lArrayInd
     End Sub
 
-    Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles zgcThresh.Paint
+    Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs)
         zgcThresh.MasterPane.ReSize(e.Graphics)
     End Sub
 
@@ -2053,13 +1937,22 @@ FileCancel:
             If lGoodRow Then
                 If aRow = .Rows - 1 Then 'add another blank row
                     AddThreshRow()
+                ElseIf aRow = .FixedRows Then 'default thresh, check whether or not to color it
+                    Dim lColor As System.Drawing.Color
+                    If .CellValue(aRow, 2) = "0" AndAlso .CellValue(aRow, 3) = "inf" Then 'defaults, set to white
+                        lColor = Color.White
+                    Else
+                        lColor = ThreshColors(0)
+                    End If
+                    For i As Integer = 0 To .Columns - 1
+                        .CellColor(aRow, i) = lColor
+                    Next
+                    grdThresh.Refresh()
                 End If
                 ProcessThresholds()
                 UpdateInputGraph()
             End If
         End With
-        aGrid.SizeAllColumnsToContents(aGrid.Width)
-        aGrid.Refresh()
     End Sub
 
     Private Sub grdInterval_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdInterval.CellEdited
@@ -2075,7 +1968,7 @@ FileCancel:
             End If
             If IsNumeric(.CellValue(aRow, 0)) Then 'valid year entered
                 If IsNumeric(.CellValue(aRow, 1)) AndAlso _
-                   (Not .CellValue(aRow, 2) Is Nothing AndAlso .CellValue(aRow, 2).Length > 0) Then 'valid peak value entry
+                   (Not .CellValue(aRow, 5) Is Nothing AndAlso .CellValue(aRow, 5).Length > 0) Then 'valid peak value entry
                     lGoodRow = True
                 End If
                 If IsNumeric(.CellValue(aRow, 3)) Or IsNumeric(.CellValue(aRow, 4)) Then 'some interval data entered, check it
@@ -2096,11 +1989,7 @@ FileCancel:
                     AddIntervalRow()
                 End If
             End If
-            'ProcessThresholds()
-            'UpdateInputGraph()
         End With
-        aGrid.SizeAllColumnsToContents(aGrid.Width)
-        aGrid.Refresh()
     End Sub
 
     Private Sub AddThreshRow()
@@ -2119,8 +2008,6 @@ FileCancel:
                 End If
             Next
         End With
-        grdThresh.SizeAllColumnsToContents(grdThresh.Width, True)
-        grdThresh.Refresh()
     End Sub
 
     Private Sub AddIntervalRow()
@@ -2135,8 +2022,6 @@ FileCancel:
                 End If
             Next
         End With
-        grdInterval.SizeAllColumnsToContents(grdInterval.Width, True)
-        grdInterval.Refresh()
     End Sub
 
     Private Sub cboLOTest_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cboLOTest.SelectedIndexChanged
@@ -2227,6 +2112,21 @@ FileCancel:
         Else
             MsgBox("No Empirical Frequency Curve file is available for viewing.", MsgBoxStyle.Information, "PeakFQ")
         End If
+    End Sub
+
+    Private Sub spltInputViewTab_MouseUp(sender As Object, e As System.Windows.Forms.MouseEventArgs) Handles spltInputViewTab.MouseUp
+        With grdThresh.Source
+            For i As Integer = 0 To .Columns - 1
+                grdThresh.SizeColumnToString(i, .CellValue(0, i))
+            Next
+        End With
+        With grdInterval.Source
+            For i As Integer = 0 To .Columns - 1
+                grdInterval.SizeColumnToString(i, .CellValue(0, i))
+            Next
+            grdInterval.SizeColumnToString(1, .CellValue(0, 1) & .CellValue(0, 1))
+        End With
+
     End Sub
 
 End Class
