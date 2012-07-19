@@ -489,6 +489,12 @@ Friend Class pfqProject
                             CurStation.SkewOpt = 2
                         End If
                         If CommentPending Then CurStation.CSkewOpt = lCom
+                    Case "LOTYPE"
+                        If Rec.ToUpper = "MGBT" Then
+                            CurStation.LOTestType = "Multiple"
+                        Else
+                            CurStation.LOTestType = "Single"
+                        End If
                     Case "URB/REG"
                         If UCase(Rec) = "YES" Then
                             CurStation.UrbanRegPeaks = 1
@@ -619,7 +625,7 @@ Friend Class pfqProject
         i = 0
 		For	Each vSta In pStations
             If vSta.AnalysisOption <> "Skip" Then 'write station specs to string
-                If vSta.CheckStationSpecs Then
+                If vSta.AnalysisOption = "B17B" OrElse vSta.CheckThreshSpecs Then
                     If DefPrj Is Nothing Then 'write out all station specs
                         'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsVerbose. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                         s = s & vSta.WriteSpecsVerbose
@@ -631,7 +637,13 @@ Friend Class pfqProject
                         defsta = Nothing
                     End If
                 Else
-                    MsgBox("")
+                    MsgBox("For Station " & vSta.id & " use of a threshold range of 0 to infinity is unacceptable for periods of missing systematic record." & vbCrLf & _
+                           "Use a threshold range of infinity to infinity for periods of missing systematic record to indicate a lack of knowledge." & vbCrLf & _
+                           "If information is available, please specify a more appropriate lower threshold value (greater than 0 and less than infinity) or another more appropriate threshold range." & vbCrLf & _
+                           "Alternatively, to NOT run an EMA analysis on this site, on the Station Specifications Tab, select either Skip or B17B for the analysis option for this station.", _
+                           MsgBoxStyle.Information, "PeakFQ Run Problem")
+                    s = ""
+                    Exit For
                 End If
             End If
             i = i + 1
@@ -991,6 +1003,10 @@ Friend Class pfqProject
                 lPeak.Value = lPks(i)
                 lPeak.Code = lXQual(i)
                 lPeaks.Add(lPeak)
+                If Not lPeak.Code.Contains("H") And Not lPeak.Code.Contains("7") Then
+                    If lStn.FirstSystematic = 0 Then lStn.FirstSystematic = lPeak.Year
+                    lStn.LastSystematic = lPeak.Year
+                End If
             Next i
             lPeaks.Sort()
             lStn.PeakDataOrig = lPeaks

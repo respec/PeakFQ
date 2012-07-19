@@ -51,6 +51,8 @@ Friend Class pfqStation
     Private pThresholds As Generic.List(Of ThresholdType)
     Private pPeakDataOrig As Generic.List(Of PeakDataType)
     Private pPeakData As Generic.List(Of PeakDataType)
+    Private pFirstSystematic As Integer
+    Private pLastSystematic As Integer
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCAnalysisOption As String
@@ -447,6 +449,24 @@ Friend Class pfqStation
         End Set
     End Property
 
+    Public Property FirstSystematic() As Integer
+        Get
+            FirstSystematic = pFirstSystematic
+        End Get
+        Set(ByVal Value As Integer)
+            pFirstSystematic = Value
+        End Set
+    End Property
+
+    Public Property LastSystematic() As Integer
+        Get
+            LastSystematic = pLastSystematic
+        End Get
+        Set(ByVal Value As Integer)
+            pLastSystematic = Value
+        End Set
+    End Property
+
     Public Function WriteSpecsVerbose() As String
 
         Dim s As String
@@ -536,7 +556,9 @@ Friend Class pfqStation
             s = "Station " & pID & vbCrLf
         End If
         If Len(defsta.CAnalysisOption) > 0 Then s = s & pad & defsta.CAnalysisOption & vbCrLf
-        If pAnalysisOption <> defsta.AnalysisOption Then s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
+        'If pAnalysisOption <> defsta.AnalysisOption Then s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
+        'always write analysis option
+        s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
         If pThresholds.Count > 0 AndAlso pAnalysisOption.ToUpper = "EMA" Then 'using perception threshholds
             For Each vPT As ThresholdType In pThresholds
                 s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
@@ -640,11 +662,27 @@ Friend Class pfqStation
                     lThresh.UpperLimit = 1.0E+20
                     inHistoric = True
                 End If
-            ElseIf inHistoric Then 'end of historic
-                lThresh.EYear = lPk.Year - 1
-                Thresholds.Add(lThresh)
-                lThresh = New ThresholdType
-                inHistoric = False
+            Else
+                If inHistoric Then 'end of historic
+                    lThresh.EYear = lPk.Year - 1
+                    Thresholds.Add(lThresh)
+                    lThresh = New ThresholdType
+                    inHistoric = False
+                End If
+                If lPk.Code = "L" Or lPk.Code = "4" Then 'peak less than state, create a threshold
+                    lThresh.SYear = lPk.Year
+                    lThresh.EYear = lPk.Year
+                    lThresh.LowerLimit = Math.Abs(lPk.Value)
+                    lThresh.UpperLimit = 1.0E+20
+                    lThresh.Comment = "Peak < stated value"
+                    Thresholds.Add(lThresh)
+                    lThresh.SYear = 0
+                ElseIf lPk.Code = "G" Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
+                    'peak greater than stated value, set interval range
+                    lPk.LowerLimit = Math.Abs(lPk.Value)
+                    lPk.UpperLimit = 1.0E+20
+                    lPk.Comment = "Peak > stated value"
+                End If
             End If
         Next
         If lThresh.SYear > 0 Then
@@ -676,6 +714,23 @@ Friend Class pfqStation
         Return lMissingYears
     End Function
 
+    Public Function CheckThreshSpecs() As Boolean
+        Dim lThreshDefined As Boolean = True
+        For Each i As Integer In FindMissingYears()
+            lThreshDefined = False
+            For Each lThresh As ThresholdType In Thresholds
+                If i >= lThresh.SYear AndAlso i <= lThresh.EYear AndAlso _
+                    (lThresh.LowerLimit <> 0 Or lThresh.UpperLimit < 1.0E+20) Then
+                    'valid threshold for this missing year
+                    lThreshDefined = True
+                    Exit For
+                End If
+            Next
+        Next
+        Return lThreshDefined
+
+    End Function
+
     Public Sub New()
         MyBase.New()
 
@@ -700,5 +755,7 @@ Friend Class pfqStation
 
         pThresholds = New Generic.List(Of ThresholdType)
         pPeakData = New Generic.List(Of PeakDataType)
+        pFirstSystematic = 0
+        pLastSystematic = 0
     End Sub
 End Class

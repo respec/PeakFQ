@@ -497,16 +497,18 @@ FileCancel:
             End If
             ProcessOutput()
             s = PfqPrj.SaveAsString
-            SaveFileString((PfqPrj.SpecFileName), s)
-            Application.DoEvents()
-            PfqPrj.RunBatchModel()
-            Application.DoEvents()
+            If s.Length > 0 Then
+                SaveFileString((PfqPrj.SpecFileName), s)
+                Application.DoEvents()
+                PfqPrj.RunBatchModel()
+                Application.DoEvents()
 
-            SetGraphNames()
-            cmdGraph.Enabled = True
+                SetGraphNames()
+                cmdGraph.Enabled = True
+                sstPfq.TabPages.Item(3).Enabled = True
+                sstPfq.SelectedIndex = 3
+            End If
             Me.Cursor = System.Windows.Forms.Cursors.Default
-            sstPfq.TabPages.Item(3).Enabled = True
-            sstPfq.SelectedIndex = 3
         Else
             MsgBox("PeakFQ Specfication or Data File must be opened before viewing results.", MsgBoxStyle.Information, "PeakFQ Results")
         End If
@@ -613,7 +615,7 @@ FileCancel:
             If lRed < 150 Then lRed += 100
             lGreen = (130 * lOffset + 130) Mod 255
             If lGreen < 150 Then lGreen += 100
-            lBlue = (240 * lOffset + 240) Mod 255
+            lBlue = (240 * lOffset + 200) Mod 255
             If lBlue < 150 Then lBlue += 100
             ThreshColors(i) = Color.FromArgb(255, lRed, lGreen, lBlue)
         Next
@@ -819,8 +821,10 @@ FileCancel:
         If CurStationIndex >= 0 Then ProcessThresholds()
         ProcessOutput()
         s = PfqPrj.SaveAsString(DefPfqPrj)
-        SaveFileString((cdlOpenOpen.FileName), s) 'save spec file under selected name
-        lblSpec.Text = cdlOpenOpen.FileName
+        If s.Length > 0 Then
+            SaveFileString((cdlOpenOpen.FileName), s) 'save spec file under selected name
+            lblSpec.Text = cdlOpenOpen.FileName
+        End If
 
 FileCancel:
     End Sub
@@ -894,20 +898,48 @@ FileCancel:
                 If aColumn = 1 Then 'check to see if switching to EMA
                     If .CellValue(aRow, aColumn) = "EMA" Then 'for inclusion of historic peaks
                         .CellValue(aRow, 5) = "Yes"
+                        'don't allow editing of hi-outlier field
+                        .CellEditable(aRow, 14) = False
+                        .CellColor(aRow, 14) = SystemColors.ControlDark
+                    Else
+                        'allow editing of hi-outlier field
+                        .CellEditable(aRow, 14) = True
+                        .CellColor(aRow, 14) = Color.White
                     End If
                 ElseIf aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
                     .CellValue(aRow, 4) = Integer.Parse(.CellValue(aRow, 3)) - Integer.Parse(.CellValue(aRow, 2)) + 1
-                ElseIf aColumn = 5 AndAlso .CellValue(aRow, aColumn) = "No" Then
-                    'Must use historic period if EMA is analysis option
-                    If .CellValue(aRow, 1) = "EMA" Then
-                        MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
-                        .CellValue(aRow, aColumn) = "Yes"
+                    If PfqPrj.Stations(aRow - .FixedRows).Thresholds.Count > 0 Then
+                        Dim lThresh As pfqStation.ThresholdType = PfqPrj.Stations(aRow - .FixedRows).Thresholds(0)
+                        If aColumn = 2 Then 'update default threshold start year
+                            lThresh.SYear = Integer.Parse(.CellValue(aRow, 2))
+                        Else 'update default threshold end year
+                            lThresh.EYear = Integer.Parse(.CellValue(aRow, 3))
+                        End If
+                        PfqPrj.Stations(aRow - .FixedRows).Thresholds.RemoveAt(0)
+                        PfqPrj.Stations(aRow - .FixedRows).Thresholds.Insert(0, lThresh)
+                        'PfqPrj.Stations(aRow - .FixedRows).Thresholds(0) = lThresh
                     End If
-                ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
-                    .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
-                    .Alignment(aRow, 9) = atcAlignment.HAlignRight
-                    '.CellColor(aRow, 9) = SystemColors.ControlDark
-                End If
+                ElseIf aColumn = 5 Then
+                    If .CellValue(aRow, aColumn) = "No" Then
+                        'update start/end years to systematic range
+                        .CellValue(aRow, 2) = PfqPrj.Stations(aRow - .FixedRows).FirstSystematic
+                        .CellValue(aRow, 3) = PfqPrj.Stations(aRow - .FixedRows).LastSystematic
+                        .CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).LastSystematic - PfqPrj.Stations(aRow - .FixedRows).FirstSystematic + 1
+                    Else
+                        .CellValue(aRow, 2) = PfqPrj.Stations(aRow - .FixedRows).BegYear
+                        .CellValue(aRow, 3) = PfqPrj.Stations(aRow - .FixedRows).EndYear
+                        .CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).EndYear - PfqPrj.Stations(aRow - .FixedRows).BegYear + 1
+                    End If
+                    'Must use historic period if EMA is analysis option
+                    'If .CellValue(aRow, 1) = "EMA" Then
+                    '    MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
+                    '    .CellValue(aRow, aColumn) = "Yes"
+                    'End If
+                    ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
+                        .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
+                        .Alignment(aRow, 9) = atcAlignment.HAlignRight
+                        '.CellColor(aRow, 9) = SystemColors.ControlDark
+                    End If
             End With
             grdSpecs.Refresh()
         Catch ex As Exception
@@ -1201,8 +1233,10 @@ FileCancel:
                 Select Case lCode
                     Case "7", "H"
                         lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Triangle)
-                    Case "D", "G", "X", "3", "8", "3+8"
+                    Case "D", "3"
                         lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, Color.Black, SymbolType.XCross)
+                    Case "G", "X", "8", "3+8"
+                        lCurve = lPane.AddCurve("Peaks > Shown", lX, lY, Color.Black, SymbolType.Star)
                     Case "K", "6", "C"
                         lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, Color.Black, SymbolType.Square)
                     Case "L", "4"
@@ -1701,7 +1735,7 @@ FileCancel:
             For j = 0 To lNT - 1
                 If Math.Abs(lPkYear(i)) >= lThrSYr(j) AndAlso Math.Abs(lPkYear(i)) <= lThrEYr(j) Then 'peak is in a threshold
                     lThresh = j
-                    Exit For
+                    If j > 0 Then Exit For 'don't exit loop if this is the default (0th) threshold
                 End If
             Next
             If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
@@ -1715,7 +1749,9 @@ FileCancel:
                 lCurve = lCurves.ItemByKey(lKey)
                 lCurve.AddPoint(lXVals(i), lYVals(i))
             Else 'need a new curve
-                If lThresh >= 0 Then 'match color of threshold
+                If lThresh = 0 Then 'use specific color for default threshold
+                    lColor = Color.DarkCyan
+                ElseIf lThresh > 0 Then 'match color of threshold
                     lColor = ThreshColors(lThresh)
                 Else
                     lColor = Color.Black
@@ -1896,7 +1932,17 @@ FileCancel:
         With grdSpecs.Source
             For i As Integer = .FixedRows To .Rows - 1
                 .CellValue(i, 1) = lstr
-                .CellValue(i, 5) = "Yes"
+                If lstr = "EMA" Then
+                    'force use of historic period
+                    .CellValue(i, 5) = "Yes"
+                    'don't allow editing of hi-outlier field
+                    .CellEditable(i, 14) = False
+                    .CellColor(i, 14) = SystemColors.ControlDark
+                Else
+                    'allow editing of hi-outlier field
+                    .CellEditable(i, 14) = True
+                    .CellColor(i, 14) = Color.White
+                End If
             Next
         End With
         'post population settings
