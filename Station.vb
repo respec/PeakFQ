@@ -48,11 +48,13 @@ Friend Class pfqStation
     Private pLng As Single
     Private pPlotName As String
     Private pPlotMade As Boolean
-    Private pThresholds As Generic.List(Of ThresholdType)
+    Public Thresholds As Generic.List(Of ThresholdType)
     Private pPeakDataOrig As Generic.List(Of PeakDataType)
     Private pPeakData As Generic.List(Of PeakDataType)
     Private pFirstSystematic As Integer
     Private pLastSystematic As Integer
+    Private pFirstPeak As Integer
+    Private pLastPeak As Integer
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCAnalysisOption As String
@@ -248,15 +250,15 @@ Friend Class pfqStation
         End Set
     End Property
 
-    Public Property Thresholds() As Generic.List(Of pfqStation.ThresholdType)
-        Get
-            If pThresholds Is Nothing Then pThresholds = New Generic.List(Of pfqStation.ThresholdType)
-            Thresholds = pThresholds
-        End Get
-        Set(ByVal Value As Generic.List(Of pfqStation.ThresholdType))
-            pThresholds = Value
-        End Set
-    End Property
+    'Public Property Thresholds() As Generic.List(Of pfqStation.ThresholdType)
+    '    Get
+    '        If pThresholds Is Nothing Then pThresholds = New Generic.List(Of pfqStation.ThresholdType)
+    '        Thresholds = pThresholds
+    '    End Get
+    '    Set(ByVal Value As Generic.List(Of pfqStation.ThresholdType))
+    '        pThresholds = Value
+    '    End Set
+    'End Property
 
     Public Property PeakDataOrig() As Generic.List(Of pfqStation.PeakDataType)
         Get
@@ -467,6 +469,24 @@ Friend Class pfqStation
         End Set
     End Property
 
+    Public Property FirstPeak() As Integer
+        Get
+            FirstPeak = pFirstPeak
+        End Get
+        Set(ByVal Value As Integer)
+            pFirstPeak = Value
+        End Set
+    End Property
+
+    Public Property LastPeak() As Integer
+        Get
+            LastPeak = pLastPeak
+        End Get
+        Set(ByVal Value As Integer)
+            pLastPeak = Value
+        End Set
+    End Property
+
     Public Function WriteSpecsVerbose() As String
 
         Dim s As String
@@ -482,8 +502,8 @@ Friend Class pfqStation
         Else
             s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
         End If
-        If pThresholds.Count > 0 AndAlso pAnalysisOption.ToUpper = "EMA" Then 'using perception threshholds, not beg/end years and hist. period
-            For Each vPT As ThresholdType In pThresholds
+        If Thresholds.Count > 0 AndAlso pAnalysisOption.ToUpper = "EMA" Then 'using perception threshholds, not beg/end years and hist. period
+            For Each vPT As ThresholdType In Thresholds
                 s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
         End If
@@ -559,8 +579,8 @@ Friend Class pfqStation
         'If pAnalysisOption <> defsta.AnalysisOption Then s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
         'always write analysis option
         s = s & pad & "Analyze " & pAnalysisOption & vbCrLf
-        If pThresholds.Count > 0 AndAlso pAnalysisOption.ToUpper = "EMA" Then 'using perception threshholds
-            For Each vPT As ThresholdType In pThresholds
+        If Thresholds.Count > 0 AndAlso pAnalysisOption.ToUpper = "EMA" Then 'using perception threshholds
+            For Each vPT As ThresholdType In Thresholds
                 s = s & pad & "PCPT_Thresh " & vPT.SYear & " " & vPT.EYear & " " & vPT.LowerLimit & " " & vPT.UpperLimit & " " & vPT.Comment & vbCrLf
             Next
         End If
@@ -630,16 +650,28 @@ Friend Class pfqStation
         Return False
     End Function
 
-    Public Sub SetDefaultThresholds()
+    Public Sub SetDefaultThresholds(Optional ByRef aSYear As Integer = 0, Optional ByRef aEYear As Integer = 0)
         'sets initial default thresholds for a station that has just read its peaks
         Dim lThresh As ThresholdType
         Dim inHistoric As Boolean = False
+        Dim lSYear As Integer
+        Dim lEYear As Integer
 
         Thresholds = New Generic.List(Of ThresholdType)
         'set default for all peaks
         lThresh = New ThresholdType
-        lThresh.SYear = PeakData(0).Year
-        lThresh.EYear = PeakData(PeakData.Count - 1).Year
+        If aSYear > 0 Then
+            lSYear = aSYear
+        Else
+            lSYear = PeakData(0).Year
+        End If
+        If aEYear > 0 Then
+            lEYear = aEYear
+        Else
+            lEYear = PeakData(PeakData.Count - 1).Year
+        End If
+        lThresh.SYear = lSYear
+        lThresh.EYear = lEYear
         lThresh.LowerLimit = 0.0
         lThresh.UpperLimit = 1.0E+20
         lThresh.Comment = "Default"
@@ -647,41 +679,45 @@ Friend Class pfqStation
 
         lThresh = New ThresholdType
         For Each lPk As PeakDataType In PeakData
-            If lPk.Code = "H" Then
-                If inHistoric Then 'continuing historic period
-                    lThresh.EYear = lPk.Year
-                    If Math.Abs(lPk.Value) < lThresh.LowerLimit Then
+            If lPk.Year >= lSYear AndAlso lPk.Year <= lEYear Then
+                If lPk.Code = "H" Then
+                    If inHistoric Then 'continuing historic period
+                        lThresh.EYear = lPk.Year
+                        If Math.Abs(lPk.Value) < lThresh.LowerLimit Then
+                            lThresh.LowerLimit = Math.Abs(lPk.Value)
+                        End If
+                    Else 'start of historic period
+                        lThresh = New ThresholdType
+                        lThresh.SYear = lPk.Year
+                        lThresh.EYear = lPk.Year
+                        lThresh.Comment = "Historic " & Thresholds.Count
                         lThresh.LowerLimit = Math.Abs(lPk.Value)
+                        lThresh.UpperLimit = 1.0E+20
+                        inHistoric = True
                     End If
-                Else 'start of historic period
-                    lThresh = New ThresholdType
-                    lThresh.SYear = lPk.Year
-                    lThresh.EYear = lPk.Year
-                    lThresh.Comment = "Historic " & Thresholds.Count
-                    lThresh.LowerLimit = Math.Abs(lPk.Value)
-                    lThresh.UpperLimit = 1.0E+20
-                    inHistoric = True
-                End If
-            Else
-                If inHistoric Then 'end of historic
-                    lThresh.EYear = lPk.Year - 1
-                    Thresholds.Add(lThresh)
-                    lThresh = New ThresholdType
-                    inHistoric = False
-                End If
-                If lPk.Code = "L" Or lPk.Code = "4" Then 'peak less than state, create a threshold
-                    lThresh.SYear = lPk.Year
-                    lThresh.EYear = lPk.Year
-                    lThresh.LowerLimit = Math.Abs(lPk.Value)
-                    lThresh.UpperLimit = 1.0E+20
-                    lThresh.Comment = "Peak < stated value"
-                    Thresholds.Add(lThresh)
-                    lThresh.SYear = 0
-                ElseIf lPk.Code = "G" Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
-                    'peak greater than stated value, set interval range
-                    lPk.LowerLimit = Math.Abs(lPk.Value)
-                    lPk.UpperLimit = 1.0E+20
-                    lPk.Comment = "Peak > stated value"
+                Else
+                    If inHistoric Then 'end of historic
+                        lThresh.EYear = lPk.Year - 1
+                        Thresholds.Add(lThresh)
+                        lThresh = New ThresholdType
+                        inHistoric = False
+                    End If
+                    If Not lPk.Code Is Nothing Then
+                        If lPk.Code = "L" Or lPk.Code = "4" Then 'peak less than state, create a threshold
+                            lThresh.SYear = lPk.Year
+                            lThresh.EYear = lPk.Year
+                            lThresh.LowerLimit = Math.Abs(lPk.Value)
+                            lThresh.UpperLimit = 1.0E+20
+                            lThresh.Comment = "Peak < stated value"
+                            Thresholds.Add(lThresh)
+                            lThresh.SYear = 0
+                        ElseIf lPk.Code = "G" Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
+                            'peak greater than stated value, set interval range
+                            lPk.LowerLimit = Math.Abs(lPk.Value)
+                            lPk.UpperLimit = 1.0E+20
+                            lPk.Comment = "Peak > stated value"
+                        End If
+                    End If
                 End If
             End If
         Next
@@ -689,28 +725,58 @@ Friend Class pfqStation
             'start of historic period found, but didn't reach end so need to add to collection
             Thresholds.Add(lThresh)
         End If
-        'Return lThresholds
     End Sub
 
     Public Function FindMissingYears() As Generic.List(Of Integer)
         Dim lMissingYears As New Generic.List(Of Integer)
         Dim lPrevYear As Integer = PeakData(0).Year - 1
         Dim inHistoric As Boolean = False
+        Dim lYearMissing As Boolean
+        Dim lThresh As ThresholdType
+        Dim lThresholds As New Generic.List(Of ThresholdType)
 
-        For Each lPk As PeakDataType In PeakData
-            If lPk.Code = "H" Then
-                inHistoric = True
-            Else
-                If inHistoric Then 'leaving historic period
-                    inHistoric = False
-                ElseIf lPk.Year > lPrevYear + 1 Then 'missing years
-                    For i As Integer = lPrevYear + 1 To lPk.Year - 1
-                        lMissingYears.Add(i)
-                    Next
-                End If
-                lPrevYear = lPk.Year
+        For Each lThresh In Thresholds
+            If lThresh.LowerLimit <> 0 OrElse lThresh.UpperLimit < 1.0E+19 Then
+                'not just the default threshold, use it to track missing years
+                lThresholds.Add(lThresh)
             End If
         Next
+
+        For lYr As Integer = BegYear To EndYear
+            lYearMissing = True
+            For Each lThresh In lThresholds
+                If lYr >= lThresh.SYear AndAlso lYr <= lThresh.EYear Then
+                    lYearMissing = False
+                    Exit For
+                End If
+            Next
+            If lYearMissing Then 'see if there is a systematic peak for this year
+                For Each lPk As PeakDataType In PeakData
+                    If lPk.Year = lYr Then
+                        lYearMissing = False
+                        Exit For
+                    End If
+                Next
+            End If
+            If lYearMissing Then
+                lMissingYears.Add(lYr)
+            End If
+        Next
+
+        'For Each lPk As PeakDataType In PeakData
+        '    If lPk.Code = "H" Then
+        '        inHistoric = True
+        '    Else
+        '        If inHistoric Then 'leaving historic period
+        '            inHistoric = False
+        '        ElseIf lPk.Year > lPrevYear + 1 Then 'missing years
+        '            For i As Integer = lPrevYear + 1 To lPk.Year - 1
+        '                lMissingYears.Add(i)
+        '            Next
+        '        End If
+        '        lPrevYear = lPk.Year
+        '    End If
+        'Next
         Return lMissingYears
     End Function
 
@@ -753,9 +819,11 @@ Friend Class pfqStation
         SOText(1) = "Weighted"
         SOText(2) = "Generalized"
 
-        pThresholds = New Generic.List(Of ThresholdType)
+        Thresholds = New Generic.List(Of ThresholdType)
         pPeakData = New Generic.List(Of PeakDataType)
         pFirstSystematic = 0
         pLastSystematic = 0
+        pFirstPeak = 0
+        pLastPeak = 0
     End Sub
 End Class
