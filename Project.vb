@@ -1009,6 +1009,8 @@ Friend Class pfqProject
                 End If
             Next i
             lPeaks.Sort()
+            lStn.FirstPeak = lPeaks(0).Year
+            lStn.LastPeak = lPeaks(lPeaks.Count - 1).Year
             lStn.PeakDataOrig = lPeaks
             lStn.PeakData = lPeaks
             If lStn.Thresholds.Count = 0 Then

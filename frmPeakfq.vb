@@ -894,9 +894,12 @@ FileCancel:
 
     Private Sub grdSpecs_CellEdited(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, ByVal aColumn As Integer) Handles grdSpecs.CellEdited
         Try
+            Dim lSYear As Integer = 0
+            Dim lEYear As Integer = 0
             With grdSpecs.Source
+                Dim lStnIndex As Integer = aRow - .FixedRows
                 If aColumn = 1 Then 'check to see if switching to EMA
-                    If .CellValue(aRow, aColumn) = "EMA" Then 'for inclusion of historic peaks
+                    If .CellValue(aRow, aColumn) = "EMA" Then 'force inclusion of historic peaks
                         .CellValue(aRow, 5) = "Yes"
                         'don't allow editing of hi-outlier field
                         .CellEditable(aRow, 14) = False
@@ -907,39 +910,51 @@ FileCancel:
                         .CellColor(aRow, 14) = Color.White
                     End If
                 ElseIf aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
-                    .CellValue(aRow, 4) = Integer.Parse(.CellValue(aRow, 3)) - Integer.Parse(.CellValue(aRow, 2)) + 1
-                    If PfqPrj.Stations(aRow - .FixedRows).Thresholds.Count > 0 Then
-                        Dim lThresh As pfqStation.ThresholdType = PfqPrj.Stations(aRow - .FixedRows).Thresholds(0)
-                        If aColumn = 2 Then 'update default threshold start year
-                            lThresh.SYear = Integer.Parse(.CellValue(aRow, 2))
-                        Else 'update default threshold end year
-                            lThresh.EYear = Integer.Parse(.CellValue(aRow, 3))
-                        End If
-                        PfqPrj.Stations(aRow - .FixedRows).Thresholds.RemoveAt(0)
-                        PfqPrj.Stations(aRow - .FixedRows).Thresholds.Insert(0, lThresh)
-                        'PfqPrj.Stations(aRow - .FixedRows).Thresholds(0) = lThresh
-                    End If
+                    lSYear = Integer.Parse(.CellValue(aRow, 2))
+                    lEYear = Integer.Parse(.CellValue(aRow, 3))
+                    .CellValue(aRow, 4) = lEYear - lSYear + 1
+                    'If PfqPrj.Stations(aRow - .FixedRows).Thresholds.Count > 0 Then
+                    '    Dim lThresh As pfqStation.ThresholdType = PfqPrj.Stations(aRow - .FixedRows).Thresholds(0)
+                    '    If aColumn = 2 Then 'update default threshold start year
+                    '        lThresh.SYear = Integer.Parse(.CellValue(aRow, 2))
+                    '    Else 'update default threshold end year
+                    '        lThresh.EYear = Integer.Parse(.CellValue(aRow, 3))
+                    '    End If
+                    '    PfqPrj.Stations(aRow - .FixedRows).Thresholds.RemoveAt(0)
+                    '    PfqPrj.Stations(aRow - .FixedRows).Thresholds.Insert(0, lThresh)
+                    '    'PfqPrj.Stations(aRow - .FixedRows).Thresholds(0) = lThresh
+                    'End If
                 ElseIf aColumn = 5 Then
                     If .CellValue(aRow, aColumn) = "No" Then
                         'update start/end years to systematic range
-                        .CellValue(aRow, 2) = PfqPrj.Stations(aRow - .FixedRows).FirstSystematic
-                        .CellValue(aRow, 3) = PfqPrj.Stations(aRow - .FixedRows).LastSystematic
-                        .CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).LastSystematic - PfqPrj.Stations(aRow - .FixedRows).FirstSystematic + 1
+                        lSYear = PfqPrj.Stations(lStnIndex).FirstSystematic
+                        .CellValue(aRow, 2) = lSYear
+                        lEYear = PfqPrj.Stations(lStnIndex).LastSystematic
+                        .CellValue(aRow, 3) = lEYear
+                        '.CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).LastSystematic - PfqPrj.Stations(aRow - .FixedRows).FirstSystematic + 1
                     Else
-                        .CellValue(aRow, 2) = PfqPrj.Stations(aRow - .FixedRows).BegYear
-                        .CellValue(aRow, 3) = PfqPrj.Stations(aRow - .FixedRows).EndYear
-                        .CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).EndYear - PfqPrj.Stations(aRow - .FixedRows).BegYear + 1
+                        lSYear = PfqPrj.Stations(lStnIndex).FirstPeak
+                        .CellValue(aRow, 2) = lSYear
+                        lEYear = PfqPrj.Stations(lStnIndex).LastPeak
+                        .CellValue(aRow, 3) = lEYear
+                        '.CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).EndYear - PfqPrj.Stations(aRow - .FixedRows).BegYear + 1
                     End If
                     'Must use historic period if EMA is analysis option
                     'If .CellValue(aRow, 1) = "EMA" Then
                     '    MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
                     '    .CellValue(aRow, aColumn) = "Yes"
                     'End If
-                    ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
-                        .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
-                        .Alignment(aRow, 9) = atcAlignment.HAlignRight
-                        '.CellColor(aRow, 9) = SystemColors.ControlDark
-                    End If
+                ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
+                    .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
+                    .Alignment(aRow, 9) = atcAlignment.HAlignRight
+                    '.CellColor(aRow, 9) = SystemColors.ControlDark
+                End If
+                If lSYear > 0 And lEYear > 0 Then
+                    PfqPrj.Stations(aRow - .FixedRows).SetDefaultThresholds(lSYear, lEYear)
+                    .CellValue(aRow, 4) = lEYear - lSYear + 1
+                    ProcessGrid()
+                    UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
+                End If
             End With
             grdSpecs.Refresh()
         Catch ex As Exception
@@ -985,7 +1000,11 @@ FileCancel:
         End If
         'update current station for threshold/interval specifying
         CurStationIndex = cboStation.SelectedIndex '+ 1
-        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
+        UpdateStationDataDisplay(CurStationIndex)
+    End Sub
+
+    Public Sub UpdateStationDataDisplay(ByVal aStationIndex As Integer)
+        Dim lStn As pfqStation = PfqPrj.Stations.Item(aStationIndex)
         Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = lStn.Thresholds
         Dim lDataColl As Generic.List(Of pfqStation.PeakDataType) = lStn.PeakData
         Dim lColor As System.Drawing.Color
@@ -1040,14 +1059,26 @@ FileCancel:
                 For Each lData As pfqStation.PeakDataType In lDataColl
                     j += 1
                     .CellValue(j, 0) = Math.Abs(lData.Year)
-                    .CellEditable(j, 0) = True
                     .Alignment(j, 0) = atcAlignment.HAlignRight
-                    .CellValue(j, 1) = DoubleToString(lData.Value, , "########.", "#######0.")
-                    .CellEditable(j, 1) = True
+                    .CellValue(j, 1) = DoubleToString(Math.Abs(lData.Value), , "########.", "#######0.")
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
-                    .CellEditable(j, 2) = True
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
+                    If Math.Abs(lData.Year) < lStn.BegYear Then 'gray out since it preceeds analysis start year
+                        .CellEditable(j, 0) = False
+                        .CellEditable(j, 1) = False
+                        .CellEditable(j, 2) = False
+                        .CellColor(j, 0) = SystemColors.ControlDark
+                        .CellColor(j, 1) = SystemColors.ControlDark
+                        .CellColor(j, 2) = SystemColors.ControlDark
+                    Else
+                        .CellEditable(j, 0) = True
+                        .CellEditable(j, 1) = True
+                        .CellEditable(j, 2) = True
+                        .CellColor(j, 0) = Color.White
+                        .CellColor(j, 1) = Color.White
+                        .CellColor(j, 2) = Color.White
+                    End If
                     .CellValue(j, 3) = lData.LowerLimit
                     .CellEditable(j, 3) = True
                     .Alignment(j, 3) = atcAlignment.HAlignRight
@@ -1102,8 +1133,16 @@ FileCancel:
                     lData.Year = CInt(.CellValue(i, 0))
                     lData.Value = CSng(.CellValue(i, 1))
                     lData.Code = .CellValue(i, 2)
-                    lData.LowerLimit = CSng(.CellValue(i, 3))
-                    lData.UpperLimit = CSng(.CellValue(i, 4))
+                    If .CellValue(i, 3).ToLower = "inf" Then
+                        lData.LowerLimit = 1.0E+20
+                    Else
+                        lData.LowerLimit = CSng(.CellValue(i, 3))
+                    End If
+                    If .CellValue(i, 4).ToLower = "inf" Then
+                        lData.UpperLimit = 1.0E+20
+                    Else
+                        lData.UpperLimit = CSng(.CellValue(i, 4))
+                    End If
                     lData.Comment = .CellValue(i, 5)
                     lDataColl.Add(lData)
                 End If
@@ -1923,7 +1962,7 @@ FileCancel:
         Next lArrayInd
     End Sub
 
-    Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs)
+    Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles zgcThresh.Paint
         zgcThresh.MasterPane.ReSize(e.Graphics)
     End Sub
 
@@ -2006,10 +2045,13 @@ FileCancel:
             Dim lVal As String = .CellValue(aRow, aColumn)
             Dim lGoodRow As Boolean = False
             If aColumn = .Columns - 1 AndAlso lVal.Length = 0 Then
-                MessageBox.Show("Comment field must be entered for new Data elements.", "Data Problem")
+                MessageBox.Show("Comment field must be entered for new Data elements.", "Data Grid Problem")
             ElseIf aColumn < .Columns - 1 And aColumn <> 2 Then
-                If Not IsNumeric(lVal) Then 'reminder that values should be numeric
-                    MessageBox.Show("All values for Peaks/Intervals must be numeric.", "Data Problem")
+                If Not IsNumeric(lVal) AndAlso lVal.ToLower <> "inf" Then 'reminder that values should be numeric
+                    MessageBox.Show("Values for this field must be numeric.", "Data Grid Problem")
+                End If
+                If IsNumeric(lVal) AndAlso Double.Parse(lVal) > 1.0E+19 Then
+                    .CellValue(aRow, aColumn) = "inf"
                 End If
             End If
             If IsNumeric(.CellValue(aRow, 0)) Then 'valid year entered
@@ -2019,8 +2061,8 @@ FileCancel:
                 End If
                 If IsNumeric(.CellValue(aRow, 3)) Or IsNumeric(.CellValue(aRow, 4)) Then 'some interval data entered, check it
                     If IsNumeric(.CellValue(aRow, 0)) AndAlso _
-                       IsNumeric(.CellValue(aRow, 3)) AndAlso _
-                       IsNumeric(.CellValue(aRow, 4)) AndAlso _
+                       (IsNumeric(.CellValue(aRow, 3)) OrElse .CellValue(aRow, 3).ToLower = "inf") AndAlso _
+                       (IsNumeric(.CellValue(aRow, 4)) OrElse .CellValue(aRow, 4).ToLower = "inf") AndAlso _
                        (Not .CellValue(aRow, 5) Is Nothing AndAlso .CellValue(aRow, 5).Length > 0) Then 'valid interval value entry
                         lGoodRow = True
                     Else
