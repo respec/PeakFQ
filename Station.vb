@@ -752,7 +752,7 @@ Friend Class pfqStation
             Next
             If lYearMissing Then 'see if there is a systematic peak for this year
                 For Each lPk As PeakDataType In PeakData
-                    If lPk.Year = lYr Then
+                    If lPk.Year = lYr And lPk.Value <> -8888 Then
                         lYearMissing = False
                         Exit For
                     End If
