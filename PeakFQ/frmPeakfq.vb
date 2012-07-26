@@ -1060,7 +1060,11 @@ FileCancel:
                     j += 1
                     .CellValue(j, 0) = Math.Abs(lData.Year)
                     .Alignment(j, 0) = atcAlignment.HAlignRight
-                    .CellValue(j, 1) = DoubleToString(Math.Abs(lData.Value), , "########.", "#######0.")
+                    If lData.Value = -8888 Then
+                        .CellValue(j, 1) = "-8888"
+                    Else
+                        .CellValue(j, 1) = DoubleToString(Math.Abs(lData.Value), , "########.", "#######0.")
+                    End If
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
@@ -1247,48 +1251,50 @@ FileCancel:
 
         lCurves = New atcCollection
         For Each lPeak As pfqStation.PeakDataType In lStn.PeakData
-            lYr = Math.Abs(lPeak.Year)
-            lPk = Math.Abs(lPeak.Value)
-            If lYr < lYearMin Then lYearMin = lYr
-            If lYr > lYearMax Then lYearMax = lYr
-            If lPeak.Code Is Nothing Then
-                lCode = ""
-            ElseIf lPeak.Code.Length > 1 Then
-                If lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'check for historic first
-                    lCode = "7"
-                ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
-                    'urban/regulated peak
-                    lCode = "6"
+            If lPeak.Value <> -8888 Then
+                lYr = Math.Abs(lPeak.Year)
+                lPk = Math.Abs(lPeak.Value)
+                If lYr < lYearMin Then lYearMin = lYr
+                If lYr > lYearMax Then lYearMax = lYr
+                If lPeak.Code Is Nothing Then
+                    lCode = ""
+                ElseIf lPeak.Code.Length > 1 Then
+                    If lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'check for historic first
+                        lCode = "7"
+                    ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
+                        'urban/regulated peak
+                        lCode = "6"
+                    End If
+                Else
+                    lCode = lPeak.Code
                 End If
-            Else
-                lCode = lPeak.Code
-            End If
-            If lCurves.Keys.Contains(lCode) Then 'add point to this curve
-                lCurve = lCurves.ItemByKey(lCode)
-                lCurve.AddPoint(lYr, lPk)
-            Else 'new curve needed for another threshold span
-                lX(0) = lYr
-                lY(0) = lPk
-                Select Case lCode
-                    Case "7", "H"
-                        lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Triangle)
-                    Case "D", "3"
-                        lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, Color.Black, SymbolType.XCross)
-                    Case "G", "X", "8", "3+8"
-                        lCurve = lPane.AddCurve("Peaks > Shown", lX, lY, Color.Black, SymbolType.Star)
-                    Case "K", "6", "C"
-                        lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, Color.Black, SymbolType.Square)
-                    Case "L", "4"
-                        lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, Color.Black, SymbolType.Diamond)
-                    Case Else
-                        lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Black, SymbolType.Circle)
-                End Select
-                lCurve.Line.IsVisible = False
-                lCurves.Add(lCode, lCurve)
-            End If
+                If lCurves.Keys.Contains(lCode) Then 'add point to this curve
+                    lCurve = lCurves.ItemByKey(lCode)
+                    lCurve.AddPoint(lYr, lPk)
+                Else 'new curve needed for another threshold span
+                    lX(0) = lYr
+                    lY(0) = lPk
+                    Select Case lCode
+                        Case "7", "H"
+                            lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Triangle)
+                        Case "D", "3"
+                            lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, Color.Black, SymbolType.XCross)
+                        Case "G", "X", "8", "3+8"
+                            lCurve = lPane.AddCurve("Peaks > Shown", lX, lY, Color.Black, SymbolType.Star)
+                        Case "K", "6", "C"
+                            lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, Color.Black, SymbolType.Square)
+                        Case "L", "4"
+                            lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, Color.Black, SymbolType.Diamond)
+                        Case Else
+                            lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Black, SymbolType.Circle)
+                    End Select
+                    lCurve.Line.IsVisible = False
+                    lCurves.Add(lCode, lCurve)
+                End If
 
-            If lPk > 0 AndAlso lPk < lDataMin Then lDataMin = lPk
-            If lPk > lDataMax Then lDataMax = lPk
+                If lPk > 0 AndAlso lPk < lDataMin Then lDataMin = lPk
+                If lPk > lDataMax Then lDataMax = lPk
+            End If
         Next
         'set y-axis range
         lYAxis.Scale.MaxAuto = False
