@@ -640,7 +640,7 @@ Friend Class pfqStation
 
     Private Function PeakDataOrigContains(ByVal aPeak As PeakDataType) As Boolean
         For Each lPeak As PeakDataType In pPeakDataOrig
-            If (lPeak.Year = aPeak.Year AndAlso lPeak.Value = aPeak.Value AndAlso _
+            If (lPeak.Year = aPeak.Year AndAlso Math.Abs(Math.Abs(lPeak.Value) - Math.Abs(aPeak.Value)) < 0.1 AndAlso _
                 lPeak.Code = aPeak.Code AndAlso lPeak.Comment = aPeak.Comment AndAlso _
                 lPeak.LowerLimit = aPeak.LowerLimit AndAlso _
                 lPeak.UpperLimit = aPeak.UpperLimit) Then

@@ -1031,7 +1031,11 @@ FileCancel:
                     .CellEditable(j, 1) = True
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellColor(j, 1) = lColor
-                    .CellValue(j, 2) = lThresh.LowerLimit
+                    If lThresh.LowerLimit >= 1.0E+20 Then
+                        .CellValue(j, 2) = "inf"
+                    Else
+                        .CellValue(j, 2) = lThresh.LowerLimit
+                    End If
                     .CellEditable(j, 2) = True
                     .Alignment(j, 2) = atcAlignment.HAlignRight
                     .CellColor(j, 2) = lColor
