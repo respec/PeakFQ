@@ -18,7 +18,7 @@ Friend Class pfqStation
 
         Public Year As Integer
         Public Value As Double
-        Public Code As String
+        Public Code As String = ""
         Public LowerLimit As Single
         Public UpperLimit As Single
         Public Comment As String

@@ -948,6 +948,9 @@ FileCancel:
                     .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
                     .Alignment(aRow, 9) = atcAlignment.HAlignRight
                     '.CellColor(aRow, 9) = SystemColors.ControlDark
+                ElseIf aColumn = 16 Then 'changed urban/regulated option, force update of Input/View tab
+                    ProcessGrid()
+                    UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
                 End If
                 If lSYear > 0 And lEYear > 0 Then
                     PfqPrj.Stations(aRow - .FixedRows).SetDefaultThresholds(lSYear, lEYear)
@@ -1072,7 +1075,9 @@ FileCancel:
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
-                    If Math.Abs(lData.Year) < lStn.BegYear Then 'gray out since it preceeds analysis start year
+                    If Math.Abs(lData.Year) < lStn.BegYear OrElse _
+                        ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) Then
+                        'gray out since it preceeds analysis start year or it's urban/regulated and that option is off
                         .CellEditable(j, 0) = False
                         .CellEditable(j, 1) = False
                         .CellEditable(j, 2) = False
@@ -1140,7 +1145,11 @@ FileCancel:
                     Dim lData As New pfqStation.PeakDataType
                     lData.Year = CInt(.CellValue(i, 0))
                     lData.Value = CSng(.CellValue(i, 1))
-                    lData.Code = .CellValue(i, 2)
+                    If .CellValue(i, 2) Is Nothing Then
+                        lData.Code = ""
+                    Else
+                        lData.Code = .CellValue(i, 2)
+                    End If
                     If .CellValue(i, 3).ToLower = "inf" Then
                         lData.LowerLimit = 1.0E+20
                     Else

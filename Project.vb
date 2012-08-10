@@ -984,6 +984,7 @@ Friend Class pfqProject
 
     Public Sub ReadPeaks()
         Dim lInd As Integer = 0
+        Dim i As Integer
         Dim lNPks As Integer
         Dim lPks(499) As Single
         Dim lPksSeq(499) As Integer
@@ -997,7 +998,7 @@ Friend Class pfqProject
             lInd += 1
             GETPEAKS(lInd, lNPks, lPks, lIQual, lPksSeq)
             NumChr(5, 500, lIQual, lXQual)
-            For i As Integer = 0 To lNPks - 1
+            For i = 0 To lNPks - 1
                 lPeak = New pfqStation.PeakDataType
                 lPeak.Year = Math.Abs(lPksSeq(i))
                 lPeak.Value = lPks(i)
@@ -1012,6 +1013,28 @@ Friend Class pfqProject
             lStn.FirstPeak = lPeaks(0).Year
             lStn.LastPeak = lPeaks(lPeaks.Count - 1).Year
             lStn.PeakDataOrig = lPeaks
+            If lStn.PeakData.Count > 0 Then 'merge peaks with peak info from spec file
+                Dim lMatchingYearIndex As Integer
+                For Each lSpecPeak As pfqStation.PeakDataType In lStn.PeakData
+                    lMatchingYearIndex = -1
+                    i = 0
+                    For Each lPeak In lPeaks
+                        If Math.Abs(lSpecPeak.Year) = Math.Abs(lPeak.Year) Then
+                            lMatchingYearIndex = i
+                            Exit For
+                        End If
+                        i += 1
+                    Next
+                    If lMatchingYearIndex >= 0 Then 'replace this peak with spec file peak
+                        If Math.Abs(lPeaks(i).Value) > 0 AndAlso lSpecPeak.Value = 0 Then 'preserve original peak value
+                            lSpecPeak.Value = lPeaks(i).Value
+                        End If
+                        lPeaks.RemoveAt(i)
+                    End If
+                    lPeaks.Add(lSpecPeak) 'add spec file peak to data peaks
+                Next
+                lPeaks.Sort()
+            End If
             lStn.PeakData = lPeaks
             If lStn.Thresholds.Count = 0 Then
                 lStn.SetDefaultThresholds()
