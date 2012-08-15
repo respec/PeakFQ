@@ -333,13 +333,14 @@ Friend Class frmPeakfq
                 cboGraphFormat.SelectedIndex = 2
             ElseIf UCase(PfqPrj.GraphFormat) = "GIF" Then
                 cboGraphFormat.SelectedIndex = 3
-            ElseIf UCase(PfqPrj.GraphFormat) = "JPG" Then
+            ElseIf UCase(PfqPrj.GraphFormat) = "JPEG" Then
                 cboGraphFormat.SelectedIndex = 4
-            ElseIf UCase(PfqPrj.GraphFormat) = "TIF" Then
+            ElseIf UCase(PfqPrj.GraphFormat) = "TIFF" Then
                 cboGraphFormat.SelectedIndex = 5
             Else 'use BMP
                 cboGraphFormat.SelectedIndex = 6
             End If
+            cboDataGraphFormat.SelectedIndex = cboGraphFormat.SelectedIndex
         Else
             cboGraphFormat.SelectedIndex = 0
         End If
@@ -901,6 +902,8 @@ FileCancel:
                 If aColumn = 1 Then 'check to see if switching to EMA
                     If .CellValue(aRow, aColumn) = "EMA" Then 'force inclusion of historic peaks
                         .CellValue(aRow, 5) = "Yes"
+                        'set to Multiple G-B test
+                        .CellValue(aRow, 12) = "Multiple"
                         'don't allow editing of hi-outlier field
                         .CellEditable(aRow, 14) = False
                         .CellColor(aRow, 14) = SystemColors.ControlDark
@@ -1993,6 +1996,8 @@ FileCancel:
                 If lstr = "EMA" Then
                     'force use of historic period
                     .CellValue(i, 5) = "Yes"
+                    'set to Multiple G-B test
+                    .CellValue(i, 12) = "Multiple"
                     'don't allow editing of hi-outlier field
                     .CellEditable(i, 14) = False
                     .CellColor(i, 14) = SystemColors.ControlDark
