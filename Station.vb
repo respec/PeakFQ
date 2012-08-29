@@ -752,8 +752,8 @@ Friend Class pfqStation
             Next
             If lYearMissing Then 'see if there is a systematic peak for this year
                 For Each lPk As PeakDataType In PeakData
-                    If (lPk.Year = lYr And lPk.Value <> -8888) OrElse _
-                        (lPk.LowerLimit >= 0 AndAlso lPk.UpperLimit > 0 AndAlso lPk.Comment.Length > 0) Then
+                    If (lPk.Year = lYr And (lPk.Value <> -8888 OrElse _
+                        (lPk.LowerLimit >= 0 AndAlso lPk.UpperLimit > 0 AndAlso lPk.Comment.Length > 0))) Then
                         lYearMissing = False
                         Exit For
                     End If
@@ -801,7 +801,7 @@ Friend Class pfqStation
     Public Sub New()
         MyBase.New()
 
-        pAnalysisOption = "B17B" 'init all stations to use EMA analysis
+        pAnalysisOption = "EMA" 'init all stations to use EMA analysis
         'pSkewOpt = 0 'Weighted skew option (middle of -1, 0, 1)
         pSkewOpt = 1  'TODO: Need to determine if this should be assigned differently (middle of 0, 1, 2)
         pUrbanRegPeaks = False
@@ -811,7 +811,7 @@ Friend Class pfqStation
         pGenSkew = -0.5
         pHighOutlier = 0.0#
         pLowOutlier = 0.0#
-        pLOTestType = "Single"
+        pLOTestType = "Multiple"
         pGageBaseDischarge = 0.0#
         pSESkew = 0.55
         pLat = 0.0#

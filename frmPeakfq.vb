@@ -1098,7 +1098,11 @@ FileCancel:
                     .CellValue(j, 3) = lData.LowerLimit
                     .CellEditable(j, 3) = True
                     .Alignment(j, 3) = atcAlignment.HAlignRight
-                    .CellValue(j, 4) = lData.UpperLimit
+                    If lData.UpperLimit >= 1.0E+20 Then
+                        .CellValue(j, 4) = "inf"
+                    Else
+                        .CellValue(j, 4) = lData.UpperLimit
+                    End If
                     .CellEditable(j, 4) = True
                     .Alignment(j, 4) = atcAlignment.HAlignRight
                     .CellValue(j, 5) = lData.Comment
@@ -1327,10 +1331,14 @@ FileCancel:
         'plot any interval data
         i = 0
         For Each vData As pfqStation.PeakDataType In lStn.PeakData
-            If vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
+            If vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 Then
                 lThrshDates(0) = vData.Year
                 lThrshDates(1) = vData.Year
-                lThrshVals(0) = vData.LowerLimit
+                If vData.LowerLimit < lYAxis.Scale.Min Then
+                    lThrshVals(0) = lYAxis.Scale.Min
+                Else
+                    lThrshVals(0) = vData.LowerLimit
+                End If
                 lThrshVals(1) = vData.UpperLimit
                 lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
                 If i > 0 Then

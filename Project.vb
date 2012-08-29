@@ -465,6 +465,7 @@ Friend Class pfqProject
                     Case "ANALYZE"
                         CurStation.AnalysisOption = Rec
                         If CommentPending Then CurStation.CAnalysisOption = lCom
+                        If CurStation.AnalysisOption.ToUpper = "EMA" Then CurStation.LOTestType = "Multiple"
                     Case "GENSKEW"
                         CurStation.GenSkew = CSng(Rec)
                         If CommentPending Then CurStation.CGenSkew = lCom
@@ -893,79 +894,56 @@ Friend Class pfqProject
 							'          Set CurStation = New pfqStation
 							'          CurStation.id = Rec
 							i = i + 1
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().Comment. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).Comment = lCom
-						Case "GENSKEW"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().GenSkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).GenSkew = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CGenSkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CGenSkew = lCom
-						Case "SKEWSE"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().SESkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).SESkew = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CSESkew. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CSESkew = lCom
+                            If CommentPending Then .Stations(i).Comment = lCom
+                        Case "ANALYZE"
+                            .Stations(i).AnalysisOption = "-999"
+                            If CommentPending Then .Stations(i).CAnalysisOption = lCom
+                        Case "LOTYPE"
+                            .Stations(i).LOTestType = "-999"
+                            If CommentPending Then .Stations(i).CLOTestType = lCom
+                        Case "GENSKEW"
+                            .Stations(i).GenSkew = -999.0#
+                            If CommentPending Then .Stations(i).CGenSkew = lCom
+                        Case "SKEWSE"
+                            .Stations(i).SESkew = -999.0#
+                            If CommentPending Then .Stations(i).CSESkew = lCom
 						Case "BEGYEAR"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().BegYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).BegYear = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CBegYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CBegYear = lCom
+                            .Stations(i).BegYear = -999.0#
+                            If CommentPending Then .Stations(i).CBegYear = lCom
 						Case "ENDYEAR"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().EndYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).EndYear = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CEndYear. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CEndYear = lCom
+                            .Stations(i).EndYear = -999.0#
+                            If CommentPending Then .Stations(i).CEndYear = lCom
 						Case "HISTPERIOD"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().HistoricPeriod. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).HistoricPeriod = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CHistoric. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CHistoric = lCom
+                            .Stations(i).HistoricPeriod = -999.0#
+                            If CommentPending Then .Stations(i).CHistoric = lCom
 						Case "SKEWOPT"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().SkewOpt. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							.Stations(i).SkewOpt = -999#
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CSkewOpt. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CSkewOpt = lCom
+                            .Stations(i).SkewOpt = -999.0#
+                            If CommentPending Then .Stations(i).CSkewOpt = lCom
 						Case "URB/REG"
 							'set default to opposite of spec file so this spec will be written out
-							'UPGRADE_WARNING: Couldn't resolve default property of object Me.Stations(i).UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If Me.Stations(i).UrbanRegPeaks Then
-								'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
+                            If Me.Stations(i).UrbanRegPeaks Then
                                 .Stations(i).UrbanRegPeaks = True
                             Else
-                                'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().UrbanRegPeaks. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                                 .Stations(i).UrbanRegPeaks = False
                             End If
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CUrban. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-							If CommentPending Then .Stations(i).CUrban = lCom
+                            If CommentPending Then .Stations(i).CUrban = lCom
 						Case "LOTHRESH"
-							'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().LowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If .Stations(i).LowOutlier > 0 Then Stations(i).LowOutlier = -999.0#
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLowOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If CommentPending Then .Stations(i).CLowOutlier = lCom
                         Case "HITHRESH"
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().HighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If .Stations(i).HighOutlier > 0 Then .Stations(i).HighOutlier = -999.0#
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CHighOutlier. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If CommentPending Then .Stations(i).CHighOutlier = lCom
                         Case "GAGEBASE"
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().GageBaseDischarge. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If .Stations(i).GageBaseDischarge Then .Stations(i).GageBaseDischarge = -999.0#
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CGageBase. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If CommentPending Then .Stations(i).CGageBase = lCom
                         Case "LATITUDE"
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().Lat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             .Stations(i).Lat = -999.0#
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLat. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If CommentPending Then .Stations(i).CLat = lCom
                         Case "LONGITUDE"
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().Lng. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             .Stations(i).Lng = -999.0#
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CLong. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If CommentPending Then .Stations(i).CLong = lCom
                         Case "PLOTNAME"
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().PlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             .Stations(i).PlotName = "-999"
-                            'UPGRADE_WARNING: Couldn't resolve default property of object prj.Stations().CPlotName. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
                             If CommentPending Then .Stations(i).CPlotName = lCom
                     End Select
 					CommentPending = False 'assume any pending comment was stored with a specification
@@ -1012,7 +990,12 @@ Friend Class pfqProject
             lPeaks.Sort()
             lStn.FirstPeak = lPeaks(0).Year
             lStn.LastPeak = lPeaks(lPeaks.Count - 1).Year
-            lStn.PeakDataOrig = lPeaks
+
+            'lStn.PeakDataOrig = lPeaks
+            lStn.PeakDataOrig = New Generic.List(Of pfqStation.PeakDataType)
+            For Each lPeak In lPeaks
+                lStn.PeakDataOrig.Add(lPeak)
+            Next
             If lStn.PeakData.Count > 0 Then 'merge peaks with peak info from spec file
                 Dim lMatchingYearIndex As Integer
                 For Each lSpecPeak As pfqStation.PeakDataType In lStn.PeakData
