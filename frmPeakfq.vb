@@ -162,12 +162,22 @@ Friend Class frmPeakfq
                 .Alignment(lRow, 13) = atcAlignment.HAlignRight
 
                 .CellValue(lRow, 14) = vSta.HighOutlier
-                .CellEditable(lRow, 14) = True
                 .Alignment(lRow, 14) = atcAlignment.HAlignRight
-
                 .CellValue(lRow, 15) = vSta.GageBaseDischarge
-                .CellEditable(lRow, 15) = True
                 .Alignment(lRow, 15) = atcAlignment.HAlignRight
+                If vSta.AnalysisOption = "EMA" Then
+                    'don't allow editing of hi-outlier field
+                    .CellEditable(lRow, 14) = False
+                    .CellColor(lRow, 14) = SystemColors.ControlDark
+                    .CellEditable(lRow, 15) = False
+                    .CellColor(lRow, 15) = SystemColors.ControlDark
+                Else
+                    .CellEditable(lRow, 14) = True
+                    .CellColor(lRow, 14) = Color.White
+                    .CellEditable(lRow, 15) = True
+                    .CellColor(lRow, 15) = Color.White
+                End If
+
 
                 If vSta.UrbanRegPeaks Then
                     .CellValue(lRow, 16) = "Yes"
@@ -904,13 +914,17 @@ FileCancel:
                         .CellValue(aRow, 5) = "Yes"
                         'set to Multiple G-B test
                         .CellValue(aRow, 12) = "Multiple"
-                        'don't allow editing of hi-outlier field
+                        'don't allow editing of hi-outlier or gage base fields
                         .CellEditable(aRow, 14) = False
                         .CellColor(aRow, 14) = SystemColors.ControlDark
+                        .CellEditable(aRow, 15) = False
+                        .CellColor(aRow, 15) = SystemColors.ControlDark
                     Else
-                        'allow editing of hi-outlier field
+                        'allow editing of hi-outlier and gage base fields
                         .CellEditable(aRow, 14) = True
                         .CellColor(aRow, 14) = Color.White
+                        .CellEditable(aRow, 15) = True
+                        .CellColor(aRow, 15) = Color.White
                     End If
                 ElseIf aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
                     lSYear = Integer.Parse(.CellValue(aRow, 2))
@@ -1073,7 +1087,7 @@ FileCancel:
                     If lData.Value = -8888 Then
                         .CellValue(j, 1) = "-8888"
                     Else
-                        .CellValue(j, 1) = DoubleToString(Math.Abs(lData.Value), , "########.", "#######0.")
+                        .CellValue(j, 1) = DoubleToString(Math.Abs(lData.Value), , "########.#", "#######0.#")
                     End If
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
@@ -2091,7 +2105,7 @@ FileCancel:
                    (Not .CellValue(aRow, 5) Is Nothing AndAlso .CellValue(aRow, 5).Length > 0) Then 'valid peak value entry
                     lGoodRow = True
                 End If
-                If IsNumeric(.CellValue(aRow, 3)) Or IsNumeric(.CellValue(aRow, 4)) Then 'some interval data entered, check it
+                If IsNumeric(.CellValue(aRow, 3)) And IsNumeric(.CellValue(aRow, 4)) Then 'some interval data entered, check it
                     If IsNumeric(.CellValue(aRow, 0)) AndAlso _
                        (IsNumeric(.CellValue(aRow, 3)) OrElse .CellValue(aRow, 3).ToLower = "inf") AndAlso _
                        (IsNumeric(.CellValue(aRow, 4)) OrElse .CellValue(aRow, 4).ToLower = "inf") AndAlso _

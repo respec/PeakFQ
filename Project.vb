@@ -1009,8 +1009,9 @@ Friend Class pfqProject
                         i += 1
                     Next
                     If lMatchingYearIndex >= 0 Then 'replace this peak with spec file peak
-                        If Math.Abs(lPeaks(i).Value) > 0 AndAlso lSpecPeak.Value = 0 Then 'preserve original peak value
+                        If Math.Abs(lPeaks(i).Value) > 0 AndAlso lSpecPeak.Value = 0 Then 'preserve original peak value & code
                             lSpecPeak.Value = lPeaks(i).Value
+                            lSpecPeak.Code = lPeaks(i).Code
                         End If
                         lPeaks.RemoveAt(i)
                     End If
