@@ -21,10 +21,21 @@ Friend Class pfqStation
         Public Code As String = ""
         Public LowerLimit As Single
         Public UpperLimit As Single
-        Public Comment As String
+        Public Comment As String = ""
 
         Public Function CompareTo(ByVal obj As Object) As Integer Implements System.IComparable.CompareTo
             Return Year.CompareTo(obj.Year)
+        End Function
+
+        Public Function Clone() As PeakDataType
+            Dim lNewPeak As New PeakDataType
+            lNewPeak.Code = Code.Clone
+            lNewPeak.Comment = Comment.Clone
+            lNewPeak.LowerLimit = LowerLimit
+            lNewPeak.UpperLimit = UpperLimit
+            lNewPeak.Value = Value
+            lNewPeak.Year = Year
+            Return lNewPeak
         End Function
     End Class
 
@@ -694,34 +705,38 @@ Friend Class pfqStation
                         If lPk.Value <> -8888 Then
                             lThresh.LowerLimit = Math.Abs(lPk.Value)
                         Else
-                            lThresh.LowerLimit = 0
+                            lThresh.LowerLimit = 1.0E+20
                         End If
                         lThresh.UpperLimit = 1.0E+20
                         inHistoric = True
-                        End If
+                    End If
                 Else
-                        If inHistoric Then 'end of historic
-                            lThresh.EYear = lPk.Year - 1
+                    If inHistoric Then 'end of historic
+                        lThresh.EYear = lPk.Year - 1
+                        Thresholds.Add(lThresh)
+                        lThresh = New ThresholdType
+                        inHistoric = False
+                    End If
+                    If Not lPk.Code Is Nothing Then
+                        If lPk.Code = "L" Or lPk.Code = "4" Then 'peak less than state, create a threshold
+                            lThresh.SYear = lPk.Year
+                            lThresh.EYear = lPk.Year
+                            lThresh.LowerLimit = Math.Abs(lPk.Value)
+                            lThresh.UpperLimit = 1.0E+20
+                            lThresh.Comment = "Peak < stated value"
                             Thresholds.Add(lThresh)
-                            lThresh = New ThresholdType
-                            inHistoric = False
+                            lThresh.SYear = 0
+                            'also set interval range
+                            lPk.LowerLimit = 0
+                            lPk.UpperLimit = Math.Abs(lPk.Value)
+                            lPk.Comment = "Peak < stated value"
+                        ElseIf lPk.Code = "G" Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
+                            'peak greater than stated value, set interval range
+                            lPk.LowerLimit = Math.Abs(lPk.Value)
+                            lPk.UpperLimit = 1.0E+20
+                            lPk.Comment = "Peak > stated value"
                         End If
-                        If Not lPk.Code Is Nothing Then
-                            If lPk.Code = "L" Or lPk.Code = "4" Then 'peak less than state, create a threshold
-                                lThresh.SYear = lPk.Year
-                                lThresh.EYear = lPk.Year
-                                lThresh.LowerLimit = Math.Abs(lPk.Value)
-                                lThresh.UpperLimit = 1.0E+20
-                                lThresh.Comment = "Peak < stated value"
-                                Thresholds.Add(lThresh)
-                                lThresh.SYear = 0
-                            ElseIf lPk.Code = "G" Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
-                                'peak greater than stated value, set interval range
-                                lPk.LowerLimit = Math.Abs(lPk.Value)
-                                lPk.UpperLimit = 1.0E+20
-                                lPk.Comment = "Peak > stated value"
-                            End If
-                        End If
+                    End If
                 End If
             End If
         Next
