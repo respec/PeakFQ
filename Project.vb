@@ -994,7 +994,7 @@ Friend Class pfqProject
             'lStn.PeakDataOrig = lPeaks
             lStn.PeakDataOrig = New Generic.List(Of pfqStation.PeakDataType)
             For Each lPeak In lPeaks
-                lStn.PeakDataOrig.Add(lPeak)
+                lStn.PeakDataOrig.Add(lPeak.Clone)
             Next
             If lStn.PeakData.Count > 0 Then 'merge peaks with peak info from spec file
                 Dim lMatchingYearIndex As Integer

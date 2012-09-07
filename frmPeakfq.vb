@@ -1942,6 +1942,7 @@ FileCancel:
 
         'set y-axis range
         Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
+        lPane.YAxis.Scale.MaxAuto = False
 
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
