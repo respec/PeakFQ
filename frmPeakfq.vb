@@ -393,14 +393,14 @@ Friend Class frmPeakfq
             lblExportFileView.Text = PfqPrj.ExportFileName
         Else
             PfqPrj.ExportFileName = ""
-            lblExportFile.Text = "(none)"
+            lblExportFileView.Text = "(none)"
         End If
         If chkEmpirical.CheckState = CheckState.Checked Then
             PfqPrj.EmpiricalFileName = lblEmpirical.Text
             lblEmpiricalFileView.Text = PfqPrj.EmpiricalFileName
         Else
             PfqPrj.EmpiricalFileName = ""
-            lblEmpirical.Text = "(none)"
+            lblEmpiricalFileView.Text = "(none)"
         End If
         If chkIntRes.CheckState = CheckState.Checked Then
             PfqPrj.IntermediateResults = True
@@ -719,13 +719,13 @@ FileCancel:
 
         cdlOpenOpen.Title = "Open PeakFQ File"
         cdlOpenSave.Title = "Open PeakFQ File"
-        'UPGRADE_WARNING: Filter has a new behavior. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
         cdlOpenOpen.Filter = "PeakFQ Watstore Data (*.pkf,*.inp,*.txt)|*.pkf;*.inp;*.txt|PeakFQ Watstore Data (*.*)|*.*|PeakFQ WDM Data (*.wdm)|*.wdm|PKFQWin Spec (*.psf)|*.psf"
         cdlOpenSave.Filter = "PeakFQ Watstore Data (*.pkf,*.inp,*.txt)|*.pkf;*.inp;*.txt|PeakFQ Watstore Data (*.*)|*.*|PeakFQ WDM Data (*.wdm)|*.wdm|PKFQWin Spec (*.psf)|*.psf"
         cdlOpenOpen.ShowDialog()
         cdlOpenSave.FileName = cdlOpenOpen.FileName
         FName = cdlOpenOpen.FileName
         PfqPrj.Stations.Clear()
+        PfqPrj = New pfqProject
         PfqPrj.InputDir = PathNameOnly(FName)
         PfqPrj.OutputDir = PathNameOnly(FName) 'default output directory to same as input
         grdSpecs.Source.Rows = grdSpecs.Source.FixedRows
