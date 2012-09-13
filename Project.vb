@@ -465,7 +465,10 @@ Friend Class pfqProject
                     Case "ANALYZE"
                         CurStation.AnalysisOption = Rec
                         If CommentPending Then CurStation.CAnalysisOption = lCom
-                        If CurStation.AnalysisOption.ToUpper = "EMA" Then CurStation.LOTestType = "Multiple"
+                        If CurStation.AnalysisOption.ToUpper = "EMA" Then
+                            CurStation.LOTestType = "Multiple"
+                            CurStation.HistoricPeriod = True
+                        End If
                     Case "GENSKEW"
                         CurStation.GenSkew = CSng(Rec)
                         If CommentPending Then CurStation.CGenSkew = lCom
@@ -478,9 +481,9 @@ Friend Class pfqProject
                     Case "ENDYEAR"
                         CurStation.EndYear = CInt(Rec)
                         If CommentPending Then CurStation.CEndYear = lCom
-                    Case "HISTPERIOD"
-                        CurStation.HistoricPeriod = CSng(Rec)
-                        If CommentPending Then CurStation.CHistoric = lCom
+                        'Case "HISTPERIOD"
+                        '    CurStation.HistoricPeriod = CSng(Rec)
+                        '    If CommentPending Then CurStation.CHistoric = lCom
                     Case "SKEWOPT"
                         If UCase(Rec) = "STATION" Then
                             CurStation.SkewOpt = 0
@@ -928,7 +931,7 @@ Friend Class pfqProject
                             End If
                             If CommentPending Then .Stations(i).CUrban = lCom
 						Case "LOTHRESH"
-                            If .Stations(i).LowOutlier > 0 Then Stations(i).LowOutlier = -999.0#
+                            If .Stations(i).LowOutlier > 0 Then .Stations(i).LowOutlier = -999.0#
                             If CommentPending Then .Stations(i).CLowOutlier = lCom
                         Case "HITHRESH"
                             If .Stations(i).HighOutlier > 0 Then .Stations(i).HighOutlier = -999.0#
