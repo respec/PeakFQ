@@ -1092,7 +1092,7 @@ FileCancel:
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
-                    If Math.Abs(lData.Year) < lStn.BegYear OrElse _
+                    If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3")) OrElse _
                         ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) Then
                         'gray out since it preceeds analysis start year or it's urban/regulated and that option is off
                         .CellEditable(j, 0) = False
@@ -1109,13 +1109,19 @@ FileCancel:
                         .CellColor(j, 1) = Color.White
                         .CellColor(j, 2) = Color.White
                     End If
-                    .CellValue(j, 3) = lData.LowerLimit
+                    If lData.LowerLimit >= 0 Then
+                        .CellValue(j, 3) = lData.LowerLimit
+                    Else
+                        .CellValue(j, 3) = " "
+                    End If
                     .CellEditable(j, 3) = True
                     .Alignment(j, 3) = atcAlignment.HAlignRight
                     If lData.UpperLimit >= 1.0E+20 Then
                         .CellValue(j, 4) = "inf"
-                    Else
+                    ElseIf lData.LowerLimit >= 0 Then
                         .CellValue(j, 4) = lData.UpperLimit
+                    Else
+                        .CellValue(j, 4) = " "
                     End If
                     .CellEditable(j, 4) = True
                     .Alignment(j, 4) = atcAlignment.HAlignRight
@@ -1173,12 +1179,12 @@ FileCancel:
                     End If
                     If .CellValue(i, 3).ToLower = "inf" Then
                         lData.LowerLimit = 1.0E+20
-                    Else
+                    ElseIf IsNumeric(.CellValue(i, 3)) Then
                         lData.LowerLimit = CSng(.CellValue(i, 3))
                     End If
                     If .CellValue(i, 4).ToLower = "inf" Then
                         lData.UpperLimit = 1.0E+20
-                    Else
+                    ElseIf IsNumeric(.CellValue(i, 4)) Then
                         lData.UpperLimit = CSng(.CellValue(i, 4))
                     End If
                     lData.Comment = .CellValue(i, 5)
@@ -1954,7 +1960,9 @@ FileCancel:
         ElseIf PfqPrj.Stations(lStnInd).SkewOpt = 2 Then
             lSkewOptionText = "Generalized"
         End If
-        If PfqPrj.Stations(lStnInd).LOTestType.StartsWith("Single") Then
+        If PfqPrj.Stations(lStnInd).LowOutlier > 0 Then
+            lLOTestStr = "Fixed at " & PfqPrj.Stations(lStnInd).LowOutlier
+        ElseIf PfqPrj.Stations(lStnInd).LOTestType.StartsWith("Single") Then
             lLOTestStr = "Single Grubbs-Beck"
         Else
             lLOTestStr = "Multiple Grubbs-Beck"
@@ -1962,11 +1970,11 @@ FileCancel:
 
         Dim lWarning As String = "Peakfq v 7.0 run " & System.DateTime.Now & vbCrLf & _
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
-                                 DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G sub g)" & vbCrLf & _
-                                 DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub g)" & vbCrLf & _
+                                 DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf & _
+                                 DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf & _
                                  lNZero & " Zeroes not displayed" & vbCrLf & _
                                  lNLow & " Peaks below Low Outlier Threshold " & vbCrLf & lLOTestStr
-        Dim lText As New TextObj(lWarning, 0.5, 0.68)
+        Dim lText As New TextObj(lWarning, 0.6, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
         lText.FontSpec.IsBold = True

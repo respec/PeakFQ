@@ -19,8 +19,8 @@ Friend Class pfqStation
         Public Year As Integer
         Public Value As Double
         Public Code As String = ""
-        Public LowerLimit As Single
-        Public UpperLimit As Single
+        Public LowerLimit As Single = -999
+        Public UpperLimit As Single = -999
         Public Comment As String = ""
 
         Public Function CompareTo(ByVal obj As Object) As Integer Implements System.IComparable.CompareTo
@@ -522,8 +522,8 @@ Friend Class pfqStation
         If pBegYear > 0 Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
         If Len(pCEndYear) > 0 Then s = s & pad & pCEndYear & vbCrLf
         If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
-        If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
-        If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        'If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
+        'If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
         'write any interval data or updated peak data
         For Each vData As PeakDataType In pPeakData
             'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
@@ -608,12 +608,15 @@ Friend Class pfqStation
                 End If
             End If
         Next
+        'always output begin/end year since Historic record being eliminated (9/2012)
         If Len(defsta.CBegYear) > 0 Then s = s & pad & defsta.CBegYear & vbCrLf
-        If pBegYear <> defsta.BegYear Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
+        'If pBegYear <> defsta.BegYear Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
+        If pBegYear > 0 Then s = s & pad & "BegYear " & CStr(pBegYear) & vbCrLf
         If Len(defsta.CEndYear) > 0 Then s = s & pad & defsta.CEndYear & vbCrLf
-        If pEndYear <> defsta.EndYear Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
-        If Len(defsta.CHistoric) > 0 Then s = s & pad & defsta.CHistoric & vbCrLf
-        If pHistoricPeriod AndAlso pHistoricPeriod <> defsta.HistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        'If pEndYear <> defsta.EndYear Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
+        If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
+        'If Len(defsta.CHistoric) > 0 Then s = s & pad & defsta.CHistoric & vbCrLf
+        'If pHistoricPeriod AndAlso pHistoricPeriod <> defsta.HistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
         If Len(defsta.CSkewOpt) > 0 Then s = s & pad & defsta.CSkewOpt & vbCrLf
         If pSkewOpt <> defsta.SkewOpt Then s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
         If Len(defsta.CGenSkew) > 0 Then s = s & pad & defsta.CGenSkew & vbCrLf
@@ -731,6 +734,13 @@ Friend Class pfqStation
                             lPk.UpperLimit = Math.Abs(lPk.Value)
                             lPk.Comment = "Peak < stated value"
                         ElseIf lPk.Code = "G" Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
+                            lThresh.SYear = lPk.Year
+                            lThresh.EYear = lPk.Year
+                            lThresh.LowerLimit = 0
+                            lThresh.UpperLimit = Math.Abs(lPk.Value)
+                            lThresh.Comment = "Peak > stated value"
+                            Thresholds.Add(lThresh)
+                            lThresh.SYear = 0
                             'peak greater than stated value, set interval range
                             lPk.LowerLimit = Math.Abs(lPk.Value)
                             lPk.UpperLimit = 1.0E+20
