@@ -1813,65 +1813,67 @@ FileCancel:
         ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
         For i = 0 To lNPkPlt - 1
             lYVals(i) = 10 ^ lPkLog(i)
-            If lYVals(i) > lPMax Then lPMax = lYVals(i)
-            If lYVals(i) < lPMin Then lPMin = lYVals(i)
-            If lHistFlg = 0 Then
-                lXVals(i) = lWrcPP(i)
-            Else
-                lXVals(i) = lSysPP(i)
-            End If
-            lThresh = -1
-            For j = 0 To lNT - 1
-                If Math.Abs(lPkYear(i)) >= lThrSYr(j) AndAlso Math.Abs(lPkYear(i)) <= lThrEYr(j) Then 'peak is in a threshold
-                    lThresh = j
-                    If j > 0 Then Exit For 'don't exit loop if this is the default (0th) threshold
-                End If
-            Next
-            If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
-                lKey = "LO Threshold"
-            ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
-                lKey = lXQual(i) & CStr(lThresh)
-            Else
-                lKey = "Low Outlier"
-            End If
-            If lCurves.Keys.Contains(lKey) Then 'add point to this curve
-                lCurve = lCurves.ItemByKey(lKey)
-                lCurve.AddPoint(lXVals(i), lYVals(i))
-            Else 'need a new curve
-                If lThresh = 0 Then 'use specific color for default threshold
-                    lColor = Color.DarkCyan
-                ElseIf lThresh > 0 Then 'match color of threshold
-                    lColor = ThreshColors(lThresh)
+            If lYVals(i) > 0.001 AndAlso lYVals(i) < 10000000000.0 Then
+                If lYVals(i) > lPMax Then lPMax = lYVals(i)
+                If lYVals(i) < lPMin Then lPMin = lYVals(i)
+                If lHistFlg = 0 Then
+                    lXVals(i) = lWrcPP(i)
                 Else
-                    lColor = Color.Black
+                    lXVals(i) = lSysPP(i)
                 End If
-                lX(0) = lXVals(i) 'lSysPP(i)
-                lY(0) = lYVals(i) '10 ^ lPkLog(i)
-                If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
-                    lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.UserDefined)
-                    lCurve.Symbol.UserSymbol = lLOThreshSymbol
-                    lCurve.Symbol.Fill.Type = FillType.Solid
-                    'lCurve.Symbol.Size = 15
-                    'lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.Circle)
-                    'lCurve.Label.IsVisible = False
-                ElseIf lY(0) < lGBCrit Then
-                    lCurve = lPane.AddCurve("Low Outlier", lX, lY, Color.Black, SymbolType.XCross)
+                lThresh = -1
+                For j = 0 To lNT - 1
+                    If Math.Abs(lPkYear(i)) >= lThrSYr(j) AndAlso Math.Abs(lPkYear(i)) <= lThrEYr(j) Then 'peak is in a threshold
+                        lThresh = j
+                        If j > 0 Then Exit For 'don't exit loop if this is the default (0th) threshold
+                    End If
+                Next
+                If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
+                    lKey = "LO Threshold"
+                ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
+                    lKey = lXQual(i) & CStr(lThresh)
                 Else
-                    Select Case lXQual(i)
-                        Case "7", "H"
-                            lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Triangle)
-                        Case "D", "G", "X", "3", "8", "3+8"
-                            lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
-                        Case "K", "6", "C"
-                            lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
-                        Case "L", "4"
-                            lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
-                        Case Else
-                            lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, lColor, SymbolType.Circle)
-                    End Select
+                    lKey = "Low Outlier"
                 End If
-                lCurve.Line.IsVisible = False
-                lCurves.Add(lKey, lCurve)
+                If lCurves.Keys.Contains(lKey) Then 'add point to this curve
+                    lCurve = lCurves.ItemByKey(lKey)
+                    lCurve.AddPoint(lXVals(i), lYVals(i))
+                Else 'need a new curve
+                    If lThresh = 0 Then 'use specific color for default threshold
+                        lColor = Color.DarkCyan
+                    ElseIf lThresh > 0 Then 'match color of threshold
+                        lColor = ThreshColors(lThresh)
+                    Else
+                        lColor = Color.Black
+                    End If
+                    lX(0) = lXVals(i) 'lSysPP(i)
+                    lY(0) = lYVals(i) '10 ^ lPkLog(i)
+                    If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
+                        lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.UserDefined)
+                        lCurve.Symbol.UserSymbol = lLOThreshSymbol
+                        lCurve.Symbol.Fill.Type = FillType.Solid
+                        'lCurve.Symbol.Size = 15
+                        'lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.Circle)
+                        'lCurve.Label.IsVisible = False
+                    ElseIf lY(0) < lGBCrit Then
+                        lCurve = lPane.AddCurve("Low Outlier", lX, lY, Color.Black, SymbolType.XCross)
+                    Else
+                        Select Case lXQual(i)
+                            Case "7", "H"
+                                lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Triangle)
+                            Case "D", "G", "X", "3", "8", "3+8"
+                                lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
+                            Case "K", "6", "C"
+                                lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
+                            Case "L", "4"
+                                lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
+                            Case Else
+                                lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, lColor, SymbolType.Circle)
+                        End Select
+                    End If
+                    lCurve.Line.IsVisible = False
+                    lCurves.Add(lKey, lCurve)
+                End If
             End If
         Next
 
@@ -1906,11 +1908,21 @@ FileCancel:
         lCurve.Label.IsVisible = False
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
+        'set y-axis range
+        Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
+        lPane.YAxis.Scale.MinAuto = False
+        lPane.YAxis.Scale.MaxAuto = False
+
         'plot any interval data
         For i = 0 To lNInt - 1
             lX2(0) = lIntPPos(i)
             lX2(1) = lIntPPos(i)
-            lY2(0) = lIntLwr(i)
+            'lY2(0) = lIntLwr(i)
+            If lIntLwr(i) < lYAxis.Scale.Min Then
+                lY2(0) = lYAxis.Scale.Min
+            Else
+                lY2(0) = lIntLwr(i)
+            End If
             lY2(1) = lIntUpr(i)
             lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Green, SymbolType.HDash)
             If i > 0 Then
@@ -1945,10 +1957,6 @@ FileCancel:
                 lCurve.Symbol.Border.Width = 2
             End If
         Next
-
-        'set y-axis range
-        Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
-        lPane.YAxis.Scale.MaxAuto = False
 
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
