@@ -481,9 +481,9 @@ Friend Class pfqProject
                     Case "ENDYEAR"
                         CurStation.EndYear = CInt(Rec)
                         If CommentPending Then CurStation.CEndYear = lCom
-                        'Case "HISTPERIOD"
-                        '    CurStation.HistoricPeriod = CSng(Rec)
-                        '    If CommentPending Then CurStation.CHistoric = lCom
+                    Case "HISTPERIOD"
+                        CurStation.HistoricPeriod = CSng(Rec)
+                        If CommentPending Then CurStation.CHistoric = lCom
                     Case "SKEWOPT"
                         If UCase(Rec) = "STATION" Then
                             CurStation.SkewOpt = 0
