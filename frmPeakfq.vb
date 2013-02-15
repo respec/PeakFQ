@@ -651,7 +651,8 @@ FileCancel:
     End Sub
 
     Public Sub mnuAbout_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mnuAbout.Click
-        MsgBox("Version " & My.Application.Info.Version.Major & "." & My.Application.Info.Version.Minor & "." & My.Application.Info.Version.Revision, MsgBoxStyle.Information, "PKFQWin")
+        'MsgBox("Version " & My.Application.Info.Version.Major & "." & My.Application.Info.Version.Minor & "." & My.Application.Info.Version.Revision, MsgBoxStyle.Information, "PKFQWin")
+        frmAbout.Show()
     End Sub
 
     Public Sub mnuExit_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mnuExit.Click
@@ -1145,17 +1146,17 @@ FileCancel:
             lThrColl = New Generic.List(Of pfqStation.ThresholdType)
             For i = .FixedRows To .Rows - 1
                 If IsNumeric(.CellValue(i, 0)) AndAlso IsNumeric(.CellValue(i, 1)) AndAlso _
-                   (IsNumeric(.CellValue(i, 2)) Or (.CellValue(i, 2) IsNot Nothing AndAlso .CellValue(i, 2).ToLower = "inf")) AndAlso _
-                   (IsNumeric(.CellValue(i, 3)) Or (.CellValue(i, 3) IsNot Nothing AndAlso .CellValue(i, 3).ToLower = "inf")) Then
+                   (IsNumeric(.CellValue(i, 2)) Or (.CellValue(i, 2) IsNot Nothing AndAlso .CellValue(i, 2).ToLower.Contains("inf"))) AndAlso _
+                   (IsNumeric(.CellValue(i, 3)) Or (.CellValue(i, 3) IsNot Nothing AndAlso .CellValue(i, 3).ToLower.Contains("inf"))) Then
                     Dim lThresh As New pfqStation.ThresholdType
                     lThresh.SYear = CInt(.CellValue(i, 0))
                     lThresh.EYear = CInt(.CellValue(i, 1))
-                    If .CellValue(i, 2).ToLower = "inf" Then
+                    If .CellValue(i, 2).ToLower.Contains("inf") Then
                         lThresh.LowerLimit = 1.0E+20
                     Else
                         lThresh.LowerLimit = CSng(.CellValue(i, 2))
                     End If
-                    If .CellValue(i, 3).ToLower = "inf" Then
+                    If .CellValue(i, 3).ToLower.Contains("inf") Then
                         lThresh.UpperLimit = 1.0E+20
                     Else
                         lThresh.UpperLimit = CSng(.CellValue(i, 3))
@@ -1177,12 +1178,12 @@ FileCancel:
                     Else
                         lData.Code = .CellValue(i, 2)
                     End If
-                    If .CellValue(i, 3).ToLower = "inf" Then
+                    If .CellValue(i, 3).ToLower.Contains("inf") Then
                         lData.LowerLimit = 1.0E+20
                     ElseIf IsNumeric(.CellValue(i, 3)) Then
                         lData.LowerLimit = CSng(.CellValue(i, 3))
                     End If
-                    If .CellValue(i, 4).ToLower = "inf" Then
+                    If .CellValue(i, 4).ToLower.Contains("inf") Then
                         lData.UpperLimit = 1.0E+20
                     ElseIf IsNumeric(.CellValue(i, 4)) Then
                         lData.UpperLimit = CSng(.CellValue(i, 4))
@@ -1931,30 +1932,45 @@ FileCancel:
         Next
 
         'thresholds
+        Dim lAddGlyph As Boolean
         For i = 0 To lNT - 1
-            If lNObsTh(i) > 0 Then
+            If lNObsTh(i) > 0 AndAlso lPPTh(i) > 0 AndAlso lPPTh(i) < 1.0 Then
                 lX(0) = lPPTh(i)
                 lY(0) = lThr(i)
                 'add dummy curve to create regular-sized legend symbol
-                Dim lPtList As New ZedGraph.PointPairList
-                If lThrDef Then
-                    lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
-                Else
-                    lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+                lAddGlyph = True 'assume we're adding glyph, but check for repeats
+                For j = 0 To i - 1
+                    If Math.Abs(lThr(i) - lThr(j)) < 0.001 AndAlso lNObsTh(i) = lNObsTh(j) Then
+                        lAddGlyph = False
+                        For k As Integer = lPane.CurveList.Count - 1 To 0 Step -1
+                            If lPane.CurveList(k).Label.Text.Contains(lThrSYr(j).ToString) Then 'change specific date range to multiple spans
+                                lPane.CurveList(k).Label.Text = "Threshold (multiple periods)"
+                            End If
+                        Next
+                        Exit For
+                    End If
+                Next
+                If lAddGlyph Then
+                    Dim lPtList As New ZedGraph.PointPairList
+                    If lThrDef Then
+                        lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+                    Else
+                        lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+                    End If
+                    lCurve.Symbol.UserSymbol = lThreshSymbol
+                    lCurve.Line.IsVisible = False
+                    'now plot symbol at appropriate scale
+                    If lThrDef Then
+                        lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
+                    Else
+                        lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
+                    End If
+                    lCurve.Symbol.UserSymbol = lThreshSymbol
+                    lCurve.Line.IsVisible = False
+                    lCurve.Label.IsVisible = False
+                    lCurve.Symbol.Size = 7 * Math.Sqrt(lNObsTh(i))
+                    lCurve.Symbol.Border.Width = 2
                 End If
-                lCurve.Symbol.UserSymbol = lThreshSymbol
-                lCurve.Line.IsVisible = False
-                'now plot symbol at appropriate scale
-                If lThrDef Then
-                    lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
-                Else
-                    lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
-                End If
-                lCurve.Symbol.UserSymbol = lThreshSymbol
-                lCurve.Line.IsVisible = False
-                lCurve.Label.IsVisible = False
-                lCurve.Symbol.Size = 7 * Math.Sqrt(lNObsTh(i))
-                lCurve.Symbol.Border.Width = 2
             End If
         Next
 
@@ -2110,7 +2126,7 @@ FileCancel:
             If aColumn = .Columns - 1 AndAlso lVal.Length = 0 Then
                 MessageBox.Show("Comment field must be entered for new Data elements.", "Data Grid Problem")
             ElseIf aColumn < .Columns - 1 And aColumn <> 2 Then
-                If Not IsNumeric(lVal) AndAlso lVal.ToLower <> "inf" Then 'reminder that values should be numeric
+                If Not IsNumeric(lVal) AndAlso Not lVal.ToLower.Contains("inf") Then 'reminder that values should be numeric
                     MessageBox.Show("Values for this field must be numeric.", "Data Grid Problem")
                 End If
                 If IsNumeric(lVal) AndAlso Double.Parse(lVal) > 1.0E+19 Then
@@ -2124,8 +2140,8 @@ FileCancel:
                 End If
                 If IsNumeric(.CellValue(aRow, 3)) And IsNumeric(.CellValue(aRow, 4)) Then 'some interval data entered, check it
                     If IsNumeric(.CellValue(aRow, 0)) AndAlso _
-                       (IsNumeric(.CellValue(aRow, 3)) OrElse .CellValue(aRow, 3).ToLower = "inf") AndAlso _
-                       (IsNumeric(.CellValue(aRow, 4)) OrElse .CellValue(aRow, 4).ToLower = "inf") AndAlso _
+                       (IsNumeric(.CellValue(aRow, 3)) OrElse .CellValue(aRow, 3).ToLower.Contains("inf")) AndAlso _
+                       (IsNumeric(.CellValue(aRow, 4)) OrElse .CellValue(aRow, 4).ToLower.Contains("inf")) AndAlso _
                        (Not .CellValue(aRow, 5) Is Nothing AndAlso .CellValue(aRow, 5).Length > 0) Then 'valid interval value entry
                         lGoodRow = True
                     Else
@@ -2280,4 +2296,32 @@ FileCancel:
 
     End Sub
 
+    Public Sub RunTests(ByVal aInputPath As String, ByVal aOutputPath As String)
+        Dim lDataFiles As New System.Collections.Specialized.NameValueCollection
+        Dim lSpecFileContents As String
+        Dim lSpecFileName As String
+
+        AddFilesInDir(lDataFiles, aInputPath, False, "*.psf")
+        For Each lFile As String In lDataFiles
+            PfqPrj = New pfqProject
+            PfqPrj.InputDir = aInputPath
+            PfqPrj.OutputDir = aOutputPath
+            lSpecFileContents = WholeFileString(lFile)
+            'build default project from initial version of spec file
+            SaveFileString(PathNameOnly(lFile) & "\" & tmpSpecName, lSpecFileContents)
+            PfqPrj.SpecFileName = PathNameOnly(lFile) & "\" & tmpSpecName 'make working verbose copy
+            If PfqPrj.Stations.Count > 0 Then DefPfqPrj = PfqPrj.SaveDefaults(lSpecFileContents)
+
+            'PfqPrj.SpecFileName = lFile
+            PfqPrj.ReadPeaks()
+            PfqPrj.OutFile = aOutputPath & "\" & FilenameNoPath(PfqPrj.OutFile)
+            lSpecFileContents = PfqPrj.SaveAsString()
+            lSpecFileName = aOutputPath & "\" & FilenameNoPath(lFile)
+            SaveFileString(lSpecFileName, lSpecFileContents)
+            PfqPrj.SpecFileName = lSpecFileName
+            PfqPrj.RunBatchModel()
+
+
+        Next
+    End Sub
 End Class
