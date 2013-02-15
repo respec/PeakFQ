@@ -697,7 +697,7 @@ Friend Class pfqProject
         Logger.Status("Begin")
         Logger.Status("Show")
         'Logger.Status("Caption PKFQWin Status")
-        Logger.Status("Label Title PKFQWin 6.0 ")
+        Logger.Status("Label Title PKFQWin 7.0 ")
 
 
         'Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
