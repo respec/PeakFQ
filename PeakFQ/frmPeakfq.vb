@@ -1088,7 +1088,7 @@ FileCancel:
                     If lData.Value = -8888 Then
                         .CellValue(j, 1) = "-8888"
                     Else
-                        .CellValue(j, 1) = DoubleToString(Math.Abs(lData.Value), , "########.#", "#######0.#")
+                        .CellValue(j, 1) = DoubleToString(Math.Abs(lData.Value), , "########.#", "#######0.#", , 7)
                     End If
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
@@ -1909,11 +1909,6 @@ FileCancel:
         lCurve.Label.IsVisible = False
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
-        'set y-axis range
-        Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
-        lPane.YAxis.Scale.MinAuto = False
-        lPane.YAxis.Scale.MaxAuto = False
-
         'plot any interval data
         For i = 0 To lNInt - 1
             lX2(0) = lIntPPos(i)
@@ -1925,11 +1920,17 @@ FileCancel:
                 lY2(0) = lIntLwr(i)
             End If
             lY2(1) = lIntUpr(i)
+            If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
             lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Green, SymbolType.HDash)
             If i > 0 Then
                 lCurve.Label.IsVisible = False
             End If
         Next
+
+        'set y-axis range
+        Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
+        lPane.YAxis.Scale.MinAuto = False
+        lPane.YAxis.Scale.MaxAuto = False
 
         'thresholds
         Dim lAddGlyph As Boolean
