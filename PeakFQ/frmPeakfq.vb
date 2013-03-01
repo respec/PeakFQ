@@ -846,6 +846,11 @@ FileCancel:
         'frmPeakfq_Resize(Me, New System.EventArgs())
         PreviousTab = sstPfq.SelectedIndex()
         sstPfq.SelectedTab.Focus()
+        If sstPfq.SelectedIndex = 1 Then
+            cmdCodeLookup.Visible = True
+        Else
+            cmdCodeLookup.Visible = False
+        End If
     End Sub
 
     Private Sub SetGraphNames()
@@ -1836,6 +1841,15 @@ FileCancel:
                 Else
                     lKey = "Low Outlier"
                 End If
+                If lKey = "LO Threshold" AndAlso lCurves.Keys.Contains(lKey) Then
+                    'don't want duplicates for LO Threshold, set this to normal peak
+                    Dim lProb As Double = lCurves.ItemByKey(lKey).points(0).x
+                    If lXVals(i) > lProb Then 'make leftmost LO the indicator
+                        lCurves.ItemByKey(lKey).points(0).x = lXVals(i)
+                        lXVals(i) = lProb
+                    End If
+                    lKey = lXQual(i) & CStr(lThresh)
+                End If
                 If lCurves.Keys.Contains(lKey) Then 'add point to this curve
                     lCurve = lCurves.ItemByKey(lKey)
                     lCurve.AddPoint(lXVals(i), lYVals(i))
@@ -2324,5 +2338,9 @@ FileCancel:
 
 
         Next
+    End Sub
+
+    Private Sub cmdCodeLookup_Click(sender As System.Object, e As System.EventArgs)
+        frmCodeLookup.Show()
     End Sub
 End Class
