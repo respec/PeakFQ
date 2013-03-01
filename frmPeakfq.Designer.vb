@@ -172,6 +172,7 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
+        Me.cmdCodeLookup = New System.Windows.Forms.Button()
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -213,67 +214,68 @@
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOpen, Me.mnuSaveSpecs, Me.mnuExit})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(35, 20)
+        Me.mnuFile.Size = New System.Drawing.Size(37, 20)
         Me.mnuFile.Text = "&File"
         '
         'mnuOpen
         '
         Me.mnuOpen.Name = "mnuOpen"
-        Me.mnuOpen.Size = New System.Drawing.Size(140, 22)
+        Me.mnuOpen.Size = New System.Drawing.Size(131, 22)
         Me.mnuOpen.Text = "&Open"
         '
         'mnuSaveSpecs
         '
         Me.mnuSaveSpecs.Enabled = False
         Me.mnuSaveSpecs.Name = "mnuSaveSpecs"
-        Me.mnuSaveSpecs.Size = New System.Drawing.Size(140, 22)
+        Me.mnuSaveSpecs.Size = New System.Drawing.Size(131, 22)
         Me.mnuSaveSpecs.Text = "&Save Specs"
         '
         'mnuExit
         '
         Me.mnuExit.Name = "mnuExit"
-        Me.mnuExit.Size = New System.Drawing.Size(140, 22)
+        Me.mnuExit.Size = New System.Drawing.Size(131, 22)
         Me.mnuExit.Text = "E&xit"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAbout, Me.mnuFeedback, Me.mnuHelpMain})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(40, 20)
+        Me.mnuHelp.Size = New System.Drawing.Size(44, 20)
         Me.mnuHelp.Text = "&Help"
         '
         'mnuAbout
         '
         Me.mnuAbout.Name = "mnuAbout"
-        Me.mnuAbout.Size = New System.Drawing.Size(158, 22)
+        Me.mnuAbout.Size = New System.Drawing.Size(153, 22)
         Me.mnuAbout.Text = "&About"
         '
         'mnuFeedback
         '
         Me.mnuFeedback.Name = "mnuFeedback"
-        Me.mnuFeedback.Size = New System.Drawing.Size(158, 22)
+        Me.mnuFeedback.Size = New System.Drawing.Size(153, 22)
         Me.mnuFeedback.Text = "Send &Feedback"
         '
         'mnuHelpMain
         '
         Me.mnuHelpMain.Name = "mnuHelpMain"
-        Me.mnuHelpMain.Size = New System.Drawing.Size(158, 22)
+        Me.mnuHelpMain.Size = New System.Drawing.Size(153, 22)
         Me.mnuHelpMain.Text = "PKFQWin Help"
         '
         'fraButtons
         '
         Me.fraButtons.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraButtons.BackColor = System.Drawing.SystemColors.Control
+        Me.fraButtons.Controls.Add(Me.cmdCodeLookup)
         Me.fraButtons.Controls.Add(Me.cmdRun)
         Me.fraButtons.Controls.Add(Me.cmdSave)
         Me.fraButtons.Controls.Add(Me.cmdExit)
         Me.fraButtons.Cursor = System.Windows.Forms.Cursors.Default
         Me.fraButtons.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.fraButtons.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.fraButtons.Location = New System.Drawing.Point(784, 502)
+        Me.fraButtons.Location = New System.Drawing.Point(309, 502)
         Me.fraButtons.Name = "fraButtons"
         Me.fraButtons.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraButtons.Size = New System.Drawing.Size(345, 25)
+        Me.fraButtons.Size = New System.Drawing.Size(820, 25)
         Me.fraButtons.TabIndex = 29
         '
         'cmdRun
@@ -282,7 +284,7 @@
         Me.cmdRun.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdRun.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdRun.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdRun.Location = New System.Drawing.Point(0, 0)
+        Me.cmdRun.Location = New System.Drawing.Point(484, 0)
         Me.cmdRun.Name = "cmdRun"
         Me.cmdRun.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdRun.Size = New System.Drawing.Size(97, 25)
@@ -296,7 +298,7 @@
         Me.cmdSave.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdSave.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdSave.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdSave.Location = New System.Drawing.Point(120, 0)
+        Me.cmdSave.Location = New System.Drawing.Point(599, 0)
         Me.cmdSave.Name = "cmdSave"
         Me.cmdSave.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdSave.Size = New System.Drawing.Size(97, 25)
@@ -310,7 +312,7 @@
         Me.cmdExit.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdExit.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdExit.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdExit.Location = New System.Drawing.Point(288, 0)
+        Me.cmdExit.Location = New System.Drawing.Point(750, 0)
         Me.cmdExit.Name = "cmdExit"
         Me.cmdExit.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdExit.Size = New System.Drawing.Size(57, 25)
@@ -1319,6 +1321,20 @@
         'cmdOutFileView
         '
         '
+        'cmdCodeLookup
+        '
+        Me.cmdCodeLookup.BackColor = System.Drawing.SystemColors.Control
+        Me.cmdCodeLookup.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cmdCodeLookup.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cmdCodeLookup.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.cmdCodeLookup.Location = New System.Drawing.Point(-9, 0)
+        Me.cmdCodeLookup.Name = "cmdCodeLookup"
+        Me.cmdCodeLookup.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmdCodeLookup.Size = New System.Drawing.Size(97, 25)
+        Me.cmdCodeLookup.TabIndex = 34
+        Me.cmdCodeLookup.Text = "&Code Lookup"
+        Me.cmdCodeLookup.UseVisualStyleBackColor = False
+        '
         'frmPeakfq
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1404,5 +1420,6 @@
     Friend WithEvents lblIntervals As System.Windows.Forms.Label
     Friend WithEvents grdInterval As atcControls.atcGrid
     Friend WithEvents zgcThresh As ZedGraph.ZedGraphControl
+    Public WithEvents cmdCodeLookup As System.Windows.Forms.Button
 #End Region
 End Class

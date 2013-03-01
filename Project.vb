@@ -577,10 +577,12 @@ Friend Class pfqProject
 			s = "Verbose" & vbCrLf
 		End If
 		If Len(pCDataFile) > 0 Then s = s & pCDataFile & vbCrLf
-		s = s & "I " & FType(pDataType) & " " & pInputDir & "\" & FilenameNoPath(pDataFileName) & vbCrLf
-		If Len(pCOutFile) > 0 Then s = s & pCOutFile & vbCrLf
-		s = s & "O File " & pOutputDir & "\" & FilenameNoPath(pOutFile) & vbCrLf
-		If Len(pCPlotStyle) > 0 Then s = s & pCPlotStyle & vbCrLf
+        '        s = s & "I " & FType(pDataType) & " " & pInputDir & "\" & FilenameNoPath(pDataFileName) & vbCrLf
+        s = s & "I " & FType(pDataType) & " " & RelativeFilename(pDataFileName, pInputDir) & vbCrLf
+        If Len(pCOutFile) > 0 Then s = s & pCOutFile & vbCrLf
+        '        s = s & "O File " & pOutputDir & "\" & FilenameNoPath(pOutFile) & vbCrLf
+        s = s & "O File " & RelativeFilename(pOutFile, pInputDir) & vbCrLf
+        If Len(pCPlotStyle) > 0 Then s = s & pCPlotStyle & vbCrLf
 		If pLinePrinter And pGraphic Then
 			s = s & "O Plot Style Both" & vbCrLf
 		ElseIf pLinePrinter Then 
@@ -604,18 +606,18 @@ Friend Class pfqProject
 		If pAdditionalOutput = 1 Then
 			s = s & "O Additional WDM" & vbCrLf
 		ElseIf pAdditionalOutput = 2 Then 
-			s = s & "O Additional Watstore " & pAddOutFileName & vbCrLf
+            s = s & "O Additional Watstore " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
 		ElseIf pAdditionalOutput = 3 Then 
-			s = s & "O Additional Both WAT " & pAddOutFileName & vbCrLf
+            s = s & "O Additional Both WAT " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
 		ElseIf pAdditionalOutput = 4 Then 
-			s = s & "O Additional Tab " & pAddOutFileName & vbCrLf
+            s = s & "O Additional Tab " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
 		ElseIf pAdditionalOutput = 5 Then 
-			s = s & "O Additional Both Tab " & pAddOutFileName & vbCrLf
+            s = s & "O Additional Both Tab " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
 		End If
         If Len(pCExportFileName) > 0 Then s = s & pCExportFileName & vbCrLf
-        If Len(pExportFileName) > 0 Then s = s & "O Export " & pExportFileName & vbCrLf
+        If Len(pExportFileName) > 0 Then s = s & "O Export " & RelativeFilename(pExportFileName, pInputDir) & vbCrLf
         If Len(pCEmpiricalFileName) > 0 Then s = s & pCEmpiricalFileName & vbCrLf
-        If Len(pEmpiricalFileName) > 0 Then s = s & "O Empirical " & pEmpiricalFileName & vbCrLf
+        If Len(pEmpiricalFileName) > 0 Then s = s & "O Empirical " & RelativeFilename(pEmpiricalFileName, pInputDir) & vbCrLf
         If Len(pCIntermediate) > 0 Then s = s & pCIntermediate & vbCrLf
 		If pIntermediateResults Then s = s & "O Debug YES" & vbCrLf
 		If Len(pCConfidenceLimits) > 0 Then s = s & pCConfidenceLimits & vbCrLf
