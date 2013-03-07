@@ -94,6 +94,7 @@
         Me.mnuFeedback = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuHelpMain = New System.Windows.Forms.ToolStripMenuItem()
         Me.fraButtons = New System.Windows.Forms.Panel()
+        Me.cmdCodeLookup = New System.Windows.Forms.Button()
         Me.cmdRun = New System.Windows.Forms.Button()
         Me.cmdSave = New System.Windows.Forms.Button()
         Me.cmdExit = New System.Windows.Forms.Button()
@@ -172,7 +173,6 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
-        Me.cmdCodeLookup = New System.Windows.Forms.Button()
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -277,6 +277,20 @@
         Me.fraButtons.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.fraButtons.Size = New System.Drawing.Size(820, 25)
         Me.fraButtons.TabIndex = 29
+        '
+        'cmdCodeLookup
+        '
+        Me.cmdCodeLookup.BackColor = System.Drawing.SystemColors.Control
+        Me.cmdCodeLookup.Cursor = System.Windows.Forms.Cursors.Default
+        Me.cmdCodeLookup.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cmdCodeLookup.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.cmdCodeLookup.Location = New System.Drawing.Point(3, 0)
+        Me.cmdCodeLookup.Name = "cmdCodeLookup"
+        Me.cmdCodeLookup.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.cmdCodeLookup.Size = New System.Drawing.Size(97, 25)
+        Me.cmdCodeLookup.TabIndex = 34
+        Me.cmdCodeLookup.Text = "&Code Lookup"
+        Me.cmdCodeLookup.UseVisualStyleBackColor = False
         '
         'cmdRun
         '
@@ -1320,20 +1334,6 @@
         '
         'cmdOutFileView
         '
-        '
-        'cmdCodeLookup
-        '
-        Me.cmdCodeLookup.BackColor = System.Drawing.SystemColors.Control
-        Me.cmdCodeLookup.Cursor = System.Windows.Forms.Cursors.Default
-        Me.cmdCodeLookup.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.cmdCodeLookup.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdCodeLookup.Location = New System.Drawing.Point(-9, 0)
-        Me.cmdCodeLookup.Name = "cmdCodeLookup"
-        Me.cmdCodeLookup.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.cmdCodeLookup.Size = New System.Drawing.Size(97, 25)
-        Me.cmdCodeLookup.TabIndex = 34
-        Me.cmdCodeLookup.Text = "&Code Lookup"
-        Me.cmdCodeLookup.UseVisualStyleBackColor = False
         '
         'frmPeakfq
         '
