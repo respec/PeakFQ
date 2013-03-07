@@ -2340,7 +2340,8 @@ FileCancel:
         Next
     End Sub
 
-    Private Sub cmdCodeLookup_Click(sender As System.Object, e As System.EventArgs)
+    Private Sub cmdCodeLookup_Click(sender As System.Object, e As System.EventArgs) Handles cmdCodeLookup.Click
         frmCodeLookup.Show()
     End Sub
+
 End Class
