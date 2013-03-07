@@ -979,7 +979,7 @@ FileCancel:
                     PfqPrj.Stations(aRow - .FixedRows).SetDefaultThresholds(lSYear, lEYear)
                     .CellValue(aRow, 4) = lEYear - lSYear + 1
                     ProcessGrid()
-                    UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
+                    If lStnIndex = CurStationIndex Then UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
                 End If
             End With
             grdSpecs.Refresh()
