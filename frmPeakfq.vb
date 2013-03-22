@@ -749,10 +749,10 @@ FileCancel:
             'build default project from initial version of spec file
             SaveFileString(PathNameOnly(FName) & "\" & tmpSpecName, s)
             PfqPrj.SpecFileName = PathNameOnly(FName) & "\" & tmpSpecName 'make working verbose copy
-            If PfqPrj.Stations.Count > 0 Then DefPfqPrj = PfqPrj.SaveDefaults(s)
+            If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then DefPfqPrj = PfqPrj.SaveDefaults(s)
         End If
         Me.Cursor = System.Windows.Forms.Cursors.Default
-        If PfqPrj.Stations.Count > 0 Then
+        If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then
             'read peak data for each station from output file
             PfqPrj.ReadPeaks()
             If FileExists(PfqPrj.OutFile) Then
@@ -2317,27 +2317,33 @@ FileCancel:
         Dim lSpecFileName As String
 
         AddFilesInDir(lDataFiles, aInputPath, False, "*.psf")
+        ChDir(aInputPath)
         For Each lFile As String In lDataFiles
             PfqPrj = New pfqProject
             PfqPrj.InputDir = aInputPath
             PfqPrj.OutputDir = aOutputPath
             lSpecFileContents = WholeFileString(lFile)
+            lSpecFileName = PathNameOnly(lFile) & "\" & tmpSpecName
             'build default project from initial version of spec file
-            SaveFileString(PathNameOnly(lFile) & "\" & tmpSpecName, lSpecFileContents)
-            PfqPrj.SpecFileName = PathNameOnly(lFile) & "\" & tmpSpecName 'make working verbose copy
-            If PfqPrj.Stations.Count > 0 Then DefPfqPrj = PfqPrj.SaveDefaults(lSpecFileContents)
-
-            'PfqPrj.SpecFileName = lFile
-            PfqPrj.ReadPeaks()
-            PfqPrj.OutFile = aOutputPath & "\" & FilenameNoPath(PfqPrj.OutFile)
-            lSpecFileContents = PfqPrj.SaveAsString()
-            lSpecFileName = aOutputPath & "\" & FilenameNoPath(lFile)
             SaveFileString(lSpecFileName, lSpecFileContents)
-            PfqPrj.SpecFileName = lSpecFileName
-            PfqPrj.RunBatchModel()
-
+            PfqPrj.SpecFileName = lSpecFileName 'make working verbose copy
+            If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then
+                '                DefPfqPrj = PfqPrj.SaveDefaults(lSpecFileContents)
+                'PfqPrj.SpecFileName = lFile
+                PfqPrj.OutFile = RelativeFilename(aOutputPath & "\" & FilenameNoPath(PfqPrj.OutFile), PathNameOnly(PfqPrj.SpecFileName))
+                PfqPrj.ReadPeaks()
+                lSpecFileContents = PfqPrj.SaveAsString()
+                'lSpecFileName = aInputPath & "\" & FilenameNoPath(lFile)
+                'SaveFileString(lSpecFileName, lSpecFileContents)
+                SaveFileString(lSpecFileName, lSpecFileContents)
+                PfqPrj.SpecFileName = lSpecFileName
+                PfqPrj.RunBatchModel()
+                Kill(aOutputPath & "\error.fil")
+            End If
+            Application.DoEvents()
 
         Next
+        MsgBox("Finished running PeakFQ runs from directory " & aInputPath)
     End Sub
 
     Private Sub cmdCodeLookup_Click(sender As System.Object, e As System.EventArgs) Handles cmdCodeLookup.Click
