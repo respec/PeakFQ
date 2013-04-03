@@ -2009,10 +2009,15 @@ FileCancel:
 
         Dim lWarning As String = "Peakfq v 7.0 run " & System.DateTime.Now & vbCrLf & _
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
-                                 DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf & _
-                                 DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf & _
-                                 lNZero & " Zeroes not displayed" & vbCrLf & _
-                                 lNLow & " Peaks below Low Outlier Threshold " & vbCrLf & lLOTestStr
+                                 DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf
+        If PfqPrj.Stations(lStnInd).SkewOpt = 1 Then
+            lWarning &= lNZero & " Zeroes not displayed" & vbCrLf & _
+                        lNLow & " Peaks below Low Outlier Threshold " & vbCrLf & lLOTestStr
+        Else
+            lWarning &= DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf & _
+                        lNZero & " Zeroes not displayed" & vbCrLf & _
+                        lNLow & " Peaks below Low Outlier Threshold " & vbCrLf & lLOTestStr
+        End If
         Dim lText As New TextObj(lWarning, 0.6, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
