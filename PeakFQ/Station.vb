@@ -616,7 +616,8 @@ Friend Class pfqStation
         'If pEndYear <> defsta.EndYear Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
         If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
         If Len(defsta.CHistoric) > 0 Then s = s & pad & defsta.CHistoric & vbCrLf
-        If pHistoricPeriod AndAlso pHistoricPeriod <> defsta.HistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        'If pHistoricPeriod AndAlso pHistoricPeriod <> defsta.HistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
         If Len(defsta.CSkewOpt) > 0 Then s = s & pad & defsta.CSkewOpt & vbCrLf
         If pSkewOpt <> defsta.SkewOpt Then s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
         If Len(defsta.CGenSkew) > 0 Then s = s & pad & defsta.CGenSkew & vbCrLf
@@ -664,7 +665,8 @@ Friend Class pfqStation
         Return False
     End Function
 
-    Public Sub SetDefaultThresholds(Optional ByRef aSYear As Integer = 0, Optional ByRef aEYear As Integer = 0)
+    Public Sub SetDefaultThresholds(Optional ByRef aSYear As Integer = 0, Optional ByRef aEYear As Integer = 0, _
+                                    Optional ByRef aIncludeHistoricPeaks As Boolean = True)
         'sets initial default thresholds for a station that has just read its peaks
         Dim lThresh As ThresholdType
         Dim inHistoric As Boolean = False
@@ -694,7 +696,7 @@ Friend Class pfqStation
         lThresh = New ThresholdType
         For Each lPk As PeakDataType In PeakData
             If lPk.Year >= lSYear AndAlso lPk.Year <= lEYear Then
-                If lPk.Code = "H" Then
+                If lPk.Code = "H" AndAlso aIncludeHistoricPeaks Then
                     If inHistoric Then 'continuing historic period
                         lThresh.EYear = lPk.Year
                         If Math.Abs(lPk.Value) < lThresh.LowerLimit AndAlso lPk.Value <> -8888 Then

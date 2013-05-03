@@ -986,6 +986,8 @@ Friend Class pfqProject
                 lPeak.Year = Math.Abs(lPksSeq(i))
                 lPeak.Value = lPks(i)
                 lPeak.Code = lXQual(i)
+                lPeak.LowerLimit = lPeak.Value
+                lPeak.UpperLimit = lPeak.Value
                 lPeaks.Add(lPeak)
                 If Not lPeak.Code.Contains("H") And Not lPeak.Code.Contains("7") Then
                     If lStn.FirstSystematic = 0 Then lStn.FirstSystematic = lPeak.Year

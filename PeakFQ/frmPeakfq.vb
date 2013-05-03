@@ -976,7 +976,8 @@ FileCancel:
                     UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
                 End If
                 If lSYear > 0 And lEYear > 0 Then
-                    PfqPrj.Stations(aRow - .FixedRows).SetDefaultThresholds(lSYear, lEYear)
+                    Dim lIncludeHistoricPeaks As Boolean = .CellValue(aRow, 5) = "Yes"
+                    PfqPrj.Stations(aRow - .FixedRows).SetDefaultThresholds(lSYear, lEYear, lIncludeHistoricPeaks)
                     .CellValue(aRow, 4) = lEYear - lSYear + 1
                     ProcessGrid()
                     If lStnIndex = CurStationIndex Then UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
@@ -1099,7 +1100,8 @@ FileCancel:
                     .CellValue(j, 2) = lData.Code
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
                     If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3")) OrElse _
-                        ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) Then
+                        ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) OrElse _
+                        (lData.Code.Contains("H") AndAlso lStn.HistoricPeriod = 0) Then
                         'gray out since it preceeds analysis start year or it's urban/regulated and that option is off
                         .CellEditable(j, 0) = False
                         .CellEditable(j, 1) = False
@@ -1115,17 +1117,29 @@ FileCancel:
                         .CellColor(j, 1) = Color.White
                         .CellColor(j, 2) = Color.White
                     End If
-                    If lData.LowerLimit >= 0 Then
-                        .CellValue(j, 3) = lData.LowerLimit
+                    If lStn.AnalysisOption = "EMA" Then
+                        If lData.LowerLimit >= 0 Then
+                            .CellValue(j, 3) = lData.LowerLimit
+                        ElseIf lData.Value = -8888 Then
+                            .CellValue(j, 3) = "-8888"
+                        Else
+                            .CellValue(j, 3) = DoubleToString(Math.Abs(lData.Value), , "########.#", "#######0.#", , 7)
+                        End If
                     Else
                         .CellValue(j, 3) = " "
                     End If
                     .CellEditable(j, 3) = True
                     .Alignment(j, 3) = atcAlignment.HAlignRight
-                    If lData.UpperLimit >= 1.0E+20 Then
-                        .CellValue(j, 4) = "inf"
-                    ElseIf lData.LowerLimit >= 0 Then
-                        .CellValue(j, 4) = lData.UpperLimit
+                    If lStn.AnalysisOption = "EMA" Then
+                        If lData.UpperLimit >= 1.0E+20 Then
+                            .CellValue(j, 4) = "inf"
+                        ElseIf lData.UpperLimit > 0 Then
+                            .CellValue(j, 4) = lData.UpperLimit
+                        ElseIf lData.Value = -8888 Then
+                            .CellValue(j, 4) = "-8888"
+                        Else
+                            .CellValue(j, 4) = DoubleToString(Math.Abs(lData.Value), , "########.#", "#######0.#", , 7)
+                        End If
                     Else
                         .CellValue(j, 4) = " "
                     End If
@@ -1357,7 +1371,7 @@ FileCancel:
         'plot any interval data
         i = 0
         For Each vData As pfqStation.PeakDataType In lStn.PeakData
-            If vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 Then
+            If vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.1 Then
                 lThrshDates(0) = vData.Year
                 lThrshDates(1) = vData.Year
                 If vData.LowerLimit < lYAxis.Scale.Min Then
@@ -1837,7 +1851,8 @@ FileCancel:
                 If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
                     lKey = "LO Threshold"
                 ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
-                    lKey = lXQual(i) & CStr(lThresh)
+                    lKey = lXQual(i)
+                    If lKey.Length > 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
                 Else
                     lKey = "Low Outlier"
                 End If
@@ -1928,8 +1943,8 @@ FileCancel:
             lX2(0) = lIntPPos(i)
             lX2(1) = lIntPPos(i)
             'lY2(0) = lIntLwr(i)
-            If lIntLwr(i) < lYAxis.Scale.Min Then
-                lY2(0) = lYAxis.Scale.Min
+            If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
+                lY2(0) = lPMin ' lYAxis.Scale.Min
             Else
                 lY2(0) = lIntLwr(i)
             End If
