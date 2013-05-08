@@ -707,6 +707,7 @@ FileCancel:
         lHelpFilename = FindFile("", "C:\Doc\Peakfq\Out\peakfq.chm")
         If FileExists(lHelpFilename) Then
             ShowHelp(lHelpFilename)
+            ShowHelp("")
         Else
             Logger.Dbg("Help File Not Found")
         End If
@@ -1207,7 +1208,11 @@ FileCancel:
                     ElseIf IsNumeric(.CellValue(i, 4)) Then
                         lData.UpperLimit = CSng(.CellValue(i, 4))
                     End If
-                    lData.Comment = .CellValue(i, 5)
+                    'If Not .CellValue(i, 5) Is Nothing Then
+                    '    lData.Comment = .CellValue(i, 5)
+                    'Else
+                    lData.Comment = ""
+                    'End If
                     lDataColl.Add(lData)
                 End If
             Next
@@ -1852,7 +1857,7 @@ FileCancel:
                     lKey = "LO Threshold"
                 ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
                     lKey = lXQual(i)
-                    If lKey.Length > 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
+                    If lKey.Length > 0 AndAlso lThresh >= 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
                 Else
                     lKey = "Low Outlier"
                 End If

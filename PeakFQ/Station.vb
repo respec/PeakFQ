@@ -657,8 +657,8 @@ Friend Class pfqStation
         For Each lPeak As PeakDataType In pPeakDataOrig
             If (lPeak.Year = aPeak.Year AndAlso Math.Abs(Math.Abs(lPeak.Value) - Math.Abs(aPeak.Value)) < 0.1 AndAlso _
                 lPeak.Code = aPeak.Code AndAlso lPeak.Comment = aPeak.Comment AndAlso _
-                lPeak.LowerLimit = aPeak.LowerLimit AndAlso _
-                lPeak.UpperLimit = aPeak.UpperLimit) Then
+                (lPeak.LowerLimit = aPeak.LowerLimit Or aPeak.LowerLimit = -999) AndAlso _
+                (lPeak.UpperLimit = aPeak.UpperLimit Or aPeak.UpperLimit = -999)) Then
                 Return True
             End If
         Next
