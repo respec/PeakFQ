@@ -1038,6 +1038,12 @@ FileCancel:
         Dim lColor As System.Drawing.Color
         Dim j As Integer
 
+        If lStn.AnalysisOption = "EMA" Then
+            lblB17BWarning.Visible = False
+        Else
+            lblB17BWarning.Visible = True
+        End If
+
         With grdThresh.Source ' lNewSource
             .FixedRows = 1
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
@@ -1796,8 +1802,12 @@ FileCancel:
 
         If lGBCrit > 0 Then lGBCrit = 10 ^ lGBCrit 'convert low outlier threshold from log to base 10
 
-        'for project stations, need overall station index found in lstGraph Items
-        lStnInd = lstGraphs.Items(aStnInd).index - 1
+        If lstGraphs.Items.Count > 0 Then
+            'for project stations, need overall station index found in lstGraph Items
+            lStnInd = lstGraphs.Items(aStnInd).index - 1
+        Else 'calling from batch mode (RunTests), so no items in lstGraphs
+            lStnInd = aStnInd
+        End If
         If PfqPrj.Stations(lStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
             lThrDef = True
         Else
@@ -2056,7 +2066,7 @@ FileCancel:
             lZGC.AxisChange()
             lZGC.Invalidate()
             lZGC.Refresh()
-            lZGC.SaveIn(PfqPrj.OutputDir & "\" & lstGraphs.Items(aStnInd).ToString & "." & PfqPrj.GraphFormat)
+            lZGC.SaveIn(PfqPrj.OutputDir & "\" & PfqPrj.Stations(aStnInd).PlotName & "." & PfqPrj.GraphFormat)
         Else 'display plot on form
             lZGC.AxisChange()
             lZGC.Invalidate()
@@ -2363,7 +2373,12 @@ FileCancel:
                 SaveFileString(lSpecFileName, lSpecFileContents)
                 PfqPrj.SpecFileName = lSpecFileName
                 PfqPrj.RunBatchModel()
-                Kill(aOutputPath & "\error.fil")
+                If PfqPrj.Graphic Then 'save graph to file
+                    For i As Integer = 0 To PfqPrj.Stations.Count - 1
+                        GenFrequencyGraph(i, True)
+                    Next
+                End If
+                Kill("error.fil")
             End If
             Application.DoEvents()
 
