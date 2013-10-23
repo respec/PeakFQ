@@ -753,40 +753,41 @@ FileCancel:
             If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then DefPfqPrj = PfqPrj.SaveDefaults(s)
         End If
         Me.Cursor = System.Windows.Forms.Cursors.Default
-        If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then
-            'read peak data for each station from output file
-            PfqPrj.ReadPeaks()
-            If FileExists(PfqPrj.OutFile) Then
-                'delete output file generated from reading data
-                Kill(PfqPrj.OutFile)
-            End If
-            '    txtData.Text = PfqPrj.DataFileName
-            lblData.Text = "PeakFQ Data File:  " & PfqPrj.DataFileName
-            If cdlOpenOpen.FilterIndex = 4 Then 'opened spec file, put name on main form
-                '      txtSpec.Text = fname
-                lblSpec.Text = "PKFQWin Spec File:  " & FName
-            End If
-            If PfqPrj.EMA Then
-                cboAnalysisOption.SelectedItem = "EMA"
+        If FileExists(PfqPrj.DataFileName) Then
+            If PfqPrj.Stations.Count > 0 Then
+                'read peak data for each station from output file
+                PfqPrj.ReadPeaks()
+                If FileExists(PfqPrj.OutFile) Then
+                    'delete output file generated from reading data
+                    Kill(PfqPrj.OutFile)
+                End If
+                '    txtData.Text = PfqPrj.DataFileName
+                lblData.Text = "PeakFQ Data File:  " & PfqPrj.DataFileName
+                If cdlOpenOpen.FilterIndex = 4 Then 'opened spec file, put name on main form
+                    '      txtSpec.Text = fname
+                    lblSpec.Text = "PKFQWin Spec File:  " & FName
+                End If
+                If PfqPrj.EMA Then
+                    cboAnalysisOption.SelectedItem = "EMA"
+                Else
+                    cboAnalysisOption.SelectedItem = "B17B"
+                End If
+                cboLOTest.SelectedItem = "Single Grubbs-Beck"
+                EnableGrid()
+                PopulateGrid()
+                PopulateOutput()
+                sstPfq.TabPages.Item(0).Enabled = True
+                sstPfq.TabPages.Item(1).Enabled = True
+                sstPfq.TabPages.Item(2).Enabled = True
+                cmdRun.Enabled = True
+                cmdSave.Enabled = True
+                mnuSaveSpecs.Enabled = True
+                '    PfqPrj.SpecFileName = tmpSpecName 'use temporary name for active spec file
             Else
-                cboAnalysisOption.SelectedItem = "B17B"
+                MessageBox.Show("Problem processing peak station data." & vbCrLf & _
+                                "Check file and path names of selected files", "File-Open Problem")
             End If
-            cboLOTest.SelectedItem = "Single Grubbs-Beck"
-            EnableGrid()
-            PopulateGrid()
-            PopulateOutput()
-            sstPfq.TabPages.Item(0).Enabled = True
-            sstPfq.TabPages.Item(1).Enabled = True
-            sstPfq.TabPages.Item(2).Enabled = True
-            cmdRun.Enabled = True
-            cmdSave.Enabled = True
-            mnuSaveSpecs.Enabled = True
-            '    PfqPrj.SpecFileName = tmpSpecName 'use temporary name for active spec file
-        Else
-            MessageBox.Show("Problem processing peak station data." & vbCrLf & _
-                            "Check file and path names of selected files", "File-Open Problem")
         End If
-
 FileCancel:
     End Sub
 
@@ -1214,11 +1215,11 @@ FileCancel:
                     ElseIf IsNumeric(.CellValue(i, 4)) Then
                         lData.UpperLimit = CSng(.CellValue(i, 4))
                     End If
-                    'If Not .CellValue(i, 5) Is Nothing Then
-                    '    lData.Comment = .CellValue(i, 5)
-                    'Else
-                    lData.Comment = ""
-                    'End If
+                    If Not .CellValue(i, 5) Is Nothing Then
+                        lData.Comment = .CellValue(i, 5)
+                    Else
+                        lData.Comment = ""
+                    End If
                     lDataColl.Add(lData)
                 End If
             Next
@@ -1953,13 +1954,18 @@ FileCancel:
         lCurve.Label.IsVisible = False
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
+        'set y-axis range
+        Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
+        lPane.YAxis.Scale.MinAuto = False
+        lPane.YAxis.Scale.MaxAuto = False
+
         'plot any interval data
         For i = 0 To lNInt - 1
             lX2(0) = lIntPPos(i)
             lX2(1) = lIntPPos(i)
             'lY2(0) = lIntLwr(i)
             If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
-                lY2(0) = lPMin ' lYAxis.Scale.Min
+                lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
             Else
                 lY2(0) = lIntLwr(i)
             End If
@@ -1970,11 +1976,6 @@ FileCancel:
                 lCurve.Label.IsVisible = False
             End If
         Next
-
-        'set y-axis range
-        Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
-        lPane.YAxis.Scale.MinAuto = False
-        lPane.YAxis.Scale.MaxAuto = False
 
         'thresholds
         Dim lAddGlyph As Boolean
@@ -2037,7 +2038,7 @@ FileCancel:
             lLOTestStr = "Multiple Grubbs-Beck"
         End If
 
-        Dim lWarning As String = "Peakfq v 7.0 run " & System.DateTime.Now & vbCrLf & _
+        Dim lWarning As String = "Peakfq v 7.1 run " & System.DateTime.Now & vbCrLf & _
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
                                  DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf
         If PfqPrj.Stations(lStnInd).SkewOpt = 1 Then
@@ -2366,6 +2367,9 @@ FileCancel:
                 '                DefPfqPrj = PfqPrj.SaveDefaults(lSpecFileContents)
                 'PfqPrj.SpecFileName = lFile
                 PfqPrj.OutFile = RelativeFilename(aOutputPath & "\" & FilenameNoPath(PfqPrj.OutFile), PathNameOnly(PfqPrj.SpecFileName))
+                If PfqPrj.AddOutFileName.Length > 0 Then PfqPrj.AddOutFileName = RelativeFilename(aOutputPath & "\" & FilenameNoPath(PfqPrj.AddOutFileName), PathNameOnly(PfqPrj.SpecFileName))
+                If PfqPrj.ExportFileName.Length > 0 Then PfqPrj.ExportFileName = RelativeFilename(aOutputPath & "\" & FilenameNoPath(PfqPrj.ExportFileName), PathNameOnly(PfqPrj.SpecFileName))
+                If PfqPrj.EmpiricalFileName.Length > 0 Then PfqPrj.EmpiricalFileName = RelativeFilename(aOutputPath & "\" & FilenameNoPath(PfqPrj.EmpiricalFileName), PathNameOnly(PfqPrj.SpecFileName))
                 PfqPrj.ReadPeaks()
                 lSpecFileContents = PfqPrj.SaveAsString()
                 'lSpecFileName = aInputPath & "\" & FilenameNoPath(lFile)

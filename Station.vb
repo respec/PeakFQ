@@ -526,11 +526,9 @@ Friend Class pfqStation
         If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
         'write any interval data or updated peak data
         For Each vData As PeakDataType In pPeakData
-            'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
-            '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-            'End If
             If Not PeakDataOrigContains(vData) Then 'new or revised peak
-                If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 Then 'interval data
+                If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso _
+                    Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
                     s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                 Else 'just revised peak data
                     s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
@@ -597,11 +595,9 @@ Friend Class pfqStation
         End If
         'write any interval data or updated peak data
         For Each vData As PeakDataType In pPeakData
-            'If vData.Year > 0 AndAlso vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 Then
-            '    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-            'End If
             If Not PeakDataOrigContains(vData) Then 'new or revised peak/interval
-                If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 Then 'interval data
+                If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso _
+                    Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
                     s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                 Else 'just revised peak data
                     s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
