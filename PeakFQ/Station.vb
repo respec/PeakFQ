@@ -531,7 +531,8 @@ Friend Class pfqStation
                     Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
                     s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                 Else 'just revised peak data
-                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
+                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
+                    If vData.Comment.Length > 0 Then s = s & "  '" & vData.Comment & vbCrLf Else s = s & vbCrLf
                 End If
             End If
         Next
@@ -600,7 +601,8 @@ Friend Class pfqStation
                     Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
                     s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                 Else 'just revised peak data
-                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code & " " & vData.Comment & vbCrLf
+                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
+                    If vData.Comment.Length > 0 Then s = s & "  '" & vData.Comment & vbCrLf Else s = s & vbCrLf
                 End If
             End If
         Next
