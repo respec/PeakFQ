@@ -1332,10 +1332,10 @@ FileCancel:
                     lCode = ""
                 ElseIf lPeak.Code.Length > 1 Then
                     If lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'check for historic first
-                        lCode = "7"
+                        lCode = "H"
                     ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
                         'urban/regulated peak
-                        lCode = "6"
+                        lCode = "K"
                     End If
                 Else
                     lCode = lPeak.Code

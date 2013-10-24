@@ -553,6 +553,20 @@ Friend Class pfqProject
                         lData.Comment = Rec
                         CurStation.PeakData.Add(lData)
                         If CommentPending Then CurStation.CIntervals = lCom
+                    Case "PEAK"
+                        lData = New pfqStation.PeakDataType
+                        lData.Year = CSng(StrRetRem(Rec))
+                        lData.Value = CSng(StrRetRem(Rec))
+                        lData.LowerLimit = lData.Value
+                        lData.UpperLimit = lData.Value
+                        If Rec.Contains("'") Then
+                            Dim lPos As Integer = Rec.IndexOf("'")
+                            lData.Comment = Rec.Substring(lPos + 1)
+                            If lPos > 0 Then lData.Code = Rec.Substring(0, lPos - 1)
+                        Else
+                            lData.Code = Rec
+                        End If
+                        CurStation.PeakData.Add(lData)
                 End Select
                 CommentPending = False 'assume any pending comment was stored with a specification
             End If
