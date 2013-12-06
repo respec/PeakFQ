@@ -733,7 +733,7 @@ Friend Class pfqStation
                             lPk.LowerLimit = 0
                             lPk.UpperLimit = Math.Abs(lPk.Value)
                             lPk.Comment = "Peak < stated value"
-                        ElseIf lPk.Code = "G" Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
+                        ElseIf lPk.Code.Contains("G") Or lPk.Code = "X" Or lPk.Code.Contains("8") Then
                             lThresh.SYear = lPk.Year
                             lThresh.EYear = lPk.Year
                             lThresh.LowerLimit = 0

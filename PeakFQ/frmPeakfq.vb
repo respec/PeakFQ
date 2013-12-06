@@ -750,7 +750,13 @@ FileCancel:
             'build default project from initial version of spec file
             SaveFileString(PathNameOnly(FName) & "\" & tmpSpecName, s)
             PfqPrj.SpecFileName = PathNameOnly(FName) & "\" & tmpSpecName 'make working verbose copy
-            If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then DefPfqPrj = PfqPrj.SaveDefaults(s)
+            If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then
+                '                DefPfqPrj = PfqPrj.SaveDefaults(s)
+                DefPfqPrj.DataFileName = PfqPrj.DataFileName
+                DefPfqPrj.BuildNewSpecFile() 'build basic spec file (I/O files)
+                DefPfqPrj.RunBatchModel() 'run model to generate verbose spec file
+                DefPfqPrj.ReadSpecFile() 'read verbose spec file
+            End If
         End If
         Me.Cursor = System.Windows.Forms.Cursors.Default
         If FileExists(PfqPrj.DataFileName) Then
