@@ -1066,6 +1066,7 @@ Friend Class pfqProject
 		pDataFileName = ""
         pStations = New Generic.List(Of pfqStation)
         pAdditionalOutput = 0
+        pAddOutFileName = ""
         pExportFileName = ""
         pEmpiricalFileName = ""
 		pIntermediateResults = False

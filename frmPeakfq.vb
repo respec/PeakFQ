@@ -1116,7 +1116,7 @@ FileCancel:
                     If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3")) OrElse _
                         ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) OrElse _
                         (lData.Code.Contains("H") AndAlso lStn.HistoricPeriod = 0) Then
-                        'gray out since it preceeds analysis start year or it's urban/regulated and that option is off
+                        'gray out since it preceeds analysis start year, is unused code, or it's urban/regulated and that option is off
                         .CellEditable(j, 0) = False
                         .CellEditable(j, 1) = False
                         .CellEditable(j, 2) = False
@@ -1174,6 +1174,7 @@ FileCancel:
         Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = Nothing
         Dim lDataColl As Generic.List(Of pfqStation.PeakDataType) = Nothing
         Dim i As Integer
+        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
 
         With grdThresh.Source
             lThrColl = New Generic.List(Of pfqStation.ThresholdType)
@@ -1211,27 +1212,28 @@ FileCancel:
                     Else
                         lData.Code = .CellValue(i, 2)
                     End If
-                    If .CellValue(i, 3).ToLower.Contains("inf") Then
-                        lData.LowerLimit = 1.0E+20
-                    ElseIf IsNumeric(.CellValue(i, 3)) Then
-                        lData.LowerLimit = CSng(.CellValue(i, 3))
-                    End If
-                    If .CellValue(i, 4).ToLower.Contains("inf") Then
-                        lData.UpperLimit = 1.0E+20
-                    ElseIf IsNumeric(.CellValue(i, 4)) Then
-                        lData.UpperLimit = CSng(.CellValue(i, 4))
-                    End If
-                    If Not .CellValue(i, 5) Is Nothing Then
-                        lData.Comment = .CellValue(i, 5)
-                    Else
-                        lData.Comment = ""
+                    If Not (lData.Code.Contains("D") OrElse (lData.Code.Contains("K") AndAlso Not lStn.UrbanRegPeaks)) Then
+                        If .CellValue(i, 3).ToLower.Contains("inf") Then
+                            lData.LowerLimit = 1.0E+20
+                        ElseIf IsNumeric(.CellValue(i, 3)) Then
+                            lData.LowerLimit = CSng(.CellValue(i, 3))
+                        End If
+                        If .CellValue(i, 4).ToLower.Contains("inf") Then
+                            lData.UpperLimit = 1.0E+20
+                        ElseIf IsNumeric(.CellValue(i, 4)) Then
+                            lData.UpperLimit = CSng(.CellValue(i, 4))
+                        End If
+                        If Not .CellValue(i, 5) Is Nothing Then
+                            lData.Comment = .CellValue(i, 5)
+                        Else
+                            lData.Comment = ""
+                        End If
                     End If
                     lDataColl.Add(lData)
                 End If
             Next
             lDataColl.Sort()
         End With
-        Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         lStn.Thresholds = lThrColl
         lStn.PeakData = lDataColl
     End Sub
