@@ -721,7 +721,7 @@ Friend Class pfqStation
                         inHistoric = False
                     End If
                     If Not lPk.Code Is Nothing Then
-                        If lPk.Code = "L" Or lPk.Code = "4" Then 'peak less than state, create a threshold
+                        If lPk.Code.Contains("L") Or lPk.Code.Contains("4") Then 'peak less than state, create a threshold
                             lThresh.SYear = lPk.Year
                             lThresh.EYear = lPk.Year
                             lThresh.LowerLimit = Math.Abs(lPk.Value)
