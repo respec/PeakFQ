@@ -703,14 +703,17 @@ FileCancel:
 
     Public Sub mnuHelpMain_Click(ByVal eventSender As System.Object, ByVal eventArgs As System.EventArgs) Handles mnuHelpMain.Click
 
-        Dim lHelpFilename As String
-        lHelpFilename = FindFile("", "C:\Doc\Peakfq\Out\peakfq.chm")
-        If FileExists(lHelpFilename) Then
-            ShowHelp(lHelpFilename)
-            ShowHelp("")
-        Else
-            Logger.Dbg("Help File Not Found")
-        End If
+        'temporarily not referencing on-line help as it is very outdated, prh 3/2014
+        frmAbout.Show()
+
+        'Dim lHelpFilename As String
+        'lHelpFilename = FindFile("", "C:\Doc\Peakfq\Out\peakfq.chm")
+        'If FileExists(lHelpFilename) Then
+        '    ShowHelp(lHelpFilename)
+        '    ShowHelp("")
+        'Else
+        '    Logger.Dbg("Help File Not Found")
+        'End If
 
     End Sub
 

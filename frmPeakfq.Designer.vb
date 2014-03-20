@@ -179,9 +179,11 @@
         Me.sstPfq.SuspendLayout()
         Me.tabStationSpecs.SuspendLayout()
         Me.tabThresholds.SuspendLayout()
+        CType(Me.spltInputViewTab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.spltInputViewTab.Panel1.SuspendLayout()
         Me.spltInputViewTab.Panel2.SuspendLayout()
         Me.spltInputViewTab.SuspendLayout()
+        CType(Me.spltThreshIntervalGrids, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.spltThreshIntervalGrids.Panel1.SuspendLayout()
         Me.spltThreshIntervalGrids.Panel2.SuspendLayout()
         Me.spltThreshIntervalGrids.SuspendLayout()
@@ -260,7 +262,7 @@
         '
         Me.mnuHelpMain.Name = "mnuHelpMain"
         Me.mnuHelpMain.Size = New System.Drawing.Size(153, 22)
-        Me.mnuHelpMain.Text = "PKFQWin Help"
+        Me.mnuHelpMain.Text = "PeakFQ Help"
         '
         'fraButtons
         '
@@ -1365,7 +1367,7 @@
         Me.Location = New System.Drawing.Point(11, 49)
         Me.Name = "frmPeakfq"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Text = "PKFQWin Beta Provisional 7.0"
+        Me.Text = "PeakFQ Version 7.1"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.fraButtons.ResumeLayout(False)
@@ -1376,11 +1378,13 @@
         Me.tabThresholds.PerformLayout()
         Me.spltInputViewTab.Panel1.ResumeLayout(False)
         Me.spltInputViewTab.Panel2.ResumeLayout(False)
+        CType(Me.spltInputViewTab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spltInputViewTab.ResumeLayout(False)
         Me.spltThreshIntervalGrids.Panel1.ResumeLayout(False)
         Me.spltThreshIntervalGrids.Panel1.PerformLayout()
         Me.spltThreshIntervalGrids.Panel2.ResumeLayout(False)
         Me.spltThreshIntervalGrids.Panel2.PerformLayout()
+        CType(Me.spltThreshIntervalGrids, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spltThreshIntervalGrids.ResumeLayout(False)
         Me.tabOutput.ResumeLayout(False)
         Me.fraOutFile.ResumeLayout(False)
