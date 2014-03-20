@@ -5,6 +5,18 @@ Public Class frmAbout
         lblVersion.Text = "PKFQWin Version " & My.Application.Info.Version.Major & "." & My.Application.Info.Version.Minor & "." & My.Application.Info.Version.Revision
     End Sub
 
+    Private Sub OpenLinkURL(ByVal aLink As Windows.Forms.LinkLabel)
+        Try
+            Diagnostics.Process.Start(aLink.Text.Substring(aLink.LinkArea.Start, aLink.LinkArea.Length))
+        Catch ex As System.Exception
+            'g_MapWin.ShowErrorDialog(ex)
+        End Try
+    End Sub
+
+    Private Sub lblFAQLink_LinkClicked(sender As Object, e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles lblFAQLink.LinkClicked
+        OpenLinkURL(lblFAQLink)
+    End Sub
+
     Private Sub txtTestPath_Click(sender As Object, e As System.EventArgs) Handles txtTestPath.Click
         With cdlSave
             .Title = "Open the directory containing PeakFQ test data"
