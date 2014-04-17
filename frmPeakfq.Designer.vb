@@ -375,9 +375,9 @@
         Me.lblLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblLOTest.Location = New System.Drawing.Point(495, 23)
         Me.lblLOTest.Name = "lblLOTest"
-        Me.lblLOTest.Size = New System.Drawing.Size(154, 13)
+        Me.lblLOTest.Size = New System.Drawing.Size(146, 13)
         Me.lblLOTest.TabIndex = 8
-        Me.lblLOTest.Text = "Global Low Outlier Test Option:"
+        Me.lblLOTest.Text = "Global PILF (LO) Test Option:"
         '
         'cboLOTest
         '
@@ -1320,9 +1320,9 @@
         Me.lblSpec.Location = New System.Drawing.Point(336, 56)
         Me.lblSpec.Name = "lblSpec"
         Me.lblSpec.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSpec.Size = New System.Drawing.Size(102, 14)
+        Me.lblSpec.Size = New System.Drawing.Size(94, 14)
         Me.lblSpec.TabIndex = 19
-        Me.lblSpec.Text = "PKFQWin Spec File:"
+        Me.lblSpec.Text = "PeakFQ Spec File:"
         '
         'lblData
         '

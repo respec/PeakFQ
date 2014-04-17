@@ -564,9 +564,9 @@ FileCancel:
             .CellValue(1, 9) = "Sqr Err"
             .CellValue(0, 10) = "Low Hist"
             .CellValue(1, 10) = "Peak"
-            .CellValue(0, 11) = "Lo-Outlier"
+            .CellValue(0, 11) = "PILF (LO)"
             .CellValue(1, 11) = "Threshold"
-            .CellValue(0, 12) = "Lo Out"
+            .CellValue(0, 12) = "PILF (LO)"
             .CellValue(1, 12) = "Test"
             .CellValue(0, 13) = "High Sys"
             .CellValue(1, 13) = "Peak"
@@ -680,7 +680,7 @@ FileCancel:
         lFeedback &= lSectionFooter
 
         lName = System.Reflection.Assembly.GetExecutingAssembly.FullName
-        If lFeedbackForm.ShowFeedback(lName, lEmail, lMessage, lFeedback, "", False, False, "") Then
+        If lFeedbackForm.ShowFeedback(lName, lEmail, lMessage, lFeedback, False, False, False, PathNameOnly(System.Reflection.Assembly.GetExecutingAssembly.Location)) Then
             Dim lFeedbackCollection As New System.Collections.Specialized.NameValueCollection
             lFeedbackCollection.Add("name", Trim(lName))
             lFeedbackCollection.Add("email", Trim(lEmail))
@@ -1252,15 +1252,17 @@ FileCancel:
 
     Private Sub tabThresholds_GotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles tabThresholds.GotFocus
         ProcessGrid()
-        If CurStationIndex < 0 Then cboStation.SelectedIndex = 0
-        With grdThresh 'At this point, there should already be one instantiated with header rows
-            .Enabled = True
-            .BackColor = SystemColors.Control
-        End With
-        With grdInterval 'At this point, there should already be one instantiated with header rows
-            .Enabled = True
-            .BackColor = SystemColors.Control
-        End With
+        If cboStation.Items.Count > 0 Then
+            If CurStationIndex < 0 Then cboStation.SelectedIndex = 0
+            With grdThresh 'At this point, there should already be one instantiated with header rows
+                .Enabled = True
+                .BackColor = SystemColors.Control
+            End With
+            With grdInterval 'At this point, there should already be one instantiated with header rows
+                .Enabled = True
+                .BackColor = SystemColors.Control
+            End With
+        End If
     End Sub
 
     Private Sub cmdAddInt_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdAddInt.Click
@@ -1922,14 +1924,14 @@ FileCancel:
                     lX(0) = lXVals(i) 'lSysPP(i)
                     lY(0) = lYVals(i) '10 ^ lPkLog(i)
                     If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
-                        lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.UserDefined)
+                        lCurve = lPane.AddCurve("PILF (LO) Threshold", lX, lY, Color.Red, SymbolType.UserDefined)
                         lCurve.Symbol.UserSymbol = lLOThreshSymbol
                         lCurve.Symbol.Fill.Type = FillType.Solid
                         'lCurve.Symbol.Size = 15
                         'lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.Circle)
                         'lCurve.Label.IsVisible = False
                     ElseIf lY(0) < lGBCrit Then
-                        lCurve = lPane.AddCurve("Low Outlier", lX, lY, Color.Black, SymbolType.XCross)
+                        lCurve = lPane.AddCurve("PILF (LO)", lX, lY, Color.Black, SymbolType.XCross)
                     Else
                         If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
                             lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Triangle)
@@ -2070,11 +2072,11 @@ FileCancel:
                                  DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf
         If PfqPrj.Stations(lStnInd).SkewOpt = 1 Then
             lWarning &= lNZero & " Zeroes not displayed" & vbCrLf & _
-                        lNLow & " Peaks below Low Outlier Threshold " & vbCrLf & lLOTestStr
+                        lNLow & " Peaks below PILF (LO) Threshold " & vbCrLf & lLOTestStr
         Else
             lWarning &= DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf & _
                         lNZero & " Zeroes not displayed" & vbCrLf & _
-                        lNLow & " Peaks below Low Outlier Threshold " & vbCrLf & lLOTestStr
+                        lNLow & " Peaks below PILF (LO) Threshold " & vbCrLf & lLOTestStr
         End If
         Dim lText As New TextObj(lWarning, 0.6, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction

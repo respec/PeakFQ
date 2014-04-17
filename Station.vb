@@ -523,7 +523,11 @@ Friend Class pfqStation
         If Len(pCEndYear) > 0 Then s = s & pad & pCEndYear & vbCrLf
         If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
         If Len(pCHistoric) > 0 Then s = s & pad & pCHistoric & vbCrLf
-        If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        If pHistoricPeriod Then
+            s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        Else
+            s = s & pad & "'NO Historic Period in use" & vbCrLf
+        End If
         'write any interval data or updated peak data
         For Each vData As PeakDataType In pPeakData
             If Not PeakDataOrigContains(vData) Then 'new or revised peak
@@ -615,7 +619,11 @@ Friend Class pfqStation
         If pEndYear > 0 Then s = s & pad & "EndYear " & CStr(pEndYear) & vbCrLf
         If Len(defsta.CHistoric) > 0 Then s = s & pad & defsta.CHistoric & vbCrLf
         'If pHistoricPeriod AndAlso pHistoricPeriod <> defsta.HistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
-        If pHistoricPeriod Then s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        If pHistoricPeriod Then
+            s = s & pad & "HistPeriod " & CStr(pEndYear - pBegYear + 1) & vbCrLf
+        Else
+            s = s & pad & "'NO Historic Period in use" & vbCrLf
+        End If
         If Len(defsta.CSkewOpt) > 0 Then s = s & pad & defsta.CSkewOpt & vbCrLf
         If pSkewOpt <> defsta.SkewOpt Then s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
         If Len(defsta.CGenSkew) > 0 Then s = s & pad & defsta.CGenSkew & vbCrLf
