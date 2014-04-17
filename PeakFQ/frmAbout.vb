@@ -2,7 +2,7 @@
 Public Class frmAbout
 
     Private Sub frmAbout_Load(sender As Object, e As System.EventArgs) Handles Me.Load
-        lblVersion.Text = "PKFQWin Version " & My.Application.Info.Version.Major & "." & My.Application.Info.Version.Minor & "." & My.Application.Info.Version.Revision
+        lblVersion.Text = "PeaKFQ Version " & My.Application.Info.Version.Major & "." & My.Application.Info.Version.Minor & "." & My.Application.Info.Version.Revision
     End Sub
 
     Private Sub OpenLinkURL(ByVal aLink As Windows.Forms.LinkLabel)
