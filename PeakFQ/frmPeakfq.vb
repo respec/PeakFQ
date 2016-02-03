@@ -1765,6 +1765,7 @@ FileCancel:
         Dim lIntLwr(499) As Single
         Dim lIntUpr(499) As Single
         Dim lIntPPos(499) As Single
+        Dim lIntYr(499) As Integer
         Dim lNT As Integer
         Dim lThrDef As Boolean
         Dim lWeiba As Single
@@ -1797,6 +1798,7 @@ FileCancel:
         Dim lY(0) As Double
         Dim lX2(1) As Double
         Dim lY2(1) As Double
+        Dim lIsInterval As Boolean = False
         Dim lColor As System.Drawing.Color
         'build threshold symbol
         Dim lThreshSymbol As New System.Drawing.Drawing2D.GraphicsPath
@@ -1806,6 +1808,24 @@ FileCancel:
         lThreshSymbol.AddLine(-lSize, -2 * lSize, 0, 0)
         lThreshSymbol.StartFigure()
         lThreshSymbol.AddLine(-lSize, 0, lSize, 0)
+        Dim lThreshSymbolDown As New System.Drawing.Drawing2D.GraphicsPath
+        lThreshSymbolDown.AddLine(lSize, 0, lSize, 2 * lSize)
+        lThreshSymbolDown.AddLine(lSize, 2 * lSize, 2 * lSize, 2 * lSize)
+        lThreshSymbolDown.AddLine(2 * lSize, 2 * lSize, 0, 4 * lSize)
+        lThreshSymbolDown.AddLine(0, 4 * lSize, -2 * lSize, 2 * lSize)
+        lThreshSymbolDown.AddLine(-2 * lSize, 2 * lSize, -lSize, 2 * lSize)
+        lThreshSymbolDown.AddLine(-lSize, 2 * lSize, -lSize, 0)
+        lThreshSymbolDown.StartFigure()
+        lThreshSymbolDown.AddLine(-3 * lSize, 0, 3 * lSize, 0)
+        Dim lThreshSymbolUp As New System.Drawing.Drawing2D.GraphicsPath
+        lThreshSymbolUp.AddLine(lSize, 0, lSize, -2 * lSize)
+        lThreshSymbolUp.AddLine(lSize, -2 * lSize, 2 * lSize, -2 * lSize)
+        lThreshSymbolUp.AddLine(2 * lSize, -2 * lSize, 0, -4 * lSize)
+        lThreshSymbolUp.AddLine(0, -4 * lSize, -2 * lSize, -2 * lSize)
+        lThreshSymbolUp.AddLine(-2 * lSize, -2 * lSize, -lSize, -2 * lSize)
+        lThreshSymbolUp.AddLine(-lSize, -2 * lSize, -lSize, 0)
+        lThreshSymbolUp.StartFigure()
+        lThreshSymbolUp.AddLine(-3 * lSize, 0, 3 * lSize, 0)
         'build low outlier threshold
         Dim lLOThreshSymbol As New System.Drawing.Drawing2D.GraphicsPath
         lLOThreshSymbol.AddEllipse(-lSize, -lSize, 2 * lSize, 2 * lSize)
@@ -1826,7 +1846,7 @@ FileCancel:
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                      lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
                      lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lIntPPos, _
-                     lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
+                     lIntYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
                      lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
 
@@ -1872,11 +1892,23 @@ FileCancel:
         lYAxis.IsVisible = True
         lYAxis.Scale.IsVisible = True
         lCurve = lPane.AddCurve("Fitted frequency", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve.Line.Width = 2
+
+        'LO Threshold
+        If lGBCrit > -99 Then
+            lX2(0) = 1.0
+            lX2(1) = lTxProb(1)
+            lY2(0) = lGBCrit
+            lY2(1) = lGBCrit
+            lCurve = lPane.AddCurve("PILF (LO) Threshold", lX2, lY2, Color.Black, SymbolType.None)
+            lCurve.Line.Width = 2
+        End If
 
         'observed peaks
         lCurves = New atcCollection
         ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
         For i = 0 To lNPkPlt - 1
+            lIsInterval = False
             lYVals(i) = 10 ^ lPkLog(i)
             If lYVals(i) > 0.001 AndAlso lYVals(i) < 10000000000.0 Then
                 If lYVals(i) > lPMax Then lPMax = lYVals(i)
@@ -1893,61 +1925,81 @@ FileCancel:
                         If j > 0 Then Exit For 'don't exit loop if this is the default (0th) threshold
                     End If
                 Next
-                If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
-                    lKey = "LO Threshold"
-                ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
-                    lKey = lXQual(i)
-                    If lKey.Length > 0 AndAlso lThresh >= 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
-                Else
-                    lKey = "Low Outlier"
-                End If
-                If lKey = "LO Threshold" AndAlso lCurves.Keys.Contains(lKey) Then
-                    'don't want duplicates for LO Threshold, set this to normal peak
-                    Dim lProb As Double = lCurves.ItemByKey(lKey).points(0).x
-                    If lXVals(i) > lProb Then 'make leftmost LO the indicator
-                        lCurves.ItemByKey(lKey).points(0).x = lXVals(i)
-                        lXVals(i) = lProb
+                For j = 0 To lNInt - 1
+                    If Math.Abs(lPkYear(i)) = lIntYr(j) Then 'this year is a flow interval, don't plot a point
+                        lIsInterval = True
+                        Exit For
                     End If
-                    lKey = lXQual(i) & CStr(lThresh)
-                End If
-                If lCurves.Keys.Contains(lKey) Then 'add point to this curve
-                    lCurve = lCurves.ItemByKey(lKey)
-                    lCurve.AddPoint(lXVals(i), lYVals(i))
-                Else 'need a new curve
-                    If lThresh = 0 Then 'use specific color for default threshold
-                        lColor = Color.DarkCyan
-                    ElseIf lThresh > 0 Then 'match color of threshold
-                        lColor = ThreshColors(lThresh)
-                    Else
-                        lColor = Color.Black
-                    End If
-                    lX(0) = lXVals(i) 'lSysPP(i)
-                    lY(0) = lYVals(i) '10 ^ lPkLog(i)
-                    If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
-                        lCurve = lPane.AddCurve("PILF (LO) Threshold", lX, lY, Color.Red, SymbolType.UserDefined)
-                        lCurve.Symbol.UserSymbol = lLOThreshSymbol
-                        lCurve.Symbol.Fill.Type = FillType.Solid
-                        'lCurve.Symbol.Size = 15
-                        'lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.Circle)
-                        'lCurve.Label.IsVisible = False
-                    ElseIf lY(0) < lGBCrit Then
-                        lCurve = lPane.AddCurve("PILF (LO)", lX, lY, Color.Black, SymbolType.XCross)
-                    Else
-                        If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
-                            lCurve = lPane.AddCurve("Historic Peaks", lX, lY, lColor, SymbolType.Triangle)
-                        ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
-                            lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
-                        ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or _
-                               lXQual(i).Contains("3") Or lXQual(i).Contains("8") Or lXQual(i).Contains("3+8") Then
-                            lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
-                        ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
-                            lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
-                        Else
-                            lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, lColor, SymbolType.Circle)
+                Next
+                If Not lIsInterval Then
+                    'If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
+                    '    lKey = "LO Threshold"
+                    'ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
+                    If lYVals(i) > lGBCrit Then 'above low outlier threshold
+                        lKey = lXQual(i)
+                        If lKey.Length > 0 Then
+                            If lKey <> "H" AndAlso lKey <> "7" AndAlso lThresh >= 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
                         End If
+                    Else
+                        lKey = "Low Outlier"
                     End If
-                    lCurve.Line.IsVisible = False
-                    lCurves.Add(lKey, lCurve)
+                    'If lKey = "LO Threshold" AndAlso lCurves.Keys.Contains(lKey) Then
+                    '    'don't want duplicates for LO Threshold, set this to normal peak
+                    '    Dim lProb As Double = lCurves.ItemByKey(lKey).points(0).x
+                    '    If lXVals(i) > lProb Then 'make leftmost LO the indicator
+                    '        lCurves.ItemByKey(lKey).points(0).x = lXVals(i)
+                    '        lXVals(i) = lProb
+                    '    End If
+                    '    lKey = lXQual(i) & CStr(lThresh)
+                    'End If
+                    If lCurves.Keys.Contains(lKey) Then 'add point to this curve
+                        lCurve = lCurves.ItemByKey(lKey)
+                        lCurve.AddPoint(lXVals(i), lYVals(i))
+                    Else 'need a new curve
+                        If lThresh = 0 Then 'use specific color for default threshold
+                            lColor = Color.DarkCyan
+                        ElseIf lThresh > 0 Then 'match color of threshold
+                            lColor = ThreshColors(lThresh)
+                        Else
+                            lColor = Color.Black
+                        End If
+                        lX(0) = lXVals(i) 'lSysPP(i)
+                        lY(0) = lYVals(i) '10 ^ lPkLog(i)
+                        'If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
+                        '    lX2(0) = 1.0
+                        '    lX2(1) = lTxProb(1)
+                        '    lY2(0) = lY(0)
+                        '    lY2(1) = lY(0)
+                        '    lCurve = lPane.AddCurve("PILF (LO) Threshold", lX2, lY2, Color.Black, SymbolType.None)
+                        '    lCurve.Line.Width = 2
+                        '    'lCurve.Symbol.UserSymbol = lLOThreshSymbol
+                        '    'lCurve.Symbol.Fill.Type = FillType.Solid
+                        '    'lCurve.Symbol.Size = 15
+                        '    'lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.Circle)
+                        '    'lCurve.Label.IsVisible = False
+                        'ElseIf lY(0) < lGBCrit Then
+                        If lY(0) < lGBCrit Then
+                            lCurve = lPane.AddCurve("PILF (LO)", lX, lY, Color.Black, SymbolType.Circle)
+                            lCurve.Line.IsVisible = False
+                        Else
+                            If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
+                                lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Pink, SymbolType.Triangle)
+                                lCurve.Symbol.Fill.Type = FillType.Solid
+                            ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
+                                lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
+                            ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or _
+                                   lXQual(i).Contains("3") Or lXQual(i).Contains("8") Or lXQual(i).Contains("3+8") Then
+                                lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
+                            ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
+                                lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
+                            Else
+                                lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Turquoise, SymbolType.Circle)
+                                lCurve.Symbol.Fill.Type = FillType.Solid
+                            End If
+                            lCurve.Line.IsVisible = False
+                        End If
+                        lCurves.Add(lKey, lCurve)
+                    End If
                 End If
             End If
         Next
@@ -2000,7 +2052,7 @@ FileCancel:
             End If
             lY2(1) = lIntUpr(i)
             If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
-            lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Green, SymbolType.HDash)
+            lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Turquoise, SymbolType.HDash)
             If i > 0 Then
                 lCurve.Label.IsVisible = False
             End If
@@ -2032,7 +2084,9 @@ FileCancel:
                     Else
                         lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
                     End If
-                    lCurve.Symbol.UserSymbol = lThreshSymbol
+                    lCurve.Symbol.UserSymbol = lThreshSymbolUp
+                    lCurve.Symbol.Size = 5
+                    lCurve.Symbol.Fill.Type = FillType.Solid
                     lCurve.Line.IsVisible = False
                     'now plot symbol at appropriate scale
                     If lThrDef Then
@@ -2040,10 +2094,11 @@ FileCancel:
                     Else
                         lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
                     End If
-                    lCurve.Symbol.UserSymbol = lThreshSymbol
+                    lCurve.Symbol.UserSymbol = lThreshSymbolUp
                     lCurve.Line.IsVisible = False
                     lCurve.Label.IsVisible = False
-                    lCurve.Symbol.Size = 7 * Math.Sqrt(lNObsTh(i))
+                    lCurve.Symbol.Size = 5 '7 * Math.Sqrt(lNObsTh(i))
+                    lCurve.Symbol.Fill.Type = FillType.Solid
                     lCurve.Symbol.Border.Width = 2
                 End If
             End If
