@@ -2018,7 +2018,7 @@ FileCancel:
             End If
             lXVals(j) = lTxProb(i)
         Next
-        lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        lCurve = lPane.AddCurve(CInt(100 * PfqPrj.ConfidenceLimits) & "% Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
             j = i - lNPlCL1
