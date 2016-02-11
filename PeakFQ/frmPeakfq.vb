@@ -943,6 +943,8 @@ FileCancel:
                         .CellEditable(aRow, 15) = True
                         .CellColor(aRow, 15) = Color.White
                     End If
+                    ProcessGrid()
+                    UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
                 ElseIf aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
                     lSYear = Integer.Parse(.CellValue(aRow, 2))
                     lEYear = Integer.Parse(.CellValue(aRow, 3))
@@ -1350,22 +1352,25 @@ FileCancel:
                 lPk = Math.Abs(lPeak.Value)
                 If lYr < lYearMin Then lYearMin = lYr
                 If lYr > lYearMax Then lYearMax = lYr
-                If lYr < lStn.BegYear Or lYr > lStn.EndYear Then 'set code to indicate peak won't be used
-                    lCode = "D"
-                ElseIf lPeak.Code Is Nothing Then
-                    lCode = ""
-                ElseIf lPeak.Code.Length > 1 Then
-                    If lPeak.Code.Contains("3") Or lPeak.Code.Contains("D") Then 'check for code 3 or D first - never used
-                        lCode = "D"
-                    ElseIf lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'next check for historic first
-                        lCode = "H"
-                    ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
-                        'urban/regulated peak
-                        lCode = "K"
-                    End If
+                If lPeak.LowerLimit >= 0 AndAlso lPeak.UpperLimit > 0 AndAlso Math.Abs(lPeak.UpperLimit - lPeak.LowerLimit) > 0.1 Then
+                    'will be plotted after peaks
                 Else
-                    lCode = lPeak.Code
-                End If
+                    If lYr < lStn.BegYear Or lYr > lStn.EndYear Then 'set code to indicate peak won't be used
+                        lCode = "D"
+                    ElseIf lPeak.Code Is Nothing Then
+                        lCode = ""
+                    ElseIf lPeak.Code.Length > 1 Then
+                        If lPeak.Code.Contains("3") Or lPeak.Code.Contains("D") Then 'check for code 3 or D first - never used
+                            lCode = "D"
+                        ElseIf lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'next check for historic first
+                            lCode = "H"
+                        ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
+                            'urban/regulated peak
+                            lCode = "K"
+                        End If
+                    Else
+                        lCode = lPeak.Code
+                    End If
                     If (lCode = "H" Or lCode = "7") And Not lStn.HistoricPeriod Then 'historic period not in use
                         lCode = "D" 'set code to not be used
                     End If
@@ -1387,7 +1392,7 @@ FileCancel:
                             Case "L", "4"
                                 lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, Color.Black, SymbolType.Diamond)
                             Case Else
-                                lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Black, SymbolType.Circle)
+                                lCurve = lPane.AddCurve("Gaged Peaks", lX, lY, Color.Black, SymbolType.Circle)
                         End Select
                         lCurve.Line.IsVisible = False
                         lCurves.Add(lCode, lCurve)
@@ -1396,6 +1401,7 @@ FileCancel:
                     If lPk > 0 AndAlso lPk < lDataMin Then lDataMin = lPk
                     If lPk > lDataMax Then lDataMax = lPk
                 End If
+            End If
         Next
         'set y-axis range
         lYAxis.Scale.MaxAuto = False
@@ -1451,24 +1457,26 @@ FileCancel:
                 '1st curve is lower limit down to bottom of graph
                 lThrshDates(0) = vThresh.SYear
                 lThrshDates(1) = vThresh.EYear + 0.75
-                lThrshVals(0) = vThresh.LowerLimit
-                lThrshVals(1) = vThresh.LowerLimit
+                lThrshVals(0) = 1.005 * Math.Max(vThresh.LowerLimit, lYAxis.Scale.Min)
+                lThrshVals(1) = lThrshVals(0) ' vThresh.LowerLimit
                 lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-                lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
-                    '2nd curve fills gap between threshold limits with white fill
-                    lThrshVals(0) = vThresh.UpperLimit
-                    lThrshVals(1) = vThresh.UpperLimit
-                    lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-                    lCurve.Line.Fill = New Fill(Color.White, Color.White)
-                    lCurve.Label.IsVisible = False
-                    '3rd curve shows upper limit to top of graph
-                    lThrshVals(0) = 1.0E+20
-                    lThrshVals(1) = 1.0E+20
-                    lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-                    lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                    lCurve.Label.IsVisible = False
-                End If
+                lCurve.Line.Width = 4
+                'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                'If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
+                '2nd curve fills gap between threshold limits with white fill
+                lThrshVals(0) = 0.98 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
+                lThrshVals(1) = lThrshVals(0) ' vThresh.UpperLimit
+                lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                lCurve.Line.Width = 4
+                'lCurve.Line.Fill = New Fill(Color.White, Color.White)
+                'lCurve.Label.IsVisible = False
+                ''3rd curve shows upper limit to top of graph
+                'lThrshVals(0) = 1.0E+20
+                'lThrshVals(1) = 1.0E+20
+                'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                lCurve.Label.IsVisible = False
+                'End If
             End If
         Next
 
@@ -1539,6 +1547,8 @@ FileCancel:
             .IsAlignGrids = True
             .IsFontsScaled = False
             .IsPenWidthScaled = False
+            .Margin.Top = 20
+            .Margin.Bottom = 20
             With .XAxis
                 If aType = "T" Then
                     .Scale.FontSpec.Size = 8
@@ -1935,7 +1945,7 @@ FileCancel:
                     'If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
                     '    lKey = "LO Threshold"
                     'ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
-                    If lYVals(i) > lGBCrit Then 'above low outlier threshold
+                    If (lYVals(i) - lGBCrit) > -0.01 Then 'above low outlier threshold
                         lKey = lXQual(i)
                         If lKey.Length > 0 Then
                             If lKey <> "H" AndAlso lKey <> "7" AndAlso lThresh >= 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
@@ -1984,7 +1994,6 @@ FileCancel:
                         Else
                             If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
                                 lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Pink, SymbolType.Triangle)
-                                lCurve.Symbol.Fill.Type = FillType.Solid
                             ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
                                 lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
                             ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or _
@@ -1993,9 +2002,9 @@ FileCancel:
                             ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
                                 lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
                             Else
-                                lCurve = lPane.AddCurve("Systematic Peaks", lX, lY, Color.Turquoise, SymbolType.Circle)
-                                lCurve.Symbol.Fill.Type = FillType.Solid
+                                lCurve = lPane.AddCurve("Gaged Peaks", lX, lY, Color.Turquoise, SymbolType.Circle)
                             End If
+                            lCurve.Symbol.Fill.Type = FillType.Solid
                             lCurve.Line.IsVisible = False
                         End If
                         lCurves.Add(lKey, lCurve)
@@ -2082,23 +2091,24 @@ FileCancel:
                     If lThrDef Then
                         lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
                     Else
-                        lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+                        lCurve = lPane.AddCurve(lNObsTh(i) & "Censored Peaks (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
                     End If
-                    lCurve.Symbol.UserSymbol = lThreshSymbolUp
+                    lCurve.Symbol.UserSymbol = lThreshSymbolDown
                     lCurve.Symbol.Size = 5
-                    lCurve.Symbol.Fill.Type = FillType.Solid
-                    lCurve.Line.IsVisible = False
+                    If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
+                    'lCurve.Symbol.Border.Width = 2
+                    'lCurve.Line.IsVisible = False
                     'now plot symbol at appropriate scale
                     If lThrDef Then
                         lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
                     Else
                         lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
                     End If
-                    lCurve.Symbol.UserSymbol = lThreshSymbolUp
+                    lCurve.Symbol.UserSymbol = lThreshSymbolDown
                     lCurve.Line.IsVisible = False
                     lCurve.Label.IsVisible = False
                     lCurve.Symbol.Size = 5 '7 * Math.Sqrt(lNObsTh(i))
-                    lCurve.Symbol.Fill.Type = FillType.Solid
+                    If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
                     lCurve.Symbol.Border.Width = 2
                 End If
             End If
@@ -2172,6 +2182,18 @@ FileCancel:
             Next lInd
             aStr(lArrayInd) = Trim(lStr)
         Next lArrayInd
+    End Sub
+
+    Private Sub zgcThresh_MouseClick1(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles zgcThresh.MouseClick
+        With zgcThresh.MasterPane.PaneList(0).Legend 'pPane.Legend
+            .Position = LegendPos.Float
+            .Location = New Location((e.X - zgcThresh.MasterPane.Rect.Left) / zgcThresh.Width, _
+                                     (e.Y - zgcThresh.MasterPane.Rect.Top) / zgcThresh.MasterPane.Rect.Height, _
+                                     CoordType.PaneFraction)
+            .IsVisible = True
+        End With
+        zgcThresh.Refresh()
+
     End Sub
 
     Private Sub zgcThresh_Paint(ByVal sender As Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles zgcThresh.Paint
