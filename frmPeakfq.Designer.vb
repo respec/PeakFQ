@@ -106,13 +106,14 @@
         Me.lblGlobalAnalysis = New System.Windows.Forms.Label()
         Me.grdSpecs = New atcControls.atcGrid()
         Me.tabThresholds = New System.Windows.Forms.TabPage()
-        Me.lblB17BWarning = New System.Windows.Forms.Label()
         Me.spltInputViewTab = New System.Windows.Forms.SplitContainer()
         Me.spltThreshIntervalGrids = New System.Windows.Forms.SplitContainer()
         Me.lblThresholds = New System.Windows.Forms.Label()
         Me.grdThresh = New atcControls.atcGrid()
         Me.lblIntervals = New System.Windows.Forms.Label()
         Me.grdInterval = New atcControls.atcGrid()
+        Me.lblB17BWarning = New System.Windows.Forms.Label()
+        Me.lblLegendMove = New System.Windows.Forms.Label()
         Me.zgcThresh = New ZedGraph.ZedGraphControl()
         Me.cboDataGraphFormat = New System.Windows.Forms.ComboBox()
         Me.lblDataGraphFormat = New System.Windows.Forms.Label()
@@ -340,8 +341,8 @@
         'sstPfq
         '
         Me.sstPfq.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.sstPfq.Controls.Add(Me.tabStationSpecs)
         Me.sstPfq.Controls.Add(Me.tabThresholds)
         Me.sstPfq.Controls.Add(Me.tabOutput)
@@ -416,8 +417,8 @@
         Me.grdSpecs.AllowHorizontalScrolling = True
         Me.grdSpecs.AllowNewValidValues = False
         Me.grdSpecs.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.grdSpecs.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdSpecs.Fixed3D = False
         Me.grdSpecs.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -431,7 +432,6 @@
         '
         'tabThresholds
         '
-        Me.tabThresholds.Controls.Add(Me.lblB17BWarning)
         Me.tabThresholds.Controls.Add(Me.spltInputViewTab)
         Me.tabThresholds.Controls.Add(Me.cboDataGraphFormat)
         Me.tabThresholds.Controls.Add(Me.lblDataGraphFormat)
@@ -448,20 +448,11 @@
         Me.tabThresholds.Text = "Input/View"
         Me.tabThresholds.UseVisualStyleBackColor = True
         '
-        'lblB17BWarning
-        '
-        Me.lblB17BWarning.AutoSize = True
-        Me.lblB17BWarning.Location = New System.Drawing.Point(682, 7)
-        Me.lblB17BWarning.Name = "lblB17BWarning"
-        Me.lblB17BWarning.Size = New System.Drawing.Size(349, 14)
-        Me.lblB17BWarning.TabIndex = 46
-        Me.lblB17BWarning.Text = "NOTE: Threshold and Interval Data are not used in Bulletin 17B analysis"
-        '
         'spltInputViewTab
         '
         Me.spltInputViewTab.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.spltInputViewTab.Location = New System.Drawing.Point(6, 30)
         Me.spltInputViewTab.Name = "spltInputViewTab"
         '
@@ -471,6 +462,8 @@
         '
         'spltInputViewTab.Panel2
         '
+        Me.spltInputViewTab.Panel2.Controls.Add(Me.lblB17BWarning)
+        Me.spltInputViewTab.Panel2.Controls.Add(Me.lblLegendMove)
         Me.spltInputViewTab.Panel2.Controls.Add(Me.zgcThresh)
         Me.spltInputViewTab.Size = New System.Drawing.Size(1098, 335)
         Me.spltInputViewTab.SplitterDistance = 672
@@ -510,8 +503,8 @@
         Me.grdThresh.AllowHorizontalScrolling = False
         Me.grdThresh.AllowNewValidValues = False
         Me.grdThresh.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.grdThresh.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdThresh.Fixed3D = False
         Me.grdThresh.LineColor = System.Drawing.SystemColors.Control
@@ -536,8 +529,8 @@
         Me.grdInterval.AllowHorizontalScrolling = False
         Me.grdInterval.AllowNewValidValues = False
         Me.grdInterval.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.grdInterval.CellBackColor = System.Drawing.SystemColors.Window
         Me.grdInterval.Fixed3D = False
         Me.grdInterval.LineColor = System.Drawing.SystemColors.Control
@@ -547,6 +540,25 @@
         Me.grdInterval.Size = New System.Drawing.Size(666, 206)
         Me.grdInterval.Source = Nothing
         Me.grdInterval.TabIndex = 12
+        '
+        'lblB17BWarning
+        '
+        Me.lblB17BWarning.AutoSize = True
+        Me.lblB17BWarning.Location = New System.Drawing.Point(-3, 0)
+        Me.lblB17BWarning.Name = "lblB17BWarning"
+        Me.lblB17BWarning.Size = New System.Drawing.Size(349, 14)
+        Me.lblB17BWarning.TabIndex = 48
+        Me.lblB17BWarning.Text = "NOTE: Threshold and Interval Data are not used in Bulletin 17B analysis"
+        '
+        'lblLegendMove
+        '
+        Me.lblLegendMove.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.lblLegendMove.AutoSize = True
+        Me.lblLegendMove.Location = New System.Drawing.Point(-3, 321)
+        Me.lblLegendMove.Name = "lblLegendMove"
+        Me.lblLegendMove.Size = New System.Drawing.Size(197, 14)
+        Me.lblLegendMove.TabIndex = 47
+        Me.lblLegendMove.Text = "NOTE: Click on graph to relocate legend"
         '
         'zgcThresh
         '
@@ -639,7 +651,7 @@
         'fraOutFile
         '
         Me.fraOutFile.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraOutFile.BackColor = System.Drawing.SystemColors.Control
         Me.fraOutFile.Controls.Add(Me._cmdOpenOut_0)
         Me.fraOutFile.Controls.Add(Me._lblOutFile_0)
@@ -672,8 +684,8 @@
         '_lblOutFile_0
         '
         Me._lblOutFile_0.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFile_0.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFile_0.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFile_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -689,8 +701,8 @@
         'fraAddOut
         '
         Me.fraAddOut.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraAddOut.BackColor = System.Drawing.SystemColors.Control
         Me.fraAddOut.Controls.Add(Me.lblEmpirical)
         Me.fraAddOut.Controls.Add(Me.cmdOpenEmpirical)
@@ -718,8 +730,8 @@
         'lblEmpirical
         '
         Me.lblEmpirical.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblEmpirical.BackColor = System.Drawing.SystemColors.Control
         Me.lblEmpirical.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblEmpirical.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -762,8 +774,8 @@
         'lblExportFile
         '
         Me.lblExportFile.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblExportFile.BackColor = System.Drawing.SystemColors.Control
         Me.lblExportFile.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblExportFile.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -886,8 +898,8 @@
         '_lblOutFile_1
         '
         Me._lblOutFile_1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFile_1.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFile_1.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFile_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1081,8 +1093,8 @@
         '_fraOutFileRes_1
         '
         Me._fraOutFileRes_1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._fraOutFileRes_1.BackColor = System.Drawing.SystemColors.Control
         Me._fraOutFileRes_1.Controls.Add(Me.cmdEmpiricalFileView)
         Me._fraOutFileRes_1.Controls.Add(Me.lblEmpiricalFileView)
@@ -1119,8 +1131,8 @@
         'lblEmpiricalFileView
         '
         Me.lblEmpiricalFileView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblEmpiricalFileView.BackColor = System.Drawing.SystemColors.Control
         Me.lblEmpiricalFileView.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblEmpiricalFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1149,8 +1161,8 @@
         'lblExportFileView
         '
         Me.lblExportFileView.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblExportFileView.BackColor = System.Drawing.SystemColors.Control
         Me.lblExportFileView.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblExportFileView.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1180,8 +1192,8 @@
         '_lblOutFileView_1
         '
         Me._lblOutFileView_1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFileView_1.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFileView_1.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFileView_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1197,7 +1209,7 @@
         'fraGraphics
         '
         Me.fraGraphics.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraGraphics.BackColor = System.Drawing.SystemColors.Control
         Me.fraGraphics.Controls.Add(Me.cmdGraph)
         Me.fraGraphics.Controls.Add(Me.lstGraphs)
@@ -1230,8 +1242,8 @@
         'lstGraphs
         '
         Me.lstGraphs.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lstGraphs.BackColor = System.Drawing.SystemColors.Window
         Me.lstGraphs.Cursor = System.Windows.Forms.Cursors.Default
         Me.lstGraphs.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1248,7 +1260,7 @@
         '_fraOutFileRes_0
         '
         Me._fraOutFileRes_0.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._fraOutFileRes_0.BackColor = System.Drawing.SystemColors.Control
         Me._fraOutFileRes_0.Controls.Add(Me._cmdOutFileView_0)
         Me._fraOutFileRes_0.Controls.Add(Me._lblOutFileView_0)
@@ -1282,8 +1294,8 @@
         '_lblOutFileView_0
         '
         Me._lblOutFileView_0.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me._lblOutFileView_0.BackColor = System.Drawing.SystemColors.Control
         Me._lblOutFileView_0.Cursor = System.Windows.Forms.Cursors.Default
         Me._lblOutFileView_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1311,7 +1323,7 @@
         'lblSpec
         '
         Me.lblSpec.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblSpec.AutoSize = True
         Me.lblSpec.BackColor = System.Drawing.SystemColors.Control
         Me.lblSpec.Cursor = System.Windows.Forms.Cursors.Default
@@ -1327,7 +1339,7 @@
         'lblData
         '
         Me.lblData.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.lblData.AutoSize = True
         Me.lblData.BackColor = System.Drawing.SystemColors.Control
         Me.lblData.Cursor = System.Windows.Forms.Cursors.Default
@@ -1378,6 +1390,7 @@
         Me.tabThresholds.PerformLayout()
         Me.spltInputViewTab.Panel1.ResumeLayout(False)
         Me.spltInputViewTab.Panel2.ResumeLayout(False)
+        Me.spltInputViewTab.Panel2.PerformLayout()
         CType(Me.spltInputViewTab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spltInputViewTab.ResumeLayout(False)
         Me.spltThreshIntervalGrids.Panel1.ResumeLayout(False)
@@ -1437,6 +1450,7 @@
     Friend WithEvents grdInterval As atcControls.atcGrid
     Friend WithEvents zgcThresh As ZedGraph.ZedGraphControl
     Public WithEvents cmdCodeLookup As System.Windows.Forms.Button
+    Friend WithEvents lblLegendMove As System.Windows.Forms.Label
     Friend WithEvents lblB17BWarning As System.Windows.Forms.Label
 #End Region
 End Class
