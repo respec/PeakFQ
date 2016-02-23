@@ -1321,6 +1321,7 @@ FileCancel:
         Dim lX(0) As Double
         Dim lY(0) As Double
         Dim i As Integer
+        Dim j As Integer
         Dim lPkCnt As Integer = -1
         Dim lHistCnt As Integer = -1
         Dim lYr As Integer
@@ -1343,6 +1344,16 @@ FileCancel:
             If vThresh.EYear > lYearMax Then lYearMax = vThresh.EYear
             If vThresh.LowerLimit > 0 AndAlso vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
             If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
+        Next
+
+        Dim lAllObs As New Generic.List(Of pfqStation.PeakDataType)
+        Dim lQ As pfqStation.PeakDataType
+        For i = lYearMin To lYearMax
+            lQ = New pfqStation.PeakDataType
+            lQ.Year = i
+            lQ.LowerLimit = -10000
+            lQ.UpperLimit = -10000
+            lAllObs.Add(lQ)
         Next
 
         lCurves = New atcCollection
@@ -1401,6 +1412,11 @@ FileCancel:
                     If lPk > 0 AndAlso lPk < lDataMin Then lDataMin = lPk
                     If lPk > lDataMax Then lDataMax = lPk
                 End If
+                If lYr >= lStn.BegYear AndAlso lYr <= lStn.EndYear Then
+                    i = lYr - lStn.BegYear
+                    lAllObs(i).LowerLimit = lPk
+                    lAllObs(i).UpperLimit = lPk
+                End If
             End If
         Next
         'set y-axis range
@@ -1416,6 +1432,7 @@ FileCancel:
         lYAxis.Scale.IsVisible = True
 
         'plot any interval data
+        Dim lIntervalsPlotted As Boolean = False
         i = 0
         For Each vData As pfqStation.PeakDataType In lStn.PeakData
             If vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.1 Then
@@ -1428,10 +1445,16 @@ FileCancel:
                 End If
                 lThrshVals(1) = vData.UpperLimit
                 lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
-                If i > 0 Then
+                If lIntervalsPlotted Then
                     lCurve.Label.IsVisible = False
                 End If
+                lIntervalsPlotted = True
                 i += 1
+                If vData.Year >= lStn.BegYear AndAlso vData.Year <= lStn.EndYear Then
+                    j = vData.Year - lStn.BegYear
+                    lAllObs(j).LowerLimit = vData.LowerLimit
+                    lAllObs(j).UpperLimit = vData.UpperLimit
+                End If
             End If
         Next
 
@@ -1510,6 +1533,30 @@ FileCancel:
                     lAlreadyOnLegend = True
                 End If
                 lPrevYear = i
+            End If
+        Next
+
+        'plot peaks implied from thresholds
+        For Each lQ In lAllObs
+            If lQ.LowerLimit < -9999 Then
+                For Each vThresh In lStn.Thresholds
+                    If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
+                        If vThresh.LowerLimit > 0 Then
+                            'implied interval from 0 to lower threshold
+                            lThrshDates(0) = lQ.Year
+                            lThrshDates(1) = lQ.Year
+                            lThrshVals(0) = lYAxis.Scale.Min
+                            lThrshVals(1) = vThresh.LowerLimit
+                            lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
+                            If lIntervalsPlotted Then
+                                lCurve.Label.IsVisible = False
+                            End If
+                            lIntervalsPlotted = True
+                        End If
+                        Exit For
+                    End If
+                Next
+
             End If
         Next
 
