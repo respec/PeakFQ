@@ -1313,7 +1313,7 @@ FileCancel:
         Dim lThrshDates(1) As Double
         Dim lDataMin As Double = 10000
         Dim lDataMax As Double = -10000
-        Dim lLogFlag As Boolean = True
+        Dim lLogFlag As Boolean = (cmdLogReal.Text = "Real") 'True
         Dim lPane As GraphPane = zgcThresh.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
         Dim lCurve As LineItem = Nothing
@@ -1422,6 +1422,12 @@ FileCancel:
         'set y-axis range
         lYAxis.Scale.MaxAuto = False
         Scalit(lDataMin, lDataMax, lLogFlag, lYAxis.Scale.Min, lYAxis.Scale.Max)
+        If Not lLogFlag Then
+            lYAxis.Type = AxisType.Linear
+            lYAxis.Scale.Min = 0
+        Else
+            lYAxis.Type = AxisType.Log
+        End If
         'set x-axis range
         lPane.X2Axis.Scale.Min = lYearMin
         lPane.X2Axis.Scale.Max = lYearMax
@@ -1444,7 +1450,7 @@ FileCancel:
                     lThrshVals(0) = vData.LowerLimit
                 End If
                 lThrshVals(1) = vData.UpperLimit
-                lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
+                lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Black, SymbolType.HDash)
                 If lIntervalsPlotted Then
                     lCurve.Label.IsVisible = False
                 End If
@@ -1457,26 +1463,35 @@ FileCancel:
                 End If
             End If
         Next
+        'plot peaks implied from thresholds
+        For Each lQ In lAllObs
+            If lQ.LowerLimit < -9999 Then
+                For Each vThresh In lStn.Thresholds
+                    If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
+                        If vThresh.LowerLimit > 0 Then
+                            'implied interval from 0 to lower threshold
+                            lThrshDates(0) = lQ.Year
+                            lThrshDates(1) = lQ.Year
+                            lThrshVals(0) = lYAxis.Scale.Min
+                            lThrshVals(1) = vThresh.LowerLimit
+                            lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Black, SymbolType.HDash)
+                            If lIntervalsPlotted Then
+                                lCurve.Label.IsVisible = False
+                            End If
+                            lIntervalsPlotted = True
+                        End If
+                        Exit For
+                    End If
+                Next
+
+            End If
+        Next
 
         'thresholds
         i = 0
         For Each vThresh In lStn.Thresholds
             i += 1
             If i > 1 OrElse (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+19) Then
-                'If vThresh.LowerLimit <= lYAxis.Scale.Min Then
-                '    'add marker to indicate lower threshold boundary
-                '    lX(0) = (vThresh.SYear + vThresh.EYear) / 2
-                '    lY(0) = lYAxis.Scale.Min
-                '    lCurve = lPane.AddCurve("Lower Threshold " & i, lX, lY, ThreshColors(i - 1), SymbolType.UserDefined)
-                '    If vThresh.LowerLimit > 0 Then
-                '        lCurve.Symbol.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                '    Else
-                '        lCurve.Symbol.Fill = New Fill(Color.White, Color.White)
-                '    End If
-                '    lCurve.Symbol.Size = 9
-                '    lCurve.Symbol.UserSymbol = lThreshSymbol
-                '    lCurve.Label.IsVisible = False
-                'End If
                 '1st curve is lower limit down to bottom of graph
                 lThrshDates(0) = vThresh.SYear
                 lThrshDates(1) = vThresh.EYear + 0.75
@@ -1491,14 +1506,13 @@ FileCancel:
                 lThrshVals(1) = lThrshVals(0) ' vThresh.UpperLimit
                 lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
                 lCurve.Line.Width = 4
-                'lCurve.Line.Fill = New Fill(Color.White, Color.White)
-                'lCurve.Label.IsVisible = False
+                lCurve.Label.IsVisible = False
                 ''3rd curve shows upper limit to top of graph
                 'lThrshVals(0) = 1.0E+20
                 'lThrshVals(1) = 1.0E+20
                 'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
                 'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                lCurve.Label.IsVisible = False
+                'lCurve.Label.IsVisible = False
                 'End If
             End If
         Next
@@ -1536,29 +1550,14 @@ FileCancel:
             End If
         Next
 
-        'plot peaks implied from thresholds
-        For Each lQ In lAllObs
-            If lQ.LowerLimit < -9999 Then
-                For Each vThresh In lStn.Thresholds
-                    If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
-                        If vThresh.LowerLimit > 0 Then
-                            'implied interval from 0 to lower threshold
-                            lThrshDates(0) = lQ.Year
-                            lThrshDates(1) = lQ.Year
-                            lThrshVals(0) = lYAxis.Scale.Min
-                            lThrshVals(1) = vThresh.LowerLimit
-                            lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Green, SymbolType.HDash)
-                            If lIntervalsPlotted Then
-                                lCurve.Label.IsVisible = False
-                            End If
-                            lIntervalsPlotted = True
-                        End If
-                        Exit For
-                    End If
-                Next
-
-            End If
-        Next
+        'plot default threshold
+        lThrshDates(0) = lStn.BegYear
+        lThrshDates(1) = lStn.EndYear
+        lThrshVals(0) = 1.0E+20
+        lThrshVals(1) = 1.0E+20
+        lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, Color.LightCyan, SymbolType.None)
+        lCurve.Line.Fill = New Fill(Color.LightCyan, Color.LightCyan)
+        lCurve.Label.IsVisible = False
 
         zgcThresh.AxisChange()
         zgcThresh.Invalidate()
@@ -1666,7 +1665,11 @@ FileCancel:
 
     Private Sub SetYaxisDefaults(ByVal aYaxis As Axis, ByVal aType As String)
         With aYaxis
-            .Type = AxisType.Log
+            If aType = "T" Then
+                .Type = AxisType.Linear
+            Else
+                .Type = AxisType.Log
+            End If
             .Title.IsOmitMag = True
             .MajorGrid.IsVisible = True
             .MajorTic.IsOutside = False
@@ -2405,7 +2408,7 @@ FileCancel:
         grdSpecs.Refresh()
     End Sub
 
-    Private Sub chkExport_CheckStateChanged(sender As Object, e As System.EventArgs) Handles chkExport.CheckStateChanged
+    Private Sub chkExport_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkExport.CheckStateChanged
         If chkExport.CheckState = CheckState.Checked Then
             lblExportFile.Visible = True
             cmdOpenExport.Visible = True
@@ -2418,7 +2421,7 @@ FileCancel:
         End If
     End Sub
 
-    Private Sub chkEmpirical_CheckStateChanged(sender As Object, e As System.EventArgs) Handles chkEmpirical.CheckStateChanged
+    Private Sub chkEmpirical_CheckStateChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkEmpirical.CheckStateChanged
         If chkEmpirical.CheckState = CheckState.Checked Then
             lblEmpirical.Visible = True
             cmdOpenEmpirical.Visible = True
@@ -2431,7 +2434,7 @@ FileCancel:
         End If
     End Sub
 
-    Private Sub cmdOpenExport_Click(sender As Object, e As System.EventArgs) Handles cmdOpenExport.Click
+    Private Sub cmdOpenExport_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdOpenExport.Click
 
         cdlOpenSave.Title = "PeakFQ Export File"
         cdlOpenSave.Filter = "PeakFQ Export (*.exp)|*.exp|All Files (*.*)|*.*"
@@ -2449,7 +2452,7 @@ FileCancel:
 FileCancel:
     End Sub
 
-    Private Sub cmdOpenEmpirical_Click(sender As Object, e As System.EventArgs) Handles cmdOpenEmpirical.Click
+    Private Sub cmdOpenEmpirical_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdOpenEmpirical.Click
 
         cdlOpenSave.Title = "Empirical Frequency Curve Table File"
         cdlOpenSave.Filter = "PeakFQ Empirical Frequency Curve (*.emp)|*.exp|All Files (*.*)|*.*"
@@ -2467,7 +2470,7 @@ FileCancel:
 FileCancel:
     End Sub
 
-    Private Sub cmdExportFileView_Click(sender As Object, e As System.EventArgs) Handles cmdExportFileView.Click
+    Private Sub cmdExportFileView_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdExportFileView.Click
 
         If lblExportFileView.Text.Length > 0 And lblExportFileView.Text <> "(none)" Then
             System.Diagnostics.Process.Start("notepad.exe", lblExportFileView.Text)
@@ -2476,7 +2479,7 @@ FileCancel:
         End If
     End Sub
 
-    Private Sub cmdEmpiricalFileView_Click(sender As Object, e As System.EventArgs) Handles cmdEmpiricalFileView.Click
+    Private Sub cmdEmpiricalFileView_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmdEmpiricalFileView.Click
 
         If lblEmpiricalFileView.Text.Length > 0 And lblEmpiricalFileView.Text <> "(none)" Then
             System.Diagnostics.Process.Start("notepad.exe", lblEmpiricalFileView.Text)
@@ -2485,7 +2488,7 @@ FileCancel:
         End If
     End Sub
 
-    Private Sub spltInputViewTab_MouseUp(sender As Object, e As System.Windows.Forms.MouseEventArgs) Handles spltInputViewTab.MouseUp
+    Private Sub spltInputViewTab_MouseUp(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles spltInputViewTab.MouseUp
         With grdThresh.Source
             For i As Integer = 0 To .Columns - 1
                 grdThresh.SizeColumnToString(i, .CellValue(0, i))
@@ -2543,8 +2546,16 @@ FileCancel:
         MsgBox("Finished running PeakFQ runs from directory " & aInputPath)
     End Sub
 
-    Private Sub cmdCodeLookup_Click(sender As System.Object, e As System.EventArgs) Handles cmdCodeLookup.Click
+    Private Sub cmdCodeLookup_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdCodeLookup.Click
         frmCodeLookup.Show()
     End Sub
 
+    Private Sub cmdLogReal_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdLogReal.Click
+        If cmdLogReal.Text = "Log" Then
+            cmdLogReal.Text = "Real"
+        Else
+            cmdLogReal.Text = "Log"
+        End If
+        UpdateInputGraph()
+    End Sub
 End Class

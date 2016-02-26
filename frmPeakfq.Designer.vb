@@ -112,6 +112,7 @@
         Me.grdThresh = New atcControls.atcGrid()
         Me.lblIntervals = New System.Windows.Forms.Label()
         Me.grdInterval = New atcControls.atcGrid()
+        Me.cmdLogReal = New System.Windows.Forms.Button()
         Me.lblB17BWarning = New System.Windows.Forms.Label()
         Me.lblLegendMove = New System.Windows.Forms.Label()
         Me.zgcThresh = New ZedGraph.ZedGraphControl()
@@ -462,11 +463,12 @@
         '
         'spltInputViewTab.Panel2
         '
+        Me.spltInputViewTab.Panel2.Controls.Add(Me.cmdLogReal)
         Me.spltInputViewTab.Panel2.Controls.Add(Me.lblB17BWarning)
         Me.spltInputViewTab.Panel2.Controls.Add(Me.lblLegendMove)
         Me.spltInputViewTab.Panel2.Controls.Add(Me.zgcThresh)
         Me.spltInputViewTab.Size = New System.Drawing.Size(1098, 335)
-        Me.spltInputViewTab.SplitterDistance = 672
+        Me.spltInputViewTab.SplitterDistance = 498
         Me.spltInputViewTab.TabIndex = 45
         '
         'spltThreshIntervalGrids
@@ -485,7 +487,7 @@
         '
         Me.spltThreshIntervalGrids.Panel2.Controls.Add(Me.lblIntervals)
         Me.spltThreshIntervalGrids.Panel2.Controls.Add(Me.grdInterval)
-        Me.spltThreshIntervalGrids.Size = New System.Drawing.Size(672, 335)
+        Me.spltThreshIntervalGrids.Size = New System.Drawing.Size(498, 335)
         Me.spltThreshIntervalGrids.SplitterDistance = 108
         Me.spltThreshIntervalGrids.TabIndex = 45
         '
@@ -511,7 +513,7 @@
         Me.grdThresh.LineWidth = 1.0!
         Me.grdThresh.Location = New System.Drawing.Point(3, 17)
         Me.grdThresh.Name = "grdThresh"
-        Me.grdThresh.Size = New System.Drawing.Size(666, 91)
+        Me.grdThresh.Size = New System.Drawing.Size(492, 91)
         Me.grdThresh.Source = Nothing
         Me.grdThresh.TabIndex = 11
         '
@@ -537,9 +539,19 @@
         Me.grdInterval.LineWidth = 1.0!
         Me.grdInterval.Location = New System.Drawing.Point(3, 17)
         Me.grdInterval.Name = "grdInterval"
-        Me.grdInterval.Size = New System.Drawing.Size(666, 206)
+        Me.grdInterval.Size = New System.Drawing.Size(492, 206)
         Me.grdInterval.Source = Nothing
         Me.grdInterval.TabIndex = 12
+        '
+        'cmdLogReal
+        '
+        Me.cmdLogReal.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.cmdLogReal.Location = New System.Drawing.Point(550, 314)
+        Me.cmdLogReal.Name = "cmdLogReal"
+        Me.cmdLogReal.Size = New System.Drawing.Size(45, 21)
+        Me.cmdLogReal.TabIndex = 50
+        Me.cmdLogReal.Text = "Log"
+        Me.cmdLogReal.UseVisualStyleBackColor = True
         '
         'lblB17BWarning
         '
@@ -572,7 +584,7 @@
         Me.zgcThresh.ScrollMinX = 0.0R
         Me.zgcThresh.ScrollMinY = 0.0R
         Me.zgcThresh.ScrollMinY2 = 0.0R
-        Me.zgcThresh.Size = New System.Drawing.Size(422, 335)
+        Me.zgcThresh.Size = New System.Drawing.Size(596, 335)
         Me.zgcThresh.TabIndex = 13
         '
         'cboDataGraphFormat
@@ -1452,5 +1464,6 @@
     Public WithEvents cmdCodeLookup As System.Windows.Forms.Button
     Friend WithEvents lblLegendMove As System.Windows.Forms.Label
     Friend WithEvents lblB17BWarning As System.Windows.Forms.Label
+    Friend WithEvents cmdLogReal As System.Windows.Forms.Button
 #End Region
 End Class
