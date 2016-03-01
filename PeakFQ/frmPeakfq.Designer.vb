@@ -575,6 +575,8 @@
         'zgcThresh
         '
         Me.zgcThresh.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.zgcThresh.IsEnableVPan = False
+        Me.zgcThresh.IsEnableVZoom = False
         Me.zgcThresh.Location = New System.Drawing.Point(0, 0)
         Me.zgcThresh.Name = "zgcThresh"
         Me.zgcThresh.ScrollGrace = 0.0R
