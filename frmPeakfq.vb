@@ -16,7 +16,8 @@ Friend Class frmPeakfq
 
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
-    Friend ThreshColors(255) As System.Drawing.Color '= {Color.CornflowerBlue, Color.DarkSeaGreen, Color.DeepPink, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
+    'Friend ThreshColors(255) As System.Drawing.Color '= {Color.CornflowerBlue, Color.DarkSeaGreen, Color.DeepPink, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
+    Friend ThreshColors() As System.Drawing.Color = {Color.LightGoldenrodYellow, Color.Lime, Color.Cyan, Color.Magenta, Color.DeepPink, Color.Violet}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -616,20 +617,20 @@ FileCancel:
         End With
 
         InitGraph(zgcThresh, "T")
-        Dim lRed As Integer
-        Dim lGreen As Integer
-        Dim lBlue As Integer
-        Dim lOffset As Integer
-        For i = 0 To 255
-            lOffset = 10 * i
-            lRed = (20 * lOffset + 20) Mod 255
-            If lRed < 150 Then lRed += 100
-            lGreen = (130 * lOffset + 130) Mod 255
-            If lGreen < 150 Then lGreen += 100
-            lBlue = (240 * lOffset + 200) Mod 255
-            If lBlue < 150 Then lBlue += 100
-            ThreshColors(i) = Color.FromArgb(255, lRed, lGreen, lBlue)
-        Next
+        'Dim lRed As Integer
+        'Dim lGreen As Integer
+        'Dim lBlue As Integer
+        'Dim lOffset As Integer
+        'For i = 0 To 255
+        '    lOffset = 10 * i
+        '    lRed = (20 * lOffset + 20) Mod 255
+        '    If lRed < 150 Then lRed += 100
+        '    lGreen = (130 * lOffset + 130) Mod 255
+        '    If lGreen < 150 Then lGreen += 100
+        '    lBlue = (240 * lOffset + 200) Mod 255
+        '    If lBlue < 150 Then lBlue += 100
+        '    ThreshColors(i) = Color.FromArgb(255, lRed, lGreen, lBlue)
+        'Next
 
         sstPfq.SelectedIndex = 0
         sstPfq.TabPages.Item(0).Enabled = False
@@ -1063,8 +1064,8 @@ FileCancel:
                 j = 0
                 For Each lThresh As pfqStation.ThresholdType In lThrColl
                     If j = 0 AndAlso lThresh.LowerLimit = 0 AndAlso lThresh.UpperLimit >= 1.0E+20 Then
-                        'default threshold, use white background
-                        lColor = Color.White
+                        'default threshold, use default background color
+                        lColor = ThreshColors(0)
                     Else
                         lColor = ThreshColors(j)
                     End If
@@ -1303,8 +1304,8 @@ FileCancel:
     Private Sub UpdateInputGraph(Optional ByVal aSaveToFile As Boolean = False)
         Dim lStn As pfqStation = PfqPrj.Stations.Item(CurStationIndex)
         Dim vThresh As pfqStation.ThresholdType
-        Dim lYearMin As Double = 10000
-        Dim lYearMax As Double = -10000
+        Dim lYearMin As Double = lStn.BegYear ' 10000
+        Dim lYearMax As Double = lStn.EndYear ' -10000
         Dim lPkVals(lStn.PeakData.Count - 1) As Double
         Dim lDateVals(lStn.PeakData.Count - 1) As Double
         Dim lHistVals(lStn.PeakData.Count - 1) As Double
@@ -1338,12 +1339,27 @@ FileCancel:
         'clear previous curves
         lPane.CurveList.Clear()
 
+        Dim lThreshColors(lStn.Thresholds.Count) As System.Drawing.Color
+        Dim lThreshLegendLabels(lStn.Thresholds.Count) As String
+        i = 0
         'find ranges for axes
         For Each vThresh In lStn.Thresholds
             If vThresh.SYear < lYearMin Then lYearMin = vThresh.SYear
             If vThresh.EYear > lYearMax Then lYearMax = vThresh.EYear
             If vThresh.LowerLimit > 0 AndAlso vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
             If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
+            lThreshColors(i) = ThreshColors(i)
+            lThreshLegendLabels(i) = "Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")"
+            For j = 0 To i - 1
+                If vThresh.LowerLimit = lStn.Thresholds(j).LowerLimit AndAlso vThresh.UpperLimit = lStn.Thresholds(j).UpperLimit Then
+                    'matching threshold, set to same color
+                    lThreshColors(i) = lThreshColors(j)
+                    lThreshLegendLabels(j) = "Threshold (multiple periods)"
+                    lThreshLegendLabels(i) = ""
+                    Exit For
+                End If
+            Next
+            i += 1
         Next
 
         Dim lAllObs As New Generic.List(Of pfqStation.PeakDataType)
@@ -1463,11 +1479,14 @@ FileCancel:
                 End If
             End If
         Next
-        'plot peaks implied from thresholds
+        'plot peaks implied from thresholds and plot default threshold
+        Dim lThreshFound As Boolean
         For Each lQ In lAllObs
-            If lQ.LowerLimit < -9999 Then
-                For Each vThresh In lStn.Thresholds
-                    If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
+            For Each vThresh In lStn.Thresholds
+                lThreshFound = False
+                If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
+                    'valid non-default threshold for this year
+                    If lQ.LowerLimit < -9999 Then 'peak undefined for this year
                         If vThresh.LowerLimit > 0 Then
                             'implied interval from 0 to lower threshold
                             lThrshDates(0) = lQ.Year
@@ -1480,10 +1499,20 @@ FileCancel:
                             End If
                             lIntervalsPlotted = True
                         End If
-                        Exit For
                     End If
-                Next
-
+                    lThreshFound = True
+                    Exit For
+                End If
+            Next
+            If Not lThreshFound AndAlso lQ.Year >= lStn.Thresholds(0).SYear AndAlso lQ.Year < lStn.Thresholds(0).EYear Then
+                'default threshold applies for this year, plot it
+                lThrshDates(0) = lQ.Year
+                lThrshDates(1) = lQ.Year + 1
+                lThrshVals(0) = lYAxis.Scale.Max ' 1.0E+20
+                lThrshVals(1) = lYAxis.Scale.Max '1.0E+20
+                lCurve = lPane.AddCurve("Default Threshold", lThrshDates, lThrshVals, ThreshColors(0), SymbolType.None)
+                lCurve.Line.Fill = New Fill(ThreshColors(0), ThreshColors(0))
+                lCurve.Label.IsVisible = False
             End If
         Next
 
@@ -1495,17 +1524,30 @@ FileCancel:
                 '1st curve is lower limit down to bottom of graph
                 lThrshDates(0) = vThresh.SYear
                 lThrshDates(1) = vThresh.EYear + 0.75
-                lThrshVals(0) = 1.005 * Math.Max(vThresh.LowerLimit, lYAxis.Scale.Min)
+                lThrshVals(0) = Math.Max(vThresh.LowerLimit, lYAxis.Scale.Min)
+                If lThrshVals(0) = lYAxis.Scale.Min Then
+                    If lLogFlag Then
+                        lThrshVals(0) = 1.005 * lThrshVals(0)
+                    Else
+                        lThrshVals(0) = 1.05 * lThrshVals(0)
+                    End If
+                End If
                 lThrshVals(1) = lThrshVals(0) ' vThresh.LowerLimit
-                lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-                lCurve.Line.Width = 4
+                'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
+                lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
+                lCurve.Line.Width = 6
+                If lThreshLegendLabels(i - 1).Length = 0 Then lCurve.Label.IsVisible = False
                 'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
                 'If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
                 '2nd curve fills gap between threshold limits with white fill
-                lThrshVals(0) = 0.98 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
+                If lLogFlag Then
+                    lThrshVals(0) = 0.98 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
+                Else
+                    lThrshVals(0) = 0.995 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
+                End If
                 lThrshVals(1) = lThrshVals(0) ' vThresh.UpperLimit
-                lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-                lCurve.Line.Width = 4
+                lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
+                lCurve.Line.Width = 6
                 lCurve.Label.IsVisible = False
                 ''3rd curve shows upper limit to top of graph
                 'lThrshVals(0) = 1.0E+20
@@ -1549,15 +1591,6 @@ FileCancel:
                 lPrevYear = i
             End If
         Next
-
-        'plot default threshold
-        lThrshDates(0) = lStn.BegYear
-        lThrshDates(1) = lStn.EndYear
-        lThrshVals(0) = 1.0E+20
-        lThrshVals(1) = 1.0E+20
-        lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, Color.LightCyan, SymbolType.None)
-        lCurve.Line.Fill = New Fill(Color.LightCyan, Color.LightCyan)
-        lCurve.Label.IsVisible = False
 
         zgcThresh.AxisChange()
         zgcThresh.Invalidate()
@@ -2306,6 +2339,15 @@ FileCancel:
             Next
             If IsNothing(.CellValue(aRow, .Columns - 1)) OrElse .CellValue(aRow, .Columns - 1).Length = 0 Then lGoodRow = False
             If lGoodRow Then
+                For i As Integer = .FixedRows To .Rows - 2
+                    If .CellValue(aRow, 2) = .CellValue(i, 2) AndAlso .CellValue(aRow, 3) = .CellValue(i, 3) Then 'this threshold same as previous, set to same color
+                        For j As Integer = 0 To .Columns - 1
+                            .CellColor(aRow, j) = .CellColor(i, j)
+                        Next
+                        grdThresh.Refresh()
+                        Exit For
+                    End If
+                Next
                 If aRow = .Rows - 1 Then 'add another blank row
                     AddThreshRow()
                 ElseIf aRow = .FixedRows Then 'default thresh, check whether or not to color it
