@@ -17,7 +17,7 @@ Friend Class frmPeakfq
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
     'Friend ThreshColors(255) As System.Drawing.Color '= {Color.CornflowerBlue, Color.DarkSeaGreen, Color.DeepPink, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
-    Friend ThreshColors() As System.Drawing.Color = {Color.LightGoldenrodYellow, Color.Lime, Color.Cyan, Color.Magenta, Color.DeepPink, Color.Violet}
+    Friend ThreshColors() As System.Drawing.Color = {Color.PaleGoldenrod, Color.Magenta, Color.Lime, Color.Cyan, Color.Coral, Color.DeepPink}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -1479,6 +1479,7 @@ FileCancel:
                 End If
             End If
         Next
+
         'plot peaks implied from thresholds and plot default threshold
         Dim lThreshFound As Boolean
         For Each lQ In lAllObs
@@ -1508,10 +1509,23 @@ FileCancel:
                 'default threshold applies for this year, plot it
                 lThrshDates(0) = lQ.Year
                 lThrshDates(1) = lQ.Year + 1
-                lThrshVals(0) = lYAxis.Scale.Max ' 1.0E+20
-                lThrshVals(1) = lYAxis.Scale.Max '1.0E+20
+                If lLogFlag Then
+                    lThrshVals(0) = 0.98 * lYAxis.Scale.Max
+                Else
+                    lThrshVals(0) = 0.995 * lYAxis.Scale.Max
+                End If
+                lThrshVals(1) = lThrshVals(0)
                 lCurve = lPane.AddCurve("Default Threshold", lThrshDates, lThrshVals, ThreshColors(0), SymbolType.None)
-                lCurve.Line.Fill = New Fill(ThreshColors(0), ThreshColors(0))
+                lCurve.Line.Width = 6
+                lCurve.Label.IsVisible = False
+                If lLogFlag Then
+                    lThrshVals(0) = 1.005 * lYAxis.Scale.Min
+                Else
+                    lThrshVals(0) = 0.05
+                End If
+                lThrshVals(1) = lThrshVals(0)
+                lCurve = lPane.AddCurve("Default Threshold", lThrshDates, lThrshVals, ThreshColors(0), SymbolType.None)
+                lCurve.Line.Width = 6
                 lCurve.Label.IsVisible = False
             End If
         Next
