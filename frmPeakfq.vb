@@ -1871,7 +1871,7 @@ FileCancel:
         Dim lNInt As Integer
         Dim lIntLwr(499) As Single
         Dim lIntUpr(499) As Single
-        Dim lIntPPos(499) As Single
+        Dim lAllPPos(9999) As Single
         Dim lIntYr(499) As Integer
         Dim lNT As Integer
         Dim lThrDef As Boolean
@@ -1952,10 +1952,14 @@ FileCancel:
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
                      lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
                      lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
-                     lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lIntPPos, _
+                     lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lAllPPos, _
                      lIntYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
                      lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
+        Dim lPeakYears As New Generic.LinkedList(Of Integer)
+        For i = 0 To lNPkPlt - 1
+            lPeakYears.AddLast(Math.Abs(lPkYear(i)))
+        Next
 
         If lGBCrit > 0 Then lGBCrit = 10 ^ lGBCrit 'convert low outlier threshold from log to base 10
 
@@ -2148,8 +2152,9 @@ FileCancel:
 
         'plot any interval data
         For i = 0 To lNInt - 1
-            lX2(0) = lIntPPos(i)
-            lX2(1) = lIntPPos(i)
+            j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
+            lX2(0) = lAllPPos(j)
+            lX2(1) = lAllPPos(j)
             'lY2(0) = lIntLwr(i)
             If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
                 lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
@@ -2164,52 +2169,82 @@ FileCancel:
             End If
         Next
 
-        'thresholds
-        Dim lAddGlyph As Boolean
-        For i = 0 To lNT - 1
-            If lNObsTh(i) > 0 AndAlso lPPTh(i) > 0 AndAlso lPPTh(i) < 1.0 Then
-                lX(0) = lPPTh(i)
-                lY(0) = lThr(i)
-                'add dummy curve to create regular-sized legend symbol
-                lAddGlyph = True 'assume we're adding glyph, but check for repeats
-                For j = 0 To i - 1
-                    If Math.Abs(lThr(i) - lThr(j)) < 0.001 AndAlso lNObsTh(i) = lNObsTh(j) Then
-                        lAddGlyph = False
-                        For k As Integer = lPane.CurveList.Count - 1 To 0 Step -1
-                            If lPane.CurveList(k).Label.Text.Contains(lThrSYr(j).ToString) Then 'change specific date range to multiple spans
-                                lPane.CurveList(k).Label.Text = "Threshold (multiple periods)"
+        'plot any censored data
+        Dim lFirstCensored As Boolean = True
+        For i = PfqPrj.Stations(lStnInd).BegYear To PfqPrj.Stations(lStnInd).EndYear
+            If Not lPeakYears.Contains(i) Then 'not an observed peak, may be censored data
+                j = i - PfqPrj.Stations(lStnInd).BegYear
+                If lAllPPos(j) > 0 AndAlso lAllPPos(j) < 1.0 Then
+                    For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(lStnInd).Thresholds
+                        If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
+                            lX2(0) = lAllPPos(j)
+                            lX2(1) = lAllPPos(j)
+                            If vThresh.LowerLimit > 0 Then
+                                'censored value from 0 to lower threshold
+                                lY2(0) = lYAxis.Scale.Min
+                                lY2(1) = vThresh.LowerLimit
+                            Else
+                                lY2(0) = vThresh.UpperLimit
+                                lY2(1) = 1000000000
                             End If
-                        Next
-                        Exit For
-                    End If
-                Next
-                If lAddGlyph Then
-                    Dim lPtList As New ZedGraph.PointPairList
-                    If lThrDef Then
-                        lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
-                    Else
-                        lCurve = lPane.AddCurve(lNObsTh(i) & "Censored Peaks (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
-                    End If
-                    lCurve.Symbol.UserSymbol = lThreshSymbolDown
-                    lCurve.Symbol.Size = 5
-                    If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
-                    'lCurve.Symbol.Border.Width = 2
-                    'lCurve.Line.IsVisible = False
-                    'now plot symbol at appropriate scale
-                    If lThrDef Then
-                        lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
-                    Else
-                        lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
-                    End If
-                    lCurve.Symbol.UserSymbol = lThreshSymbolDown
-                    lCurve.Line.IsVisible = False
-                    lCurve.Label.IsVisible = False
-                    lCurve.Symbol.Size = 5 '7 * Math.Sqrt(lNObsTh(i))
-                    If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
-                    lCurve.Symbol.Border.Width = 2
+                            lCurve = lPane.AddCurve("Censored Flow Interval", lX2, lY2, Color.LightGray, SymbolType.HDash)
+                            If Not lFirstCensored Then
+                                lCurve.Label.IsVisible = False
+                            End If
+                            lFirstCensored = False
+                            Exit For
+                        End If
+                    Next
                 End If
             End If
         Next
+
+        ''thresholds
+        'Dim lAddGlyph As Boolean
+        'For i = 0 To lNT - 1
+        '    If lNObsTh(i) > 0 AndAlso lPPTh(i) > 0 AndAlso lPPTh(i) < 1.0 Then
+        '        lX(0) = lPPTh(i)
+        '        lY(0) = lThr(i)
+        '        'add dummy curve to create regular-sized legend symbol
+        '        lAddGlyph = True 'assume we're adding glyph, but check for repeats
+        '        For j = 0 To i - 1
+        '            If Math.Abs(lThr(i) - lThr(j)) < 0.001 AndAlso lNObsTh(i) = lNObsTh(j) Then
+        '                lAddGlyph = False
+        '                For k As Integer = lPane.CurveList.Count - 1 To 0 Step -1
+        '                    If lPane.CurveList(k).Label.Text.Contains(lThrSYr(j).ToString) Then 'change specific date range to multiple spans
+        '                        lPane.CurveList(k).Label.Text = "Threshold (multiple periods)"
+        '                    End If
+        '                Next
+        '                Exit For
+        '            End If
+        '        Next
+        '        If lAddGlyph Then
+        '            Dim lPtList As New ZedGraph.PointPairList
+        '            If lThrDef Then
+        '                lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+        '            Else
+        '                lCurve = lPane.AddCurve(lNObsTh(i) & "Censored Peaks (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
+        '            End If
+        '            lCurve.Symbol.UserSymbol = lThreshSymbolDown
+        '            lCurve.Symbol.Size = 5
+        '            If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
+        '            'lCurve.Symbol.Border.Width = 2
+        '            'lCurve.Line.IsVisible = False
+        '            'now plot symbol at appropriate scale
+        '            If lThrDef Then
+        '                lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
+        '            Else
+        '                lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
+        '            End If
+        '            lCurve.Symbol.UserSymbol = lThreshSymbolDown
+        '            lCurve.Line.IsVisible = False
+        '            lCurve.Label.IsVisible = False
+        '            lCurve.Symbol.Size = 5 '7 * Math.Sqrt(lNObsTh(i))
+        '            If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
+        '            lCurve.Symbol.Border.Width = 2
+        '        End If
+        '    End If
+        'Next
 
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
