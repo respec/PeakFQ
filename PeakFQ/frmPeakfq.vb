@@ -1960,6 +1960,11 @@ FileCancel:
         For i = 0 To lNPkPlt - 1
             lPeakYears.AddLast(Math.Abs(lPkYear(i)))
         Next
+        For i = 0 To lNInt - 1
+            If lIntLwr(i) > 0 And lIntUpr(i) < 1000000000 Then
+                lPeakYears.AddLast(Math.Abs(lIntYr(i)))
+            End If
+        Next
 
         If lGBCrit > 0 Then lGBCrit = 10 ^ lGBCrit 'convert low outlier threshold from log to base 10
 
@@ -2094,7 +2099,8 @@ FileCancel:
                             lCurve.Line.IsVisible = False
                         Else
                             If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
-                                lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Pink, SymbolType.Triangle)
+                                lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Fuchsia, SymbolType.Triangle)
+                                lCurve.Symbol.Size = 9
                             ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
                                 lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
                             ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or _
@@ -2128,7 +2134,9 @@ FileCancel:
             End If
             lXVals(j) = lTxProb(i)
         Next
-        lCurve = lPane.AddCurve(CInt(100 * PfqPrj.ConfidenceLimits) & "% Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        Dim lTwoSidedCI As Double = 2 * PfqPrj.ConfidenceLimits - 1
+        lCurve = lPane.AddCurve(CInt(100 * lTwoSidedCI) & "% Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        lCurve.Line.Width = 2
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
             j = i - lNPlCL1
@@ -2142,6 +2150,7 @@ FileCancel:
             lXVals(j) = lTxProb(i)
         Next
         lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        lCurve.Line.Width = 2
         lCurve.Label.IsVisible = False
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
@@ -2152,20 +2161,25 @@ FileCancel:
 
         'plot any interval data
         For i = 0 To lNInt - 1
-            j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
-            lX2(0) = lAllPPos(j)
-            lX2(1) = lAllPPos(j)
-            'lY2(0) = lIntLwr(i)
-            If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
-                lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
-            Else
-                lY2(0) = lIntLwr(i)
-            End If
-            lY2(1) = lIntUpr(i)
-            If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
-            lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Turquoise, SymbolType.HDash)
-            If i > 0 Then
-                lCurve.Label.IsVisible = False
+            If lIntLwr(i) > 0 And lIntUpr(i) < 1000000000 Then
+                j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
+                lX2(0) = lAllPPos(j)
+                lX2(1) = lAllPPos(j)
+                'lY2(0) = lIntLwr(i)
+                If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
+                    lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
+                Else
+                    lY2(0) = lIntLwr(i)
+                End If
+                lY2(1) = lIntUpr(i)
+                If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
+                If i = 0 Then
+                    lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Turquoise, SymbolType.HDash)
+                Else
+                    lCurve.AddPoint(Double.NaN, Double.NaN)
+                    lCurve.AddPoint(lX2(0), lY2(0))
+                    lCurve.AddPoint(lX2(1), lY2(1))
+                End If
             End If
         Next
 
@@ -2187,9 +2201,12 @@ FileCancel:
                                 lY2(0) = vThresh.UpperLimit
                                 lY2(1) = 1000000000
                             End If
-                            lCurve = lPane.AddCurve("Censored Flow Interval", lX2, lY2, Color.LightGray, SymbolType.HDash)
-                            If Not lFirstCensored Then
-                                lCurve.Label.IsVisible = False
+                            If lFirstCensored Then
+                                lCurve = lPane.AddCurve("Censored Flow Interval", lX2, lY2, Color.Gray, SymbolType.HDash)
+                            Else
+                                lCurve.AddPoint(Double.NaN, Double.NaN)
+                                lCurve.AddPoint(lX2(0), lY2(0))
+                                lCurve.AddPoint(lX2(1), lY2(1))
                             End If
                             lFirstCensored = False
                             Exit For
@@ -2198,53 +2215,6 @@ FileCancel:
                 End If
             End If
         Next
-
-        ''thresholds
-        'Dim lAddGlyph As Boolean
-        'For i = 0 To lNT - 1
-        '    If lNObsTh(i) > 0 AndAlso lPPTh(i) > 0 AndAlso lPPTh(i) < 1.0 Then
-        '        lX(0) = lPPTh(i)
-        '        lY(0) = lThr(i)
-        '        'add dummy curve to create regular-sized legend symbol
-        '        lAddGlyph = True 'assume we're adding glyph, but check for repeats
-        '        For j = 0 To i - 1
-        '            If Math.Abs(lThr(i) - lThr(j)) < 0.001 AndAlso lNObsTh(i) = lNObsTh(j) Then
-        '                lAddGlyph = False
-        '                For k As Integer = lPane.CurveList.Count - 1 To 0 Step -1
-        '                    If lPane.CurveList(k).Label.Text.Contains(lThrSYr(j).ToString) Then 'change specific date range to multiple spans
-        '                        lPane.CurveList(k).Label.Text = "Threshold (multiple periods)"
-        '                    End If
-        '                Next
-        '                Exit For
-        '            End If
-        '        Next
-        '        If lAddGlyph Then
-        '            Dim lPtList As New ZedGraph.PointPairList
-        '            If lThrDef Then
-        '                lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
-        '            Else
-        '                lCurve = lPane.AddCurve(lNObsTh(i) & "Censored Peaks (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lPtList, ThreshColors(i), SymbolType.UserDefined)
-        '            End If
-        '            lCurve.Symbol.UserSymbol = lThreshSymbolDown
-        '            lCurve.Symbol.Size = 5
-        '            If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
-        '            'lCurve.Symbol.Border.Width = 2
-        '            'lCurve.Line.IsVisible = False
-        '            'now plot symbol at appropriate scale
-        '            If lThrDef Then
-        '                lCurve = lPane.AddCurve("Default Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
-        '            Else
-        '                lCurve = lPane.AddCurve("Threshold (" & CStr(lThrSYr(i)) & "-" & CStr(lThrEYr(i)) & ")", lX, lY, ThreshColors(i), SymbolType.UserDefined)
-        '            End If
-        '            lCurve.Symbol.UserSymbol = lThreshSymbolDown
-        '            lCurve.Line.IsVisible = False
-        '            lCurve.Label.IsVisible = False
-        '            lCurve.Symbol.Size = 5 '7 * Math.Sqrt(lNObsTh(i))
-        '            If lY(0) >= lGBCrit Then lCurve.Symbol.Fill.Type = FillType.Solid
-        '            lCurve.Symbol.Border.Width = 2
-        '        End If
-        '    End If
-        'Next
 
         lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
 
