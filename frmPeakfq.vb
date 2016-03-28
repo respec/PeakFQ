@@ -2021,6 +2021,7 @@ FileCancel:
         End If
 
         'observed peaks
+        Dim lNGagedPILFS As Integer = 0
         lCurves = New atcCollection
         ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
         For i = 0 To lNPkPlt - 1
@@ -2058,6 +2059,7 @@ FileCancel:
                         End If
                     Else
                         lKey = "Low Outlier"
+                        lNGagedPILFS += 1
                     End If
                     'If lKey = "LO Threshold" AndAlso lCurves.Keys.Contains(lKey) Then
                     '    'don't want duplicates for LO Threshold, set this to normal peak
@@ -2237,14 +2239,13 @@ FileCancel:
         Dim lWarning As String = "Peakfq v 7.1 run " & System.DateTime.Now & vbCrLf & _
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
                                  DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf
-        If PfqPrj.Stations(lStnInd).SkewOpt = 1 Then
-            lWarning &= lNZero & " Zeroes not displayed" & vbCrLf & _
-                        lNLow & " Peaks below PILF (LO) Threshold " & vbCrLf & lLOTestStr
-        Else
-            lWarning &= DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf & _
-                        lNZero & " Zeroes not displayed" & vbCrLf & _
-                        lNLow & " Peaks below PILF (LO) Threshold " & vbCrLf & lLOTestStr
+        If PfqPrj.Stations(lStnInd).SkewOpt <> 1 Then
+            lWarning &= DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf
         End If
+        lWarning &= lLOTestStr & vbCrLf & "   " & lNZero & " Zeroes not displayed" & vbCrLf & _
+                    "   " & lNLow - lNGagedPILFS - lNZero & " Censored flows below PILF (LO) Threshold " & vbCrLf & _
+                    "   " & lNGagedPILFS & " Gaged peaks below PILF (LO) Threshold " & vbCrLf
+
         Dim lText As New TextObj(lWarning, 0.6, 0.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
