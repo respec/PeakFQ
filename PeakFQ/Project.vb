@@ -489,7 +489,7 @@ Friend Class pfqProject
                             CurStation.SkewOpt = 0
                         ElseIf UCase(Rec) = "WEIGHTED" Then
                             CurStation.SkewOpt = 1
-                        ElseIf UCase(Rec) = "GENERALIZED" Then
+                        ElseIf UCase(Rec) = "REGIONAL" Then
                             CurStation.SkewOpt = 2
                         End If
                         If CommentPending Then CurStation.CSkewOpt = lCom

@@ -44,7 +44,7 @@ Friend Class pfqStation
     Private pAnalysisOption As String 'Skip, B17B, EMA
     Private pBegYear As Integer
     Private pEndYear As Integer
-    Private pSkewOpt As Integer '0 - Station, 1 - Weighted, 2 - Generalized
+    Private pSkewOpt As Integer '0 - Station, 1 - Weighted, 2 - Regional
     Private pUrbanRegPeaks As Boolean
     Private pHistoricPeriod As Boolean
     Private pGenSkew As Single
@@ -855,7 +855,7 @@ Friend Class pfqStation
         pLng = 0.0#
         SOText(0) = "Station"
         SOText(1) = "Weighted"
-        SOText(2) = "Generalized"
+        SOText(2) = "Regional"
 
         Thresholds = New Generic.List(Of ThresholdType)
         pPeakData = New Generic.List(Of PeakDataType)

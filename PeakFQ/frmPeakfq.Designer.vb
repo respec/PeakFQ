@@ -42,8 +42,6 @@
     Public WithEvents _lblOutFile_1 As System.Windows.Forms.Label
     Public WithEvents fraAddOut As System.Windows.Forms.GroupBox
     Public WithEvents chkPlotPos As System.Windows.Forms.CheckBox
-    Public WithEvents chkLinePrinter As System.Windows.Forms.CheckBox
-    Public WithEvents chkIntRes As System.Windows.Forms.CheckBox
     Public WithEvents lblGraphics As System.Windows.Forms.Label
     Public WithEvents lblPlotPos As System.Windows.Forms.Label
     Public WithEvents lblCL As System.Windows.Forms.Label
@@ -140,12 +138,11 @@
         Me._cmdOpenOut_1 = New System.Windows.Forms.Button()
         Me._lblOutFile_1 = New System.Windows.Forms.Label()
         Me.fraOutRight = New System.Windows.Forms.Panel()
+        Me.lblCL2 = New System.Windows.Forms.Label()
         Me.cboGraphFormat = New System.Windows.Forms.ComboBox()
         Me.txtCL = New atcControls.atcText()
         Me.txtPlotPos = New atcControls.atcText()
         Me.chkPlotPos = New System.Windows.Forms.CheckBox()
-        Me.chkLinePrinter = New System.Windows.Forms.CheckBox()
-        Me.chkIntRes = New System.Windows.Forms.CheckBox()
         Me.lblGraphics = New System.Windows.Forms.Label()
         Me.lblPlotPos = New System.Windows.Forms.Label()
         Me.lblCL = New System.Windows.Forms.Label()
@@ -496,9 +493,9 @@
         Me.lblThresholds.AutoSize = True
         Me.lblThresholds.Location = New System.Drawing.Point(178, 0)
         Me.lblThresholds.Name = "lblThresholds"
-        Me.lblThresholds.Size = New System.Drawing.Size(115, 14)
+        Me.lblThresholds.Size = New System.Drawing.Size(100, 14)
         Me.lblThresholds.TabIndex = 12
-        Me.lblThresholds.Text = "Perception Thresholds"
+        Me.lblThresholds.Text = "Perceptible Ranges"
         '
         'grdThresh
         '
@@ -522,9 +519,9 @@
         Me.lblIntervals.AutoSize = True
         Me.lblIntervals.Location = New System.Drawing.Point(219, 0)
         Me.lblIntervals.Name = "lblIntervals"
-        Me.lblIntervals.Size = New System.Drawing.Size(29, 14)
+        Me.lblIntervals.Size = New System.Drawing.Size(100, 14)
         Me.lblIntervals.TabIndex = 13
-        Me.lblIntervals.Text = "Data"
+        Me.lblIntervals.Text = "Data/Flow Intervals"
         '
         'grdInterval
         '
@@ -930,12 +927,11 @@
         '
         Me.fraOutRight.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraOutRight.BackColor = System.Drawing.SystemColors.Control
+        Me.fraOutRight.Controls.Add(Me.lblCL2)
         Me.fraOutRight.Controls.Add(Me.cboGraphFormat)
         Me.fraOutRight.Controls.Add(Me.txtCL)
         Me.fraOutRight.Controls.Add(Me.txtPlotPos)
         Me.fraOutRight.Controls.Add(Me.chkPlotPos)
-        Me.fraOutRight.Controls.Add(Me.chkLinePrinter)
-        Me.fraOutRight.Controls.Add(Me.chkIntRes)
         Me.fraOutRight.Controls.Add(Me.lblGraphics)
         Me.fraOutRight.Controls.Add(Me.lblPlotPos)
         Me.fraOutRight.Controls.Add(Me.lblCL)
@@ -945,15 +941,29 @@
         Me.fraOutRight.Location = New System.Drawing.Point(533, 12)
         Me.fraOutRight.Name = "fraOutRight"
         Me.fraOutRight.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraOutRight.Size = New System.Drawing.Size(193, 185)
+        Me.fraOutRight.Size = New System.Drawing.Size(288, 185)
         Me.fraOutRight.TabIndex = 21
+        '
+        'lblCL2
+        '
+        Me.lblCL2.AutoSize = True
+        Me.lblCL2.BackColor = System.Drawing.SystemColors.Control
+        Me.lblCL2.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblCL2.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCL2.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lblCL2.Location = New System.Drawing.Point(18, 159)
+        Me.lblCL2.Name = "lblCL2"
+        Me.lblCL2.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblCL2.Size = New System.Drawing.Size(186, 14)
+        Me.lblCL2.TabIndex = 43
+        Me.lblCL2.Text = "alpha value of upper confidence limit:"
         '
         'cboGraphFormat
         '
         Me.cboGraphFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboGraphFormat.FormattingEnabled = True
         Me.cboGraphFormat.Items.AddRange(New Object() {"None", "EMF - Enhanced Windows Metafile", "PNG - Portable Network Graphics", "GIF - Graphic Interchange Format", "JPEG", "TIFF", "BMP - Bitmap"})
-        Me.cboGraphFormat.Location = New System.Drawing.Point(3, 94)
+        Me.cboGraphFormat.Location = New System.Drawing.Point(3, 37)
         Me.cboGraphFormat.Name = "cboGraphFormat"
         Me.cboGraphFormat.Size = New System.Drawing.Size(187, 22)
         Me.cboGraphFormat.TabIndex = 42
@@ -966,7 +976,7 @@
         Me.txtCL.HardMax = 0.995R
         Me.txtCL.HardMin = 0.5R
         Me.txtCL.InsideLimitsBackground = System.Drawing.Color.White
-        Me.txtCL.Location = New System.Drawing.Point(120, 157)
+        Me.txtCL.Location = New System.Drawing.Point(206, 157)
         Me.txtCL.MaxWidth = 20
         Me.txtCL.Name = "txtCL"
         Me.txtCL.NumericFormat = "0.#####"
@@ -989,7 +999,7 @@
         Me.txtPlotPos.HardMax = 0.5R
         Me.txtPlotPos.HardMin = 0.0R
         Me.txtPlotPos.InsideLimitsBackground = System.Drawing.Color.White
-        Me.txtPlotPos.Location = New System.Drawing.Point(120, 134)
+        Me.txtPlotPos.Location = New System.Drawing.Point(120, 81)
         Me.txtPlotPos.MaxWidth = 20
         Me.txtPlotPos.Name = "txtPlotPos"
         Me.txtPlotPos.NumericFormat = "0.#####"
@@ -1011,7 +1021,7 @@
         Me.chkPlotPos.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkPlotPos.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.chkPlotPos.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkPlotPos.Location = New System.Drawing.Point(0, 24)
+        Me.chkPlotPos.Location = New System.Drawing.Point(7, 103)
         Me.chkPlotPos.Name = "chkPlotPos"
         Me.chkPlotPos.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.chkPlotPos.Size = New System.Drawing.Size(130, 18)
@@ -1019,44 +1029,13 @@
         Me.chkPlotPos.Text = "Print Plotting Positions"
         Me.chkPlotPos.UseVisualStyleBackColor = False
         '
-        'chkLinePrinter
-        '
-        Me.chkLinePrinter.AutoSize = True
-        Me.chkLinePrinter.BackColor = System.Drawing.SystemColors.Control
-        Me.chkLinePrinter.Cursor = System.Windows.Forms.Cursors.Default
-        Me.chkLinePrinter.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkLinePrinter.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkLinePrinter.Location = New System.Drawing.Point(0, 48)
-        Me.chkLinePrinter.Name = "chkLinePrinter"
-        Me.chkLinePrinter.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkLinePrinter.Size = New System.Drawing.Size(106, 18)
-        Me.chkLinePrinter.TabIndex = 23
-        Me.chkLinePrinter.Text = "Line Printer Plots"
-        Me.chkLinePrinter.UseVisualStyleBackColor = False
-        '
-        'chkIntRes
-        '
-        Me.chkIntRes.AutoSize = True
-        Me.chkIntRes.BackColor = System.Drawing.SystemColors.Control
-        Me.chkIntRes.Cursor = System.Windows.Forms.Cursors.Default
-        Me.chkIntRes.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkIntRes.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkIntRes.Location = New System.Drawing.Point(0, 0)
-        Me.chkIntRes.Name = "chkIntRes"
-        Me.chkIntRes.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkIntRes.Size = New System.Drawing.Size(158, 18)
-        Me.chkIntRes.TabIndex = 22
-        Me.chkIntRes.Text = "Output Intermediate Results"
-        Me.chkIntRes.UseVisualStyleBackColor = False
-        Me.chkIntRes.Visible = False
-        '
         'lblGraphics
         '
         Me.lblGraphics.BackColor = System.Drawing.SystemColors.Control
         Me.lblGraphics.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblGraphics.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblGraphics.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblGraphics.Location = New System.Drawing.Point(3, 74)
+        Me.lblGraphics.Location = New System.Drawing.Point(3, 17)
         Me.lblGraphics.Name = "lblGraphics"
         Me.lblGraphics.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblGraphics.Size = New System.Drawing.Size(137, 17)
@@ -1070,7 +1049,7 @@
         Me.lblPlotPos.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblPlotPos.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblPlotPos.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblPlotPos.Location = New System.Drawing.Point(3, 136)
+        Me.lblPlotPos.Location = New System.Drawing.Point(3, 83)
         Me.lblPlotPos.Name = "lblPlotPos"
         Me.lblPlotPos.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblPlotPos.Size = New System.Drawing.Size(84, 14)
@@ -1084,12 +1063,12 @@
         Me.lblCL.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblCL.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCL.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblCL.Location = New System.Drawing.Point(3, 157)
+        Me.lblCL.Location = New System.Drawing.Point(3, 141)
         Me.lblCL.Name = "lblCL"
         Me.lblCL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCL.Size = New System.Drawing.Size(109, 14)
+        Me.lblCL.Size = New System.Drawing.Size(148, 14)
         Me.lblCL.TabIndex = 27
-        Me.lblCL.Text = "Confidence Intervals:"
+        Me.lblCL.Text = "Symmetric Confidence Limits:"
         '
         'tabResults
         '
@@ -1467,5 +1446,6 @@
     Friend WithEvents lblLegendMove As System.Windows.Forms.Label
     Friend WithEvents lblB17BWarning As System.Windows.Forms.Label
     Friend WithEvents cmdLogReal As System.Windows.Forms.Button
+    Public WithEvents lblCL2 As System.Windows.Forms.Label
 #End Region
 End Class
