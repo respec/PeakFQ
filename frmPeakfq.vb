@@ -17,7 +17,7 @@ Friend Class frmPeakfq
     Dim DefaultSpecFile As String
     Const tmpSpecName As String = "PKFQWPSF.TMP"
     'Friend ThreshColors(255) As System.Drawing.Color '= {Color.CornflowerBlue, Color.DarkSeaGreen, Color.DeepPink, Color.DarkGoldenrod, Color.LightSlateGray, Color.Violet}
-    Friend ThreshColors() As System.Drawing.Color = {Color.PaleGoldenrod, Color.Magenta, Color.Lime, Color.Cyan, Color.Coral, Color.DeepPink}
+    Friend ThreshColors() As System.Drawing.Color = {Color.Yellow, Color.Magenta, Color.Lime, Color.Cyan, Color.Coral, Color.DarkSeaGreen, Color.DeepPink, Color.DarkOrange, Color.SlateBlue}
     Dim CurGraphName As String
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
@@ -129,7 +129,7 @@ Friend Class frmPeakfq
                 ElseIf vSta.SkewOpt = 1 Then
                     .CellValue(lRow, 6) = "Weighted"
                 ElseIf vSta.SkewOpt = 2 Then
-                    .CellValue(lRow, 6) = "Generalized"
+                    .CellValue(lRow, 6) = "Regional"
                 End If
                 .CellEditable(lRow, 6) = True
 
@@ -249,7 +249,7 @@ Friend Class frmPeakfq
                     curSta.SkewOpt = 0
                 ElseIf .CellValue(i, 6) = "Weighted" Then
                     curSta.SkewOpt = 1
-                ElseIf .CellValue(i, 6) = "Generalized" Then
+                ElseIf .CellValue(i, 6) = "Regional" Then
                     curSta.SkewOpt = 2
                 End If
                 If IsNumeric(.CellValue(i, 7)) Then curSta.GenSkew = CSng(.CellValue(i, 7))
@@ -327,16 +327,6 @@ Friend Class frmPeakfq
             lblEmpirical.Visible = False
             cmdOpenEmpirical.Visible = False
         End If
-        If PfqPrj.IntermediateResults Then
-            chkIntRes.CheckState = CheckState.Checked
-        Else
-            chkIntRes.CheckState = CheckState.Unchecked
-        End If
-        If PfqPrj.LinePrinter Then
-            chkLinePrinter.CheckState = CheckState.Checked
-        Else
-            chkLinePrinter.CheckState = CheckState.Unchecked
-        End If
         If PfqPrj.Graphic Then
             If UCase(PfqPrj.GraphFormat) = "EMF" Then
                 cboGraphFormat.SelectedIndex = 1
@@ -353,7 +343,7 @@ Friend Class frmPeakfq
             End If
             cboDataGraphFormat.SelectedIndex = cboGraphFormat.SelectedIndex
         Else
-            cboGraphFormat.SelectedIndex = 0
+            cboGraphFormat.SelectedIndex = 1
         End If
         If PfqPrj.PrintPlotPos Then
             chkPlotPos.CheckState = CheckState.Checked
@@ -402,16 +392,6 @@ Friend Class frmPeakfq
         Else
             PfqPrj.EmpiricalFileName = ""
             lblEmpiricalFileView.Text = "(none)"
-        End If
-        If chkIntRes.CheckState = CheckState.Checked Then
-            PfqPrj.IntermediateResults = True
-        Else
-            PfqPrj.IntermediateResults = False
-        End If
-        If chkLinePrinter.CheckState = CheckState.Checked Then
-            PfqPrj.LinePrinter = True
-        Else
-            PfqPrj.LinePrinter = False
         End If
         If cboGraphFormat.SelectedIndex = 0 Then 'no graphics
             PfqPrj.Graphic = False
@@ -557,9 +537,9 @@ FileCancel:
             .CellValue(1, 5) = "Peaks"
             .CellValue(0, 6) = "Skew"
             .CellValue(1, 6) = "Option"
-            .CellValue(0, 7) = "Generalized"
+            .CellValue(0, 7) = "Regional"
             .CellValue(1, 7) = "Skew"
-            .CellValue(0, 8) = "Gen Skew"
+            .CellValue(0, 8) = "Reg Skew"
             .CellValue(1, 8) = "Std Error"
             .CellValue(0, 9) = "Mean"
             .CellValue(1, 9) = "Sqr Err"
@@ -591,8 +571,8 @@ FileCancel:
             .FixedRows = 1
             .CellValue(0, 0) = "Start Year"
             .CellValue(0, 1) = "End Year"
-            .CellValue(0, 2) = "Low Threshold"
-            .CellValue(0, 3) = "High Threshold"
+            .CellValue(0, 2) = "Lower Threshold"
+            .CellValue(0, 3) = "Upper Threshold"
             .CellValue(0, 4) = "Comment (Required)"
             .ColorCells = True
             For i = 0 To .Columns - 1
@@ -606,8 +586,8 @@ FileCancel:
             .CellValue(0, 0) = "Year"
             .CellValue(0, 1) = "Peak"
             .CellValue(0, 2) = "Remark Codes"
-            .CellValue(0, 3) = "Low Value"
-            .CellValue(0, 4) = "High Value"
+            .CellValue(0, 3) = "Lower Bound"
+            .CellValue(0, 4) = "Upper Bound"
             .CellValue(0, 5) = "Comment (Required)"
             .ColorCells = True
             For i = 0 To .Columns - 1
@@ -1019,7 +999,7 @@ FileCancel:
         ElseIf aColumn = 6 Then ' The Skew option column
             lUniqueValues.Add("Station")
             lUniqueValues.Add("Weighted")
-            lUniqueValues.Add("Generalized")
+            lUniqueValues.Add("Regional")
             aGrid.AllowNewValidValues = True
         ElseIf aColumn = 12 Then 'Low-outlier test option
             lUniqueValues.Add("Single")
@@ -1485,7 +1465,8 @@ FileCancel:
         For Each lQ In lAllObs
             For Each vThresh In lStn.Thresholds
                 lThreshFound = False
-                If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
+                If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso _
+                    ((vThresh.LowerLimit > 0 And vThresh.LowerLimit < 1.0E+20) Or vThresh.UpperLimit < 1.0E+20) Then
                     'valid non-default threshold for this year
                     If lQ.LowerLimit < -9999 Then 'peak undefined for this year
                         If vThresh.LowerLimit > 0 Then
@@ -2136,8 +2117,8 @@ FileCancel:
             End If
             lXVals(j) = lTxProb(i)
         Next
-        Dim lTwoSidedCI As Double = 2 * PfqPrj.ConfidenceLimits - 1
-        lCurve = lPane.AddCurve(CInt(100 * lTwoSidedCI) & "% Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        Dim lCIUpperPct As Integer = CInt(100 * PfqPrj.ConfidenceLimits)
+        lCurve = lPane.AddCurve("Confidence limits: " & (100 - lCIUpperPct) & "% Lower, " & lCIUpperPct & "% Upper", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Line.Width = 2
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
@@ -2177,6 +2158,7 @@ FileCancel:
                 If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
                 If i = 0 Then
                     lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Turquoise, SymbolType.HDash)
+                    lCurve.Line.Width = 2
                 Else
                     lCurve.AddPoint(Double.NaN, Double.NaN)
                     lCurve.AddPoint(lX2(0), lY2(0))
@@ -2226,7 +2208,7 @@ FileCancel:
         ElseIf PfqPrj.Stations(lStnInd).SkewOpt = 1 Then
             lSkewOptionText = "Weighted"
         ElseIf PfqPrj.Stations(lStnInd).SkewOpt = 2 Then
-            lSkewOptionText = "Generalized"
+            lSkewOptionText = "Regional"
         End If
         If PfqPrj.Stations(lStnInd).LowOutlier > 0 Then
             lLOTestStr = "Fixed at " & PfqPrj.Stations(lStnInd).LowOutlier
@@ -2620,4 +2602,5 @@ FileCancel:
         End If
         UpdateInputGraph()
     End Sub
+
 End Class
