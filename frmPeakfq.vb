@@ -1043,11 +1043,23 @@ FileCancel:
             If lThrColl.Count > 0 Then
                 j = 0
                 For Each lThresh As pfqStation.ThresholdType In lThrColl
+                    If j = ThreshColors.Length Then
+                        Array.Resize(ThreshColors, ThreshColors.Length + 8)
+                        For i As Integer = 1 To 8
+                            ThreshColors(ThreshColors.Length - 9 + i) = ThreshColors(i)
+                        Next
+                    End If
                     If j = 0 AndAlso lThresh.LowerLimit = 0 AndAlso lThresh.UpperLimit >= 1.0E+20 Then
                         'default threshold, use default background color
                         lColor = ThreshColors(0)
                     Else
                         lColor = ThreshColors(j)
+                        For i As Integer = 0 To j - 1
+                            If lThrColl(i).LowerLimit = lThresh.LowerLimit AndAlso lThrColl(i).UpperLimit = lThresh.UpperLimit Then
+                                lColor = ThreshColors(i)
+                                Exit For
+                            End If
+                        Next
                     End If
                     j += 1
                     .CellValue(j, 0) = lThresh.SYear
@@ -1326,7 +1338,10 @@ FileCancel:
         For Each vThresh In lStn.Thresholds
             If vThresh.SYear < lYearMin Then lYearMin = vThresh.SYear
             If vThresh.EYear > lYearMax Then lYearMax = vThresh.EYear
-            If vThresh.LowerLimit > 0 AndAlso vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
+            If vThresh.LowerLimit > 0 Then
+                If vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
+                If vThresh.LowerLimit > lDataMax Then lDataMax = vThresh.LowerLimit
+            End If
             If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
             lThreshColors(i) = ThreshColors(i)
             lThreshLegendLabels(i) = "Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")"
@@ -1415,19 +1430,6 @@ FileCancel:
                 End If
             End If
         Next
-        'set y-axis range
-        lYAxis.Scale.MaxAuto = False
-        Scalit(lDataMin, lDataMax, lLogFlag, lYAxis.Scale.Min, lYAxis.Scale.Max)
-        If Not lLogFlag Then
-            lYAxis.Type = AxisType.Linear
-            lYAxis.Scale.Min = 0
-        Else
-            lYAxis.Type = AxisType.Log
-        End If
-        'set x-axis range
-        lPane.X2Axis.Scale.Min = lYearMin
-        lPane.X2Axis.Scale.Max = lYearMax
-        lPane.XAxis.Title.Text = "Water Year" & vbCrLf & "Station - " & lStn.PlotName ' lStn.id & " " & lStn.Name
 
         'now draw curves
         lYAxis.IsVisible = True
@@ -1446,6 +1448,7 @@ FileCancel:
                     lThrshVals(0) = vData.LowerLimit
                 End If
                 lThrshVals(1) = vData.UpperLimit
+                If vData.UpperLimit < 1.0E+19 AndAlso vData.UpperLimit > lDataMax Then lDataMax = vData.UpperLimit
                 lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Black, SymbolType.HDash)
                 If lIntervalsPlotted Then
                     lCurve.Label.IsVisible = False
@@ -1459,6 +1462,24 @@ FileCancel:
                 End If
             End If
         Next
+        'set y-axis range
+        lYAxis.Scale.MaxAuto = False
+        lYAxis.Scale.Max = lDataMax
+        Do While lDataMax >= lYAxis.Scale.Max 'set scale so there is a buffer between highest value and top of graph
+            Scalit(lDataMin, lDataMax, lLogFlag, lYAxis.Scale.Min, lYAxis.Scale.Max)
+            lDataMax += 1
+        Loop
+
+        If Not lLogFlag Then
+            lYAxis.Type = AxisType.Linear
+            lYAxis.Scale.Min = 0
+        Else
+            lYAxis.Type = AxisType.Log
+        End If
+        'set x-axis range
+        lPane.XAxis.Scale.Min = lYearMin
+        lPane.XAxis.Scale.Max = lYearMax
+        lPane.XAxis.Title.Text = "Water Year" & vbCrLf & "Station - " & lStn.PlotName ' lStn.id & " " & lStn.Name
 
         'plot peaks implied from thresholds and plot default threshold
         Dim lThreshFound As Boolean
@@ -1471,6 +1492,12 @@ FileCancel:
                     If lQ.LowerLimit < -9999 Then 'peak undefined for this year
                         If vThresh.LowerLimit > 0 Then
                             'implied interval from 0 to lower threshold
+                            If vThresh.EYear - vThresh.SYear > 100 Then 'don't plot every interval for large time spans
+                                Dim lYearIntervalsToPlot As Integer = CInt((vThresh.EYear - vThresh.SYear) / 100)
+                                Dim lRemainder As Integer
+                                Math.DivRem(lQ.Year, lYearIntervalsToPlot, lRemainder)
+                                If Not lRemainder = 0 Then Exit For
+                            End If
                             lThrshDates(0) = lQ.Year
                             lThrshDates(1) = lQ.Year
                             lThrshVals(0) = lYAxis.Scale.Min
@@ -1658,7 +1685,7 @@ FileCancel:
                         .Type = AxisType.Linear
                     End If
                     .Title.Text = "Water Year"
-                    .Scale.Format = "0000"
+                    .Scale.Format = "#000"
                 Else
                     If .Type <> AxisType.Probability Then
                         .Type = AxisType.Probability
@@ -2175,6 +2202,12 @@ FileCancel:
                 If lAllPPos(j) > 0 AndAlso lAllPPos(j) < 1.0 Then
                     For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(lStnInd).Thresholds
                         If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
+                            If vThresh.EYear - vThresh.SYear > 100 Then 'don't plot every interval for large time spans
+                                Dim lYearIntervalsToPlot As Integer = CInt((vThresh.EYear - vThresh.SYear) / 100)
+                                Dim lRemainder As Integer
+                                Math.DivRem(i, lYearIntervalsToPlot, lRemainder)
+                                If Not lRemainder = 0 Then Exit For
+                            End If
                             lX2(0) = lAllPPos(j)
                             lX2(1) = lAllPPos(j)
                             If vThresh.LowerLimit > 0 Then
@@ -2422,6 +2455,12 @@ FileCancel:
                 End If
                 If i = 3 Then 'default high threshold value and assign threshold color
                     .CellValue(.Rows - 1, i) = "inf" '"1.0e20"
+                    If .Rows - .FixedRows > ThreshColors.Length Then
+                        Array.Resize(ThreshColors, ThreshColors.Length + 8)
+                        For j As Integer = 1 To 8
+                            ThreshColors(ThreshColors.Length - 9 + j) = ThreshColors(j)
+                        Next
+                    End If
                     .CellColor(.Rows - 1, i) = ThreshColors(.Rows - .FixedRows - 1)
                 End If
             Next
