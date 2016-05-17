@@ -173,6 +173,7 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
+        Me.chkExtendedOutput = New System.Windows.Forms.CheckBox()
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -715,6 +716,7 @@
                     Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraAddOut.BackColor = System.Drawing.SystemColors.Control
+        Me.fraAddOut.Controls.Add(Me.chkExtendedOutput)
         Me.fraAddOut.Controls.Add(Me.lblEmpirical)
         Me.fraAddOut.Controls.Add(Me.cmdOpenEmpirical)
         Me.fraAddOut.Controls.Add(Me.chkEmpirical)
@@ -747,10 +749,10 @@
         Me.lblEmpirical.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblEmpirical.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblEmpirical.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblEmpirical.Location = New System.Drawing.Point(72, 209)
+        Me.lblEmpirical.Location = New System.Drawing.Point(72, 179)
         Me.lblEmpirical.Name = "lblEmpirical"
         Me.lblEmpirical.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblEmpirical.Size = New System.Drawing.Size(430, 45)
+        Me.lblEmpirical.Size = New System.Drawing.Size(430, 38)
         Me.lblEmpirical.TabIndex = 48
         Me.lblEmpirical.Text = "(none)"
         '
@@ -760,7 +762,7 @@
         Me.cmdOpenEmpirical.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdOpenEmpirical.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdOpenEmpirical.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdOpenEmpirical.Location = New System.Drawing.Point(8, 212)
+        Me.cmdOpenEmpirical.Location = New System.Drawing.Point(8, 182)
         Me.cmdOpenEmpirical.Name = "cmdOpenEmpirical"
         Me.cmdOpenEmpirical.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdOpenEmpirical.Size = New System.Drawing.Size(57, 25)
@@ -774,7 +776,7 @@
         Me.chkEmpirical.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkEmpirical.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.chkEmpirical.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkEmpirical.Location = New System.Drawing.Point(8, 189)
+        Me.chkEmpirical.Location = New System.Drawing.Point(8, 161)
         Me.chkEmpirical.Name = "chkEmpirical"
         Me.chkEmpirical.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.chkEmpirical.Size = New System.Drawing.Size(201, 17)
@@ -791,7 +793,7 @@
         Me.lblExportFile.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblExportFile.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblExportFile.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblExportFile.Location = New System.Drawing.Point(72, 124)
+        Me.lblExportFile.Location = New System.Drawing.Point(72, 109)
         Me.lblExportFile.Name = "lblExportFile"
         Me.lblExportFile.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.lblExportFile.Size = New System.Drawing.Size(430, 38)
@@ -804,7 +806,7 @@
         Me.cmdOpenExport.Cursor = System.Windows.Forms.Cursors.Default
         Me.cmdOpenExport.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmdOpenExport.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.cmdOpenExport.Location = New System.Drawing.Point(8, 127)
+        Me.cmdOpenExport.Location = New System.Drawing.Point(8, 112)
         Me.cmdOpenExport.Name = "cmdOpenExport"
         Me.cmdOpenExport.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.cmdOpenExport.Size = New System.Drawing.Size(57, 25)
@@ -818,7 +820,7 @@
         Me.chkExport.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkExport.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.chkExport.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkExport.Location = New System.Drawing.Point(8, 104)
+        Me.chkExport.Location = New System.Drawing.Point(8, 91)
         Me.chkExport.Name = "chkExport"
         Me.chkExport.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.chkExport.Size = New System.Drawing.Size(86, 17)
@@ -833,7 +835,7 @@
         Me._optAddFormat_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._optAddFormat_1.ForeColor = System.Drawing.SystemColors.ControlText
         Me.optAddFormat.SetIndex(Me._optAddFormat_1, CType(1, Short))
-        Me._optAddFormat_1.Location = New System.Drawing.Point(192, 32)
+        Me._optAddFormat_1.Location = New System.Drawing.Point(192, 29)
         Me._optAddFormat_1.Name = "_optAddFormat_1"
         Me._optAddFormat_1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._optAddFormat_1.Size = New System.Drawing.Size(145, 17)
@@ -851,7 +853,7 @@
         Me._optAddFormat_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._optAddFormat_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.optAddFormat.SetIndex(Me._optAddFormat_0, CType(0, Short))
-        Me._optAddFormat_0.Location = New System.Drawing.Point(192, 16)
+        Me._optAddFormat_0.Location = New System.Drawing.Point(192, 13)
         Me._optAddFormat_0.Name = "_optAddFormat_0"
         Me._optAddFormat_0.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._optAddFormat_0.Size = New System.Drawing.Size(145, 17)
@@ -868,7 +870,7 @@
         Me._chkAddOut_0.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._chkAddOut_0.ForeColor = System.Drawing.SystemColors.ControlText
         Me.chkAddOut.SetIndex(Me._chkAddOut_0, CType(0, Short))
-        Me._chkAddOut_0.Location = New System.Drawing.Point(8, 24)
+        Me._chkAddOut_0.Location = New System.Drawing.Point(8, 21)
         Me._chkAddOut_0.Name = "_chkAddOut_0"
         Me._chkAddOut_0.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._chkAddOut_0.Size = New System.Drawing.Size(65, 17)
@@ -883,7 +885,7 @@
         Me._chkAddOut_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._chkAddOut_1.ForeColor = System.Drawing.SystemColors.ControlText
         Me.chkAddOut.SetIndex(Me._chkAddOut_1, CType(1, Short))
-        Me._chkAddOut_1.Location = New System.Drawing.Point(88, 24)
+        Me._chkAddOut_1.Location = New System.Drawing.Point(88, 21)
         Me._chkAddOut_1.Name = "_chkAddOut_1"
         Me._chkAddOut_1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._chkAddOut_1.Size = New System.Drawing.Size(81, 17)
@@ -898,7 +900,7 @@
         Me._cmdOpenOut_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._cmdOpenOut_1.ForeColor = System.Drawing.SystemColors.ControlText
         Me.cmdOpenOut.SetIndex(Me._cmdOpenOut_1, CType(1, Short))
-        Me._cmdOpenOut_1.Location = New System.Drawing.Point(8, 48)
+        Me._cmdOpenOut_1.Location = New System.Drawing.Point(8, 45)
         Me._cmdOpenOut_1.Name = "_cmdOpenOut_1"
         Me._cmdOpenOut_1.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me._cmdOpenOut_1.Size = New System.Drawing.Size(57, 25)
@@ -916,10 +918,10 @@
         Me._lblOutFile_1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me._lblOutFile_1.ForeColor = System.Drawing.SystemColors.ControlText
         Me.lblOutFile.SetIndex(Me._lblOutFile_1, CType(1, Short))
-        Me._lblOutFile_1.Location = New System.Drawing.Point(72, 48)
+        Me._lblOutFile_1.Location = New System.Drawing.Point(72, 45)
         Me._lblOutFile_1.Name = "_lblOutFile_1"
         Me._lblOutFile_1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me._lblOutFile_1.Size = New System.Drawing.Size(430, 40)
+        Me._lblOutFile_1.Size = New System.Drawing.Size(430, 38)
         Me._lblOutFile_1.TabIndex = 9
         Me._lblOutFile_1.Text = "(none)"
         '
@@ -1354,6 +1356,20 @@
         'cmdOutFileView
         '
         '
+        'chkExtendedOutput
+        '
+        Me.chkExtendedOutput.BackColor = System.Drawing.SystemColors.Control
+        Me.chkExtendedOutput.Cursor = System.Windows.Forms.Cursors.Default
+        Me.chkExtendedOutput.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkExtendedOutput.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.chkExtendedOutput.Location = New System.Drawing.Point(8, 230)
+        Me.chkExtendedOutput.Name = "chkExtendedOutput"
+        Me.chkExtendedOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.chkExtendedOutput.Size = New System.Drawing.Size(201, 17)
+        Me.chkExtendedOutput.TabIndex = 49
+        Me.chkExtendedOutput.Text = "Extended Output"
+        Me.chkExtendedOutput.UseVisualStyleBackColor = False
+        '
         'frmPeakfq
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1447,5 +1463,6 @@
     Friend WithEvents lblB17BWarning As System.Windows.Forms.Label
     Friend WithEvents cmdLogReal As System.Windows.Forms.Button
     Public WithEvents lblCL2 As System.Windows.Forms.Label
+    Public WithEvents chkExtendedOutput As System.Windows.Forms.CheckBox
 #End Region
 End Class
