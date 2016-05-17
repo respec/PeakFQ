@@ -27,6 +27,7 @@ Friend Class pfqProject
 	Private pInputDir As String
 	Private pOutputDir As String
     Private pEMA As Boolean
+    Private pExtendedOutput As Boolean
     'the following are for storing comments for various specification records
 	Private pCDataFile As String
 	Private pCOutFile As String
@@ -40,6 +41,7 @@ Friend Class pfqProject
     Private pCIntermediate As String
 	Private pCConfidenceLimits As String
     Private pCEMA As String
+    Private pCExtendedOutput As String
 
 	Private FType(1) As String
 
@@ -231,6 +233,15 @@ Friend Class pfqProject
         End Set
     End Property
 
+    Public Property ExtendedOutput() As Boolean
+        Get
+            ExtendedOutput = pExtendedOutput
+        End Get
+        Set(ByVal Value As Boolean)
+            pExtendedOutput = Value
+        End Set
+    End Property
+
     Public Property CDataFile() As String
         Get
             CDataFile = pCDataFile
@@ -339,6 +350,15 @@ Friend Class pfqProject
         End Set
     End Property
 
+    Public Property CExtendedOutput() As String
+        Get
+            CExtendedOutput = pCExtendedOutput
+        End Get
+        Set(ByVal Value As String)
+            pCExtendedOutput = Value
+        End Set
+    End Property
+
     Public Sub ReadSpecFile()
 
         Dim i As Short
@@ -442,6 +462,13 @@ Friend Class pfqProject
                             Case "CONFIDENCE"
                                 pConfidenceLimits = CSng(Rec)
                                 If CommentPending Then pCConfidenceLimits = lCom
+                            Case "EXTENDED"
+                                If UCase(Rec) = "YES" Then
+                                    pExtendedOutput = True
+                                Else
+                                    pExtendedOutput = False
+                                End If
+                                If CommentPending Then pCExtendedOutput = lCom
                             Case "EMA"
                                 If UCase(Rec) = "YES" Then
                                     pEMA = True
@@ -638,9 +665,13 @@ Friend Class pfqProject
 		If System.Math.Abs(pConfidenceLimits - 0.95) > 0.000001 Then 'not using .95, print it
 			s = s & "O Confidence " & CStr(pConfidenceLimits) & vbCrLf
 		End If
-		If Len(pCEMA) > 0 Then s = s & pCEMA & vbCrLf
-		If pEMA Then
-			s = s & "O EMA YES" & vbCrLf
+        If Len(pCExtendedOutput) > 0 Then s = s & pCExtendedOutput & vbCrLf
+        If pExtendedOutput Then
+            s = s & "O EXTENDED YES" & vbCrLf
+        End If
+        If Len(pCEMA) > 0 Then s = s & pCEMA & vbCrLf
+        If pEMA Then
+            s = s & "O EMA YES" & vbCrLf
         End If
         i = 0
 		For	Each vSta In pStations
@@ -1078,8 +1109,9 @@ Friend Class pfqProject
 		pConfidenceLimits = 0.95
 		FType(0) = "ASCI"
 		FType(1) = "WDM"
-		pOutputDir = ""
-		pEMA = False
+        pOutputDir = ""
+        pExtendedOutput = False
+        pEMA = True
 	End Sub
 	Public Sub New()
 		MyBase.New()
