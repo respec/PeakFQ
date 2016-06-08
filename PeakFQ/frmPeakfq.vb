@@ -1349,6 +1349,12 @@ FileCancel:
 
         Dim lThreshColors(lStn.Thresholds.Count) As System.Drawing.Color
         Dim lThreshLegendLabels(lStn.Thresholds.Count) As String
+        While lThreshColors.Length > ThreshColors.Length
+            Array.Resize(ThreshColors, ThreshColors.Length + 8)
+            For j = 1 To 8
+                ThreshColors(ThreshColors.Length - 9 + j) = ThreshColors(j)
+            Next
+        End While
         i = 0
         'find ranges for axes
         For Each vThresh In lStn.Thresholds
@@ -2007,8 +2013,14 @@ FileCancel:
             lThrDef = False
         End If
 
-        Dim lPP1 As Double = lTxProb(lNPlot - 1)
-        Dim lPP0 As Double = lTxProb(0)
+        Dim lPP1 As Double = 0.0 ' lTxProb(lNPlot - 1)
+        Dim lPP0 As Double = 1.0 ' lTxProb(0)
+        i = 0
+        While lAllPPos(i) > 0.0
+            If lAllPPos(i) < lPP0 Then lPP0 = lAllPPos(i)
+            If lAllPPos(i) > lPP1 Then lPP1 = lAllPPos(i)
+            i += 1
+        End While
         lNPlot1 = 0
         lNPlot2 = lNPlot - 1
         For i = 0 To lNPlot - 1
