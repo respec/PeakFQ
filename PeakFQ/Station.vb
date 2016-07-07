@@ -844,7 +844,7 @@ Friend Class pfqStation
         pUrbanRegPeaks = False
         pBegYear = 0
         pEndYear = 0
-        pHistoricPeriod = False
+        pHistoricPeriod = True
         pGenSkew = -0.5
         pHighOutlier = 0.0#
         pLowOutlier = 0.0#
