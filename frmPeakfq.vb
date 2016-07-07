@@ -581,8 +581,8 @@ FileCancel:
             .FixedRows = 1
             .CellValue(0, 0) = "Start Year"
             .CellValue(0, 1) = "End Year"
-            .CellValue(0, 2) = "Lower Threshold"
-            .CellValue(0, 3) = "Upper Threshold"
+            .CellValue(0, 2) = "Lower Bound"
+            .CellValue(0, 3) = "Upper Bound"
             .CellValue(0, 4) = "Comment (Required)"
             .ColorCells = True
             For i = 0 To .Columns - 1
@@ -772,7 +772,7 @@ FileCancel:
                 Else
                     cboAnalysisOption.SelectedItem = "B17B"
                 End If
-                cboLOTest.SelectedItem = "Single Grubbs-Beck"
+                cboLOTest.SelectedItem = "Multiple Grubbs-Beck"
                 EnableGrid()
                 PopulateGrid()
                 PopulateOutput()
@@ -1360,18 +1360,18 @@ FileCancel:
         For Each vThresh In lStn.Thresholds
             If vThresh.SYear < lYearMin Then lYearMin = vThresh.SYear
             If vThresh.EYear > lYearMax Then lYearMax = vThresh.EYear
-            If vThresh.LowerLimit > 0 Then
+            If vThresh.LowerLimit > 0 AndAlso vThresh.LowerLimit < 1.0E+20 Then
                 If vThresh.LowerLimit < lDataMin Then lDataMin = vThresh.LowerLimit
                 If vThresh.LowerLimit > lDataMax Then lDataMax = vThresh.LowerLimit
             End If
             If vThresh.UpperLimit < 1.0E+19 AndAlso vThresh.UpperLimit > lDataMax Then lDataMax = vThresh.UpperLimit
             lThreshColors(i) = ThreshColors(i)
-            lThreshLegendLabels(i) = "Perception Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")"
+            lThreshLegendLabels(i) = "Perceptible Range (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")"
             For j = 0 To i - 1
                 If vThresh.LowerLimit = lStn.Thresholds(j).LowerLimit AndAlso vThresh.UpperLimit = lStn.Thresholds(j).UpperLimit Then
                     'matching threshold, set to same color
                     lThreshColors(i) = lThreshColors(j)
-                    lThreshLegendLabels(j) = "Perception Threshold (multiple periods)"
+                    lThreshLegendLabels(j) = "Perceptible Range (multiple periods)"
                     lThreshLegendLabels(i) = ""
                     Exit For
                 End If
@@ -1511,31 +1511,35 @@ FileCancel:
         For Each lQ In lAllObs
             For Each vThresh In lStn.Thresholds
                 lThreshFound = False
-                If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear AndAlso _
-                    ((vThresh.LowerLimit > 0 And vThresh.LowerLimit < 1.0E+20) Or vThresh.UpperLimit < 1.0E+20) Then
-                    'valid non-default threshold for this year
-                    If lQ.LowerLimit < -9999 Then 'peak undefined for this year
-                        If vThresh.LowerLimit > 0 Then
-                            'implied interval from 0 to lower threshold
-                            'If vThresh.EYear - vThresh.SYear > 100 Then 'don't plot every interval for large time spans
-                            '    Dim lYearIntervalsToPlot As Integer = CInt((vThresh.EYear - vThresh.SYear) / 100)
-                            '    Dim lRemainder As Integer
-                            '    Math.DivRem(lQ.Year, lYearIntervalsToPlot, lRemainder)
-                            '    If Not lRemainder = 0 Then Exit For
-                            'End If
-                            lThrshDates(0) = lQ.Year
-                            lThrshDates(1) = lQ.Year
-                            lThrshVals(0) = lYAxis.Scale.Min
-                            lThrshVals(1) = vThresh.LowerLimit
-                            lCurve = lPane.AddCurve("Censored Intervals", lThrshDates, lThrshVals, Color.Silver, SymbolType.HDash)
-                            If lIntervalsPlotted Then
-                                lCurve.Label.IsVisible = False
+                If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear Then
+                    If ((vThresh.LowerLimit > 0 And vThresh.LowerLimit < 1.0E+20) Or vThresh.UpperLimit < 1.0E+20) Then
+                        'valid non-default threshold for this year
+                        If lQ.LowerLimit < -9999 Then 'peak undefined for this year
+                            If vThresh.LowerLimit > 0 Then
+                                'implied interval from 0 to lower threshold
+                                'If vThresh.EYear - vThresh.SYear > 100 Then 'don't plot every interval for large time spans
+                                '    Dim lYearIntervalsToPlot As Integer = CInt((vThresh.EYear - vThresh.SYear) / 100)
+                                '    Dim lRemainder As Integer
+                                '    Math.DivRem(lQ.Year, lYearIntervalsToPlot, lRemainder)
+                                '    If Not lRemainder = 0 Then Exit For
+                                'End If
+                                lThrshDates(0) = lQ.Year
+                                lThrshDates(1) = lQ.Year
+                                lThrshVals(0) = lYAxis.Scale.Min
+                                lThrshVals(1) = vThresh.LowerLimit
+                                lCurve = lPane.AddCurve("Censored Flows", lThrshDates, lThrshVals, Color.Silver, SymbolType.HDash)
+                                If lIntervalsPlotted Then
+                                    lCurve.Label.IsVisible = False
+                                End If
+                                lIntervalsPlotted = True
                             End If
-                            lIntervalsPlotted = True
                         End If
+                        lThreshFound = True
+                        Exit For
+                    ElseIf vThresh.LowerLimit >= 1.0E+20 AndAlso vThresh.UpperLimit >= 1.0E+20 Then
+                        lThreshFound = True
+                        Exit For
                     End If
-                    lThreshFound = True
-                    Exit For
                 End If
             Next
             If Not lThreshFound AndAlso lQ.Year >= lStn.Thresholds(0).SYear AndAlso lQ.Year < lStn.Thresholds(0).EYear Then
@@ -1569,41 +1573,54 @@ FileCancel:
             i += 1
             If vThresh.SYear <= lStn.EndYear AndAlso vThresh.EYear >= lStn.BegYear Then
                 If i > 1 OrElse (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+19) Then
-                    '1st curve is lower limit down to bottom of graph
-                    lThrshDates(0) = vThresh.SYear
-                    lThrshDates(1) = vThresh.EYear + 0.75
-                    lThrshVals(0) = Math.Max(vThresh.LowerLimit, lYAxis.Scale.Min)
-                    If lThrshVals(0) = lYAxis.Scale.Min Then
-                        If lLogFlag Then
-                            lThrshVals(0) = 1.005 * lThrshVals(0)
-                        Else
-                            lThrshVals(0) = 1.05 * lThrshVals(0)
+                    If vThresh.LowerLimit < 1.0E+19 OrElse vThresh.UpperLimit < 1.0E+19 Then 'check for both set to 'inf'
+                        '1st curve is lower limit down to bottom of graph
+                        lThrshDates(0) = vThresh.SYear
+                        lThrshDates(1) = vThresh.EYear + 0.75
+                        lThrshVals(0) = Math.Max(vThresh.LowerLimit, lYAxis.Scale.Min)
+                        If lThrshVals(0) = lYAxis.Scale.Min Then
+                            If lLogFlag Then
+                                lThrshVals(0) = 1.005 * lThrshVals(0)
+                            Else
+                                lThrshVals(0) = 1.05 * lThrshVals(0)
+                            End If
                         End If
+                        lThrshVals(1) = lThrshVals(0) ' vThresh.LowerLimit
+                        'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
+                        lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
+                        lCurve.Line.Width = 6
+                        If lThreshLegendLabels(i - 1).Length = 0 Then lCurve.Label.IsVisible = False
+                        'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                        'If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
+                        '2nd curve fills gap between threshold limits with white fill
+                        If lLogFlag Then
+                            lThrshVals(0) = 0.98 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
+                        Else
+                            lThrshVals(0) = 0.995 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
+                        End If
+                        lThrshVals(1) = lThrshVals(0) ' vThresh.UpperLimit
+                        lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
+                        lCurve.Line.Width = 6
+                        lCurve.Label.IsVisible = False
+                        ''3rd curve shows upper limit to top of graph
+                        'lThrshVals(0) = 1.0E+20
+                        'lThrshVals(1) = 1.0E+20
+                        'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
+                        'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
+                        'lCurve.Label.IsVisible = False
+                        'End If
+                    Else 'blank out years for inf-inf threshold
+                        lThrshDates(0) = vThresh.SYear
+                        lThrshDates(1) = vThresh.EYear + 0.75
+                        If lLogFlag Then
+                            lThrshVals(0) = 1.005 * lYAxis.Scale.Min
+                        Else
+                            lThrshVals(0) = 1.05 * lYAxis.Scale.Min
+                        End If
+                        lThrshVals(1) = lThrshVals(0) ' vThresh.LowerLimit
+                        'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
+                        lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, Color.White, SymbolType.None)
                     End If
-                    lThrshVals(1) = lThrshVals(0) ' vThresh.LowerLimit
-                    'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
-                    lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
-                    lCurve.Line.Width = 6
-                    If lThreshLegendLabels(i - 1).Length = 0 Then lCurve.Label.IsVisible = False
-                    'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                    'If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
-                    '2nd curve fills gap between threshold limits with white fill
-                    If lLogFlag Then
-                        lThrshVals(0) = 0.98 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
-                    Else
-                        lThrshVals(0) = 0.995 * Math.Min(vThresh.UpperLimit, lYAxis.Scale.Max)
-                    End If
-                    lThrshVals(1) = lThrshVals(0) ' vThresh.UpperLimit
-                    lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
-                    lCurve.Line.Width = 6
-                    lCurve.Label.IsVisible = False
-                    ''3rd curve shows upper limit to top of graph
-                    'lThrshVals(0) = 1.0E+20
-                    'lThrshVals(1) = 1.0E+20
-                    'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, ThreshColors(i - 1), SymbolType.None)
-                    'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
-                    'lCurve.Label.IsVisible = False
-                    'End If
                 End If
             End If
         Next
@@ -2013,12 +2030,14 @@ FileCancel:
             lThrDef = False
         End If
 
-        Dim lPP1 As Double = 0.0 ' lTxProb(lNPlot - 1)
-        Dim lPP0 As Double = 1.0 ' lTxProb(0)
+        Dim lPP1 As Double = lTxProb(lNPlot - 1)
+        Dim lPP0 As Double = lTxProb(0)
+        'Dim lPP1 As Double = 0.0 ' lTxProb(lNPlot - 1)
+        'Dim lPP0 As Double = 1.0 ' lTxProb(0)
         i = 0
         While lAllPPos(i) > 0.0
-            If lAllPPos(i) < lPP0 Then lPP0 = lAllPPos(i)
-            If lAllPPos(i) > lPP1 Then lPP1 = lAllPPos(i)
+            If lAllPPos(i) < lPane.XAxis.Scale.Min Then lPane.XAxis.Scale.Min = lAllPPos(i)
+            If lAllPPos(i) > lPane.XAxis.Scale.Max Then lPane.XAxis.Scale.Max = lAllPPos(i)
             i += 1
         End While
         lNPlot1 = 0
@@ -2254,7 +2273,7 @@ FileCancel:
                                 lY2(1) = 1000000000
                             End If
                             If lFirstCensored Then
-                                lCurve = lPane.AddCurve("Censored Flow Interval", lX2, lY2, Color.Gray, SymbolType.HDash)
+                                lCurve = lPane.AddCurve("Censored Flow", lX2, lY2, Color.Gray, SymbolType.HDash)
                             Else
                                 lCurve.AddPoint(Double.NaN, Double.NaN)
                                 lCurve.AddPoint(lX2(0), lY2(0))

@@ -138,6 +138,7 @@
         Me._cmdOpenOut_1 = New System.Windows.Forms.Button()
         Me._lblOutFile_1 = New System.Windows.Forms.Label()
         Me.fraOutRight = New System.Windows.Forms.Panel()
+        Me.chkExtendedOutput = New System.Windows.Forms.CheckBox()
         Me.lblCL2 = New System.Windows.Forms.Label()
         Me.cboGraphFormat = New System.Windows.Forms.ComboBox()
         Me.txtCL = New atcControls.atcText()
@@ -173,7 +174,6 @@
         Me.lblOutFileView = New Microsoft.VisualBasic.Compatibility.VB6.LabelArray(Me.components)
         Me.optAddFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
         Me.optGraphFormat = New Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray(Me.components)
-        Me.chkExtendedOutput = New System.Windows.Forms.CheckBox()
         Me.MainMenu1.SuspendLayout()
         Me.fraButtons.SuspendLayout()
         Me.sstPfq.SuspendLayout()
@@ -716,7 +716,6 @@
                     Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraAddOut.BackColor = System.Drawing.SystemColors.Control
-        Me.fraAddOut.Controls.Add(Me.chkExtendedOutput)
         Me.fraAddOut.Controls.Add(Me.lblEmpirical)
         Me.fraAddOut.Controls.Add(Me.cmdOpenEmpirical)
         Me.fraAddOut.Controls.Add(Me.chkEmpirical)
@@ -929,6 +928,7 @@
         '
         Me.fraOutRight.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraOutRight.BackColor = System.Drawing.SystemColors.Control
+        Me.fraOutRight.Controls.Add(Me.chkExtendedOutput)
         Me.fraOutRight.Controls.Add(Me.lblCL2)
         Me.fraOutRight.Controls.Add(Me.cboGraphFormat)
         Me.fraOutRight.Controls.Add(Me.txtCL)
@@ -943,8 +943,22 @@
         Me.fraOutRight.Location = New System.Drawing.Point(533, 12)
         Me.fraOutRight.Name = "fraOutRight"
         Me.fraOutRight.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraOutRight.Size = New System.Drawing.Size(288, 185)
+        Me.fraOutRight.Size = New System.Drawing.Size(288, 230)
         Me.fraOutRight.TabIndex = 21
+        '
+        'chkExtendedOutput
+        '
+        Me.chkExtendedOutput.BackColor = System.Drawing.SystemColors.Control
+        Me.chkExtendedOutput.Cursor = System.Windows.Forms.Cursors.Default
+        Me.chkExtendedOutput.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkExtendedOutput.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.chkExtendedOutput.Location = New System.Drawing.Point(7, 203)
+        Me.chkExtendedOutput.Name = "chkExtendedOutput"
+        Me.chkExtendedOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.chkExtendedOutput.Size = New System.Drawing.Size(201, 17)
+        Me.chkExtendedOutput.TabIndex = 50
+        Me.chkExtendedOutput.Text = "Extended Analysis"
+        Me.chkExtendedOutput.UseVisualStyleBackColor = False
         '
         'lblCL2
         '
@@ -1356,20 +1370,6 @@
         'cmdOutFileView
         '
         '
-        'chkExtendedOutput
-        '
-        Me.chkExtendedOutput.BackColor = System.Drawing.SystemColors.Control
-        Me.chkExtendedOutput.Cursor = System.Windows.Forms.Cursors.Default
-        Me.chkExtendedOutput.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkExtendedOutput.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkExtendedOutput.Location = New System.Drawing.Point(8, 230)
-        Me.chkExtendedOutput.Name = "chkExtendedOutput"
-        Me.chkExtendedOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkExtendedOutput.Size = New System.Drawing.Size(201, 17)
-        Me.chkExtendedOutput.TabIndex = 49
-        Me.chkExtendedOutput.Text = "Extended Output"
-        Me.chkExtendedOutput.UseVisualStyleBackColor = False
-        '
         'frmPeakfq
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
@@ -1388,7 +1388,7 @@
         Me.Location = New System.Drawing.Point(11, 49)
         Me.Name = "frmPeakfq"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Text = "PeakFQ Version 7.1"
+        Me.Text = "PeakFQ Version 7.2"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.fraButtons.ResumeLayout(False)
