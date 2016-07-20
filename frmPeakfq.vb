@@ -1064,6 +1064,8 @@ FileCancel:
                     If j = 0 AndAlso lThresh.LowerLimit = 0 AndAlso lThresh.UpperLimit >= 1.0E+20 Then
                         'default threshold, use default background color
                         lColor = ThreshColors(0)
+                    ElseIf lThresh.LowerLimit >= 1.0E+20 AndAlso lThresh.UpperLimit >= 1.0E+20 Then
+                        lColor = Color.White
                     Else
                         lColor = ThreshColors(j)
                         For i As Integer = 0 To j - 1
@@ -1447,8 +1449,8 @@ FileCancel:
                 End If
                 If lYr >= lStn.BegYear AndAlso lYr <= lStn.EndYear Then
                     i = lYr - lStn.BegYear
-                    lAllObs(i).LowerLimit = lPk
-                    lAllObs(i).UpperLimit = lPk
+                    lAllObs(i).LowerLimit = lPeak.LowerLimit ' lPk
+                    lAllObs(i).UpperLimit = lPeak.UpperLimit ' lPk
                 End If
             End If
         Next
@@ -1462,7 +1464,7 @@ FileCancel:
         i = 0
         For Each vData As pfqStation.PeakDataType In lStn.PeakData
             If (vData.Year >= lStn.BegYear And vData.Year <= lStn.EndYear) AndAlso _
-               vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso _
+               vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 AndAlso _
                Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.1 Then
                 lThrshDates(0) = vData.Year
                 lThrshDates(1) = vData.Year
@@ -1473,7 +1475,7 @@ FileCancel:
                 End If
                 lThrshVals(1) = vData.UpperLimit
                 If vData.UpperLimit < 1.0E+19 AndAlso vData.UpperLimit > lDataMax Then lDataMax = vData.UpperLimit
-                lCurve = lPane.AddCurve("Intervals", lThrshDates, lThrshVals, Color.Black, SymbolType.HDash)
+                lCurve = lPane.AddCurve("Interval Flows", lThrshDates, lThrshVals, Color.Black, SymbolType.HDash)
                 If lIntervalsPlotted Then
                     lCurve.Label.IsVisible = False
                 End If
@@ -1501,7 +1503,7 @@ FileCancel:
             lYAxis.Type = AxisType.Log
         End If
         'set x-axis range
-        lPane.XAxis.Scale.Min = lStn.BegYear ' lYearMin - 1
+        lPane.XAxis.Scale.Min = lStn.BegYear - 1 ' lYearMin - 1
         lPane.XAxis.Scale.Max = lStn.EndYear + 1 ' lYearMax + 1
         lPane.XAxis.Title.Text = "Water Year" & vbCrLf & "Station - " & lStn.PlotName ' lStn.id & " " & lStn.Name
 
@@ -1514,7 +1516,7 @@ FileCancel:
                 If lQ.Year >= vThresh.SYear AndAlso lQ.Year <= vThresh.EYear Then
                     If ((vThresh.LowerLimit > 0 And vThresh.LowerLimit < 1.0E+20) Or vThresh.UpperLimit < 1.0E+20) Then
                         'valid non-default threshold for this year
-                        If lQ.LowerLimit < -9999 Then 'peak undefined for this year
+                        If lQ.LowerLimit <= 0 Then ' < -9999 Then 'peak undefined for this year
                             If vThresh.LowerLimit > 0 Then
                                 'implied interval from 0 to lower threshold
                                 'If vThresh.EYear - vThresh.SYear > 100 Then 'don't plot every interval for large time spans
@@ -1568,6 +1570,11 @@ FileCancel:
         Next
 
         'thresholds
+        lThrshDates(0) = lStn.BegYear
+        lThrshDates(1) = lStn.BegYear
+        lThrshVals(0) = 0
+        lThrshVals(1) = 0
+        lCurve = lPane.AddCurve("Horizontal bars represent perception thresholds", lThrshDates, lThrshVals, Color.White, SymbolType.None)
         i = 0
         For Each vThresh In lStn.Thresholds
             i += 1
@@ -1589,7 +1596,9 @@ FileCancel:
                         'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
                         lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
                         lCurve.Line.Width = 6
-                        If lThreshLegendLabels(i - 1).Length = 0 Then lCurve.Label.IsVisible = False
+                        'If lThreshLegendLabels(i - 1).Length = 0 Then
+                        lCurve.Label.IsVisible = False
+                        'End If
                         'lCurve.Line.Fill = New Fill(ThreshColors(i - 1), ThreshColors(i - 1))
                         'If vThresh.UpperLimit < 1.0E+19 Then 'need other curves to show both limits
                         '2nd curve fills gap between threshold limits with white fill
@@ -1620,6 +1629,7 @@ FileCancel:
                         lThrshVals(1) = lThrshVals(0) ' vThresh.LowerLimit
                         'lCurve = lPane.AddCurve("Threshold (" & CStr(vThresh.SYear) & "-" & CStr(vThresh.EYear) & ")", lThrshDates, lThrshVals, lThreshColors(i - 1), SymbolType.None)
                         lCurve = lPane.AddCurve(lThreshLegendLabels(i - 1), lThrshDates, lThrshVals, Color.White, SymbolType.None)
+                        lCurve.Label.IsVisible = False
                     End If
                 End If
             End If
@@ -2013,6 +2023,8 @@ FileCancel:
         For i = 0 To lNInt - 1
             If lIntLwr(i) > 0 And lIntUpr(i) < 1000000000 Then
                 lPeakYears.AddLast(Math.Abs(lIntYr(i)))
+            ElseIf lPeakYears.Contains(lIntYr(i)) Then 'censored peak, remove it
+                lPeakYears.Remove(lIntYr(i))
             End If
         Next
 
@@ -2036,8 +2048,10 @@ FileCancel:
         'Dim lPP0 As Double = 1.0 ' lTxProb(0)
         i = 0
         While lAllPPos(i) > 0.0
-            If lAllPPos(i) < lPane.XAxis.Scale.Min Then lPane.XAxis.Scale.Min = lAllPPos(i)
-            If lAllPPos(i) > lPane.XAxis.Scale.Max Then lPane.XAxis.Scale.Max = lAllPPos(i)
+            If lAllPPos(i) < lPane.XAxis.Scale.Min Then lPane.XAxis.Scale.Min = 0.8 * lAllPPos(i)
+            If lAllPPos(i) > lPane.XAxis.Scale.Max Then
+                lPane.XAxis.Scale.Max = (1.0 + 1 / (10000 * lAllPPos(i))) * lAllPPos(i)
+            End If
             i += 1
         End While
         lNPlot1 = 0
@@ -2428,6 +2442,12 @@ FileCancel:
             Next
             If IsNothing(.CellValue(aRow, .Columns - 1)) OrElse .CellValue(aRow, .Columns - 1).Length = 0 Then lGoodRow = False
             If lGoodRow Then
+                If .CellValue(aRow, 2) = "inf" AndAlso .CellValue(aRow, 3) = "inf" Then
+                    For j As Integer = 0 To .Columns - 1
+                        .CellColor(aRow, j) = Color.White
+                    Next
+                    grdThresh.Refresh()
+                End If
                 For i As Integer = .FixedRows To .Rows - 2
                     If .CellValue(aRow, 2) = .CellValue(i, 2) AndAlso .CellValue(aRow, 3) = .CellValue(i, 3) Then 'this threshold same as previous, set to same color
                         For j As Integer = 0 To .Columns - 1
