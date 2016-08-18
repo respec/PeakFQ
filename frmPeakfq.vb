@@ -141,6 +141,8 @@ Friend Class frmPeakfq
                 .CellEditable(lRow, 8) = True
                 .Alignment(lRow, 8) = atcAlignment.HAlignRight
 
+                SetSkewFields(grdSpecs, lRow)
+
                 .CellValue(lRow, 9) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
                 .CellColor(lRow, 9) = SystemColors.ControlDark
                 .CellEditable(lRow, 9) = False
@@ -917,68 +919,72 @@ FileCancel:
             Dim lEYear As Integer = 0
             With grdSpecs.Source
                 Dim lStnIndex As Integer = aRow - .FixedRows
-                If aColumn = 1 Then 'check to see if switching to EMA
-                    If .CellValue(aRow, aColumn) = "EMA" Then 'force inclusion of historic peaks
-                        .CellValue(aRow, 5) = "Yes"
-                        'set to Multiple G-B test
-                        .CellValue(aRow, 12) = "Multiple"
-                        'don't allow editing of hi-outlier or gage base fields
-                        .CellEditable(aRow, 14) = False
-                        .CellColor(aRow, 14) = SystemColors.ControlDark
-                        .CellEditable(aRow, 15) = False
-                        .CellColor(aRow, 15) = SystemColors.ControlDark
-                    Else
-                        'allow editing of hi-outlier and gage base fields
-                        .CellEditable(aRow, 14) = True
-                        .CellColor(aRow, 14) = Color.White
-                        .CellEditable(aRow, 15) = True
-                        .CellColor(aRow, 15) = Color.White
-                    End If
-                    ProcessGrid()
-                    UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
-                ElseIf aColumn = 2 Or aColumn = 3 Then 'start/end year edited, update record length field
-                    lSYear = Integer.Parse(.CellValue(aRow, 2))
-                    lEYear = Integer.Parse(.CellValue(aRow, 3))
-                    .CellValue(aRow, 4) = lEYear - lSYear + 1
-                    'If PfqPrj.Stations(aRow - .FixedRows).Thresholds.Count > 0 Then
-                    '    Dim lThresh As pfqStation.ThresholdType = PfqPrj.Stations(aRow - .FixedRows).Thresholds(0)
-                    '    If aColumn = 2 Then 'update default threshold start year
-                    '        lThresh.SYear = Integer.Parse(.CellValue(aRow, 2))
-                    '    Else 'update default threshold end year
-                    '        lThresh.EYear = Integer.Parse(.CellValue(aRow, 3))
-                    '    End If
-                    '    PfqPrj.Stations(aRow - .FixedRows).Thresholds.RemoveAt(0)
-                    '    PfqPrj.Stations(aRow - .FixedRows).Thresholds.Insert(0, lThresh)
-                    '    'PfqPrj.Stations(aRow - .FixedRows).Thresholds(0) = lThresh
-                    'End If
-                ElseIf aColumn = 5 Then
-                    If .CellValue(aRow, aColumn) = "No" Then
-                        'update start/end years to systematic range
-                        lSYear = PfqPrj.Stations(lStnIndex).FirstSystematic
-                        .CellValue(aRow, 2) = lSYear
-                        lEYear = PfqPrj.Stations(lStnIndex).LastSystematic
-                        .CellValue(aRow, 3) = lEYear
-                        '.CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).LastSystematic - PfqPrj.Stations(aRow - .FixedRows).FirstSystematic + 1
-                    Else
-                        lSYear = PfqPrj.Stations(lStnIndex).FirstPeak
-                        .CellValue(aRow, 2) = lSYear
-                        lEYear = PfqPrj.Stations(lStnIndex).LastPeak
-                        .CellValue(aRow, 3) = lEYear
-                        '.CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).EndYear - PfqPrj.Stations(aRow - .FixedRows).BegYear + 1
-                    End If
-                    'Must use historic period if EMA is analysis option
-                    'If .CellValue(aRow, 1) = "EMA" Then
-                    '    MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
-                    '    .CellValue(aRow, aColumn) = "Yes"
-                    'End If
-                ElseIf aColumn = 8 Then 'changed std skew err, update mean sqr err
-                    .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
-                    .Alignment(aRow, 9) = atcAlignment.HAlignRight
-                    '.CellColor(aRow, 9) = SystemColors.ControlDark
-                ElseIf aColumn = 16 Then 'changed urban/regulated option, force update of Input/View tab
-                    ProcessGrid()
-                    UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
-                End If
+                Select Case aColumn
+                    Case 1'check to see if switching to EMA
+                            If .CellValue(aRow, aColumn) = "EMA" Then 'force inclusion of historic peaks
+                                .CellValue(aRow, 5) = "Yes"
+                                'set to Multiple G-B test
+                                .CellValue(aRow, 12) = "Multiple"
+                                'don't allow editing of hi-outlier or gage base fields
+                                .CellEditable(aRow, 14) = False
+                                .CellColor(aRow, 14) = SystemColors.ControlDark
+                                .CellEditable(aRow, 15) = False
+                                .CellColor(aRow, 15) = SystemColors.ControlDark
+                            Else
+                                'allow editing of hi-outlier and gage base fields
+                                .CellEditable(aRow, 14) = True
+                                .CellColor(aRow, 14) = Color.White
+                                .CellEditable(aRow, 15) = True
+                                .CellColor(aRow, 15) = Color.White
+                            End If
+                            ProcessGrid()
+                            UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
+                    Case 2, 3 'start/end year edited, update record length field
+                        lSYear = Integer.Parse(.CellValue(aRow, 2))
+                        lEYear = Integer.Parse(.CellValue(aRow, 3))
+                        .CellValue(aRow, 4) = lEYear - lSYear + 1
+                        'If PfqPrj.Stations(aRow - .FixedRows).Thresholds.Count > 0 Then
+                        '    Dim lThresh As pfqStation.ThresholdType = PfqPrj.Stations(aRow - .FixedRows).Thresholds(0)
+                        '    If aColumn = 2 Then 'update default threshold start year
+                        '        lThresh.SYear = Integer.Parse(.CellValue(aRow, 2))
+                        '    Else 'update default threshold end year
+                        '        lThresh.EYear = Integer.Parse(.CellValue(aRow, 3))
+                        '    End If
+                        '    PfqPrj.Stations(aRow - .FixedRows).Thresholds.RemoveAt(0)
+                        '    PfqPrj.Stations(aRow - .FixedRows).Thresholds.Insert(0, lThresh)
+                        '    'PfqPrj.Stations(aRow - .FixedRows).Thresholds(0) = lThresh
+                        'End If
+                    Case 5
+                        If .CellValue(aRow, aColumn) = "No" Then
+                            'update start/end years to systematic range
+                            lSYear = PfqPrj.Stations(lStnIndex).FirstSystematic
+                            .CellValue(aRow, 2) = lSYear
+                            lEYear = PfqPrj.Stations(lStnIndex).LastSystematic
+                            .CellValue(aRow, 3) = lEYear
+                            '.CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).LastSystematic - PfqPrj.Stations(aRow - .FixedRows).FirstSystematic + 1
+                        Else
+                            lSYear = PfqPrj.Stations(lStnIndex).FirstPeak
+                            .CellValue(aRow, 2) = lSYear
+                            lEYear = PfqPrj.Stations(lStnIndex).LastPeak
+                            .CellValue(aRow, 3) = lEYear
+                            '.CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).EndYear - PfqPrj.Stations(aRow - .FixedRows).BegYear + 1
+                        End If
+                        'Must use historic period if EMA is analysis option
+                        'If .CellValue(aRow, 1) = "EMA" Then
+                        '    MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
+                        '    .CellValue(aRow, aColumn) = "Yes"
+                        'End If
+                    Case 6, 7, 8 'changed skew option or values
+                        SetSkewFields(aGrid, aRow)
+                        If aColumn = 8 Then
+                            .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
+                            .Alignment(aRow, 9) = atcAlignment.HAlignRight
+                            '.CellColor(aRow, 9) = SystemColors.ControlDark
+                        End If
+                    Case 16 'changed urban/regulated option, force update of Input/View tab
+                        ProcessGrid()
+                        UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
+                End Select
                 If lSYear > 0 And lEYear > 0 Then
                     Dim lIncludeHistoricPeaks As Boolean = .CellValue(aRow, 5) = "Yes"
                     If PfqPrj.Stations(aRow - .FixedRows).Thresholds.Count = 0 Then
@@ -993,6 +999,29 @@ FileCancel:
         Catch ex As Exception
 
         End Try
+
+    End Sub
+
+    Private Sub SetSkewFields(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer)
+        With aGrid.Source
+            If .CellValue(aRow, 6) <> "Station" Then
+                If IsNumeric(.CellValue(aRow, 7)) AndAlso _
+                   .CellValue(aRow, 7) > -10 AndAlso .CellValue(aRow, 7) < 10 Then 'valid value
+                    .CellColor(aRow, 7) = Color.White
+                Else
+                    .CellColor(aRow, 7) = Color.Yellow
+                End If
+                If IsNumeric(.CellValue(aRow, 8)) AndAlso _
+                   .CellValue(aRow, 8) > 0 Then 'valid value
+                    .CellColor(aRow, 8) = Color.White
+                Else
+                    .CellColor(aRow, 8) = Color.Yellow
+                End If
+            Else
+                .CellColor(aRow, 7) = SystemColors.ControlLight
+                .CellColor(aRow, 8) = SystemColors.ControlLight
+            End If
+        End With
 
     End Sub
 

@@ -696,6 +696,20 @@ Friend Class pfqProject
                     s = ""
                     Exit For
                 End If
+                If vSta.SkewOpt > 0 AndAlso (vSta.GenSkew < -10 Or vSta.GenSkew > 10) Then
+                    MsgBox("For Station " & vSta.id & " a valid Reional Skew value has not been entered." & vbCrLf & _
+                           "When using either the Weighted or Regional Skew option, a Generalized Skew value must be provided", _
+                           MsgBoxStyle.Information, "PeakFQ Run Problem")
+                    s = ""
+                    Exit For
+                End If
+                If vSta.SkewOpt > 0 AndAlso (vSta.SESkew <= 0 Or vSta.SESkew > 1) Then
+                    MsgBox("For Station " & vSta.id & " a valid Regional Skew Standard Error value has not been entered." & vbCrLf & _
+                           "When using either the Weighted or Generalized Skew option, a Regional Skew Standard Error value must be provided", _
+                           MsgBoxStyle.Information, "PeakFQ Run Problem")
+                    s = ""
+                    Exit For
+                End If
             End If
             i = i + 1
         Next vSta
