@@ -705,7 +705,7 @@ Friend Class pfqProject
                 End If
                 If vSta.SkewOpt > 0 AndAlso (vSta.SESkew <= 0 Or vSta.SESkew > 1) Then
                     MsgBox("For Station " & vSta.id & " a valid Regional Skew Standard Error value has not been entered." & vbCrLf & _
-                           "When using either the Weighted or Generalized Skew option, a Regional Skew Standard Error value must be provided", _
+                           "When using either the Weighted or Generalized Skew option, a Regional Skew Standard Error value (> 0.0) must be provided", _
                            MsgBoxStyle.Information, "PeakFQ Run Problem")
                     s = ""
                     Exit For
