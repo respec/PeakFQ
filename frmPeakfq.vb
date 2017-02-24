@@ -662,6 +662,7 @@ FileCancel:
         Dim lMessage As String = ""
 
         Dim lFeedbackForm As New frmFeedback
+        lFeedbackForm.Text = "PeakFQ Feedback"
 
         'TODO: format as an html document?
         Dim lFeedback As String = lFeedbackForm.GetSystemInfo()
@@ -682,7 +683,7 @@ FileCancel:
             Try
                 Dim lClient As New System.Net.WebClient
                 lClient.Proxy.Credentials = System.Net.CredentialCache.DefaultCredentials
-                lClient.UploadValues("http://hspf.com/cgi-bin/feedback-basins4.cgi", "POST", lFeedbackCollection)
+                lClient.UploadValues("http://hspf.com/cgi-bin/feedback-PeakFQ.cgi", "POST", lFeedbackCollection)
                 Logger.Msg("Feedback successfully sent", "Send Feedback")
             Catch e As Exception
                 Logger.Msg("Feedback could not be sent", "Send Feedback")
@@ -2348,7 +2349,7 @@ FileCancel:
             lLOTestStr = "Multiple Grubbs-Beck"
         End If
 
-        Dim lWarning As String = "Peakfq v 7.1 run " & System.DateTime.Now & vbCrLf & _
+        Dim lWarning As String = "Peakfq v 7.2 run " & System.DateTime.Now & vbCrLf & _
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
                                  DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf
         If PfqPrj.Stations(lStnInd).SkewOpt <> 1 Then
