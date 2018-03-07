@@ -6,29 +6,46 @@ Module modPeakfq
     'Public LOTestType As String = "Single Grubbs-Beck"
     Public PFQExePath As String = IO.Path.GetDirectoryName(Application.ExecutablePath)
 
-    Friend Declare Sub PEAKFQ Lib "peakfq.dll" (ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
-    Friend Declare Sub GETDATA Lib "peakfq.dll" (ByRef aStnInd As Integer, ByRef aNPkPlt As Integer, _
-                                                 ByVal aPkLog() As Single, ByVal aSysPP() As Single, _
-                                                 ByVal aWrcPP() As Single, ByVal aXQual(,) As Integer, _
-                                                 ByVal aPkSeq() As Integer, ByRef aWeiba As Single, _
-                                                 ByRef aNPlot As Integer, ByVal aSysRfc() As Single, _
-                                                 ByVal aWrcFc() As Single, ByVal aTxProb() As Single, _
-                                                 ByRef aHistFlg As Integer, _
-                                                 ByVal aCLimL() As Single, ByVal aCLimU() As Single, _
-                                                 ByRef aNT As Integer, ByVal aThr() As Single, _
-                                                 ByVal aPPTh() As Single, ByVal aNObsTh() As Integer, _
-                                                 ByVal aThrSYr() As Integer, ByVal aThrEYr() As Integer, _
-                                                 ByRef aNInt As Integer, ByVal aIntLwr() As Single, _
-                                                 ByVal aIntUpr() As Single, ByVal aAllPPos() As Single, _
-                                                 ByVal aIntYr() As Integer, ByRef aGBCrit As Single, _
-                                                 ByRef aNLow As Integer, ByRef aNZero As Integer, _
-                                                 ByRef aSkew As Single, ByRef aRMSegs As Single, _
+    <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Ansi)>
+    Public Sub PEAKFQ(ByVal aSourceFile As String, ByVal aSourceFileNameLength As Short)
+    End Sub
+
+    <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Ansi)>
+    Public Function WCFGSM(ByRef aLatDec As Single, ByRef aLngDec As Single) As Single
+    End Function
+
+    <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Ansi)>
+    Public Sub GETDATA(ByRef aStnInd As Integer, ByRef aNPkPlt As Integer,
+                                                 ByVal aPkLog() As Single, ByVal aSysPP() As Single,
+                                                 ByVal aWrcPP() As Single, ByVal aXQual(,) As Integer,
+                                                 ByVal aPkSeq() As Integer, ByRef aWeiba As Single,
+                                                 ByRef aNPlot As Integer, ByVal aSysRfc() As Single,
+                                                 ByVal aWrcFc() As Single, ByVal aTxProb() As Single,
+                                                 ByRef aHistFlg As Integer,
+                                                 ByVal aCLimL() As Single, ByVal aCLimU() As Single,
+                                                 ByRef aNT As Integer, ByVal aThr() As Single,
+                                                 ByVal aPPTh() As Single, ByVal aNObsTh() As Integer,
+                                                 ByVal aThrSYr() As Integer, ByVal aThrEYr() As Integer,
+                                                 ByRef aNInt As Integer, ByVal aIntLwr() As Single,
+                                                 ByVal aIntUpr() As Single, ByVal aAllPPos() As Single,
+                                                 ByVal aIntYr() As Integer, ByRef aGBCrit As Single,
+                                                 ByRef aNLow As Integer, ByRef aNZero As Integer,
+                                                 ByRef aSkew As Single, ByRef aRMSegs As Single,
                                                  ByVal aHeader As String, ByVal aHeaderLength As Short)
-    Friend Declare Sub GETPEAKS Lib "peakfq.dll" (ByRef aStnInd As Integer, ByRef aNPkPlt As Integer, _
-                                                  ByVal aPks() As Single, ByVal aXQual(,) As Integer, _
+
+    End Sub
+
+    <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Unicode)>
+    Public Sub GETPEAKS(ByRef aStnInd As Integer, ByRef aNPkPlt As Integer,
+                                                  ByVal aPks() As Single, ByVal aXQual(,) As Integer,
                                                   ByVal aPkSeq() As Integer)
 
-    Friend Declare Sub F90_SPIPH Lib "peakfq.dll" (ByRef aHin As Integer, ByRef aHout As Integer)
+    End Sub
+
+    <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Unicode)>
+    Public Sub F90_SPIPH(ByRef aHin As Integer, ByRef aHout As Integer)
+
+    End Sub
 
     Friend pPipeWriteToStatus As Integer = 0
     Friend pPipeReadFromStatus As Integer = 0
@@ -40,16 +57,15 @@ Module modPeakfq
         'ff.SetDialogProperties("Please locate the PKFQWin Batch Executable 'PKFQBat.EXE'", My.Application.Info.DirectoryPath & "\PKFQBat.exe")
         'ff.SetRegistryInfo("PKFQWin", "files", "PKFQBat.exe")
         'PfqPrj.PFQExeFileName = atcUtility.FindFile("Please locate the PKFQWin Batch Executable 'PKFQBat.EXE'", "PKFQBat.EXE")
-		
+
         'ff.SetDialogProperties("Please locate PKFQWin help file 'PeakFQ.chm'", My.Application.Info.DirectoryPath & "\PeakFQ.chm")
         'ff.SetRegistryInfo("PKFQWin", "files", "PeakFQ.chm")
-		'UPGRADE_ISSUE: App property App.HelpFile was not upgraded. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
+        'UPGRADE_ISSUE: App property App.HelpFile was not upgraded. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="076C26E5-B7A9-4E77-B69C-B4448DF39E58"'
         'App.HelpFile = ff.GetName
-
-        Dim lfrmPeakfq As New frmPeakfq
+        Dim lfrmPeakfq As New frmPeakfq()
         lfrmPeakfq.ShowDialog()
-		
-	End Sub
+
+    End Sub
 End Module
 ''' <summary>
 ''' Sends messages to VB6 Status Monitor. 

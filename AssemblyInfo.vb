@@ -12,7 +12,7 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("")>
 <Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("Aqua Terra Consultants")>
+<Assembly: AssemblyCompany("RESPEC")>
 <Assembly: AssemblyProduct("")>
 <Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>

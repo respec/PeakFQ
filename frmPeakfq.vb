@@ -133,72 +133,79 @@ Friend Class frmPeakfq
                 End If
                 .CellEditable(lRow, 6) = True
 
-                .CellValue(lRow, 7) = vSta.GenSkew
+                If vSta.UseSkewMap Then
+                    .CellValue(lRow, 7) = "Yes"
+                Else
+                    .CellValue(lRow, 7) = "No"
+                End If
                 .CellEditable(lRow, 7) = True
-                .Alignment(lRow, 7) = atcAlignment.HAlignRight
 
-                .CellValue(lRow, 8) = vSta.SESkew
+                If Math.Abs(vSta.GenSkew) < 10 Then .CellValue(lRow, 8) = vSta.GenSkew
                 .CellEditable(lRow, 8) = True
                 .Alignment(lRow, 8) = atcAlignment.HAlignRight
 
-                SetSkewFields(grdSpecs, lRow)
+                If vSta.SESkew > 0 Then .CellValue(lRow, 9) = vSta.SESkew
+                .CellEditable(lRow, 9) = True
+                .Alignment(lRow, 9) = atcAlignment.HAlignRight
 
-                .CellValue(lRow, 9) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
-                .CellColor(lRow, 9) = SystemColors.ControlDark
-                .CellEditable(lRow, 9) = False
+                SetSkewFields(grdSpecs, lRow, 6)
 
-                .CellValue(lRow, 10) = vSta.LowHistPeak
+                .CellValue(lRow, 10) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
                 .CellColor(lRow, 10) = SystemColors.ControlDark
                 .CellEditable(lRow, 10) = False
-                .Alignment(lRow, 10) = atcAlignment.HAlignRight
 
-                .CellValue(lRow, 11) = vSta.LowOutlier
-                .CellEditable(lRow, 11) = True
+                .CellValue(lRow, 11) = vSta.LowHistPeak
+                .CellColor(lRow, 11) = SystemColors.ControlDark
+                .CellEditable(lRow, 11) = False
                 .Alignment(lRow, 11) = atcAlignment.HAlignRight
 
-                .CellValue(lRow, 12) = vSta.LOTestType
+                .CellValue(lRow, 12) = vSta.LowOutlier
                 .CellEditable(lRow, 12) = True
+                .Alignment(lRow, 12) = atcAlignment.HAlignRight
 
-                .CellValue(lRow, 13) = vSta.HighSysPeak
-                .CellColor(lRow, 13) = SystemColors.ControlDark
-                .CellEditable(lRow, 13) = False
-                .Alignment(lRow, 13) = atcAlignment.HAlignRight
+                .CellValue(lRow, 13) = vSta.LOTestType
+                .CellEditable(lRow, 13) = True
 
-                .CellValue(lRow, 14) = vSta.HighOutlier
+                .CellValue(lRow, 14) = vSta.HighSysPeak
+                .CellColor(lRow, 14) = SystemColors.ControlDark
+                .CellEditable(lRow, 14) = False
                 .Alignment(lRow, 14) = atcAlignment.HAlignRight
-                .CellValue(lRow, 15) = vSta.GageBaseDischarge
+
+                .CellValue(lRow, 15) = vSta.HighOutlier
                 .Alignment(lRow, 15) = atcAlignment.HAlignRight
+                .CellValue(lRow, 16) = vSta.GageBaseDischarge
+                .Alignment(lRow, 16) = atcAlignment.HAlignRight
                 If vSta.AnalysisOption = "EMA" Then
                     'don't allow editing of hi-outlier field
-                    .CellEditable(lRow, 14) = False
-                    .CellColor(lRow, 14) = SystemColors.ControlDark
                     .CellEditable(lRow, 15) = False
                     .CellColor(lRow, 15) = SystemColors.ControlDark
+                    .CellEditable(lRow, 16) = False
+                    .CellColor(lRow, 16) = SystemColors.ControlDark
                 Else
-                    .CellEditable(lRow, 14) = True
-                    .CellColor(lRow, 14) = Color.White
                     .CellEditable(lRow, 15) = True
                     .CellColor(lRow, 15) = Color.White
+                    .CellEditable(lRow, 16) = True
+                    .CellColor(lRow, 16) = Color.White
                 End If
 
 
                 If vSta.UrbanRegPeaks Then
-                    .CellValue(lRow, 16) = "Yes"
+                    .CellValue(lRow, 17) = "Yes"
                 Else
-                    .CellValue(lRow, 16) = "No"
+                    .CellValue(lRow, 17) = "No"
                 End If
-                .CellEditable(lRow, 16) = True
-
-                .CellValue(lRow, 17) = vSta.Lat
                 .CellEditable(lRow, 17) = True
-                .Alignment(lRow, 17) = atcAlignment.HAlignRight
 
-                .CellValue(lRow, 18) = vSta.Lng
+                .CellValue(lRow, 18) = vSta.Lat
                 .CellEditable(lRow, 18) = True
                 .Alignment(lRow, 18) = atcAlignment.HAlignRight
 
-                .CellValue(lRow, 19) = vSta.PlotName
+                .CellValue(lRow, 19) = vSta.Lng
                 .CellEditable(lRow, 19) = True
+                .Alignment(lRow, 19) = atcAlignment.HAlignRight
+
+                .CellValue(lRow, 20) = vSta.PlotName
+                .CellEditable(lRow, 20) = True
 
                 ilen = Len(vSta.PlotName)
                 For j = .Rows - 2 To .FixedRows Step -1 'look for duplicate plot names and adjust as needed
@@ -254,20 +261,25 @@ Friend Class frmPeakfq
                 ElseIf .CellValue(i, 6) = "Regional" Then
                     curSta.SkewOpt = 2
                 End If
-                If IsNumeric(.CellValue(i, 7)) Then curSta.GenSkew = CSng(.CellValue(i, 7))
-                If IsNumeric(.CellValue(i, 8)) Then curSta.SESkew = CSng(.CellValue(i, 8))
-                If IsNumeric(.CellValue(i, 11)) Then curSta.LowOutlier = CSng(.CellValue(i, 11))
-                curSta.LOTestType = .CellValue(i, 12)
-                If IsNumeric(.CellValue(i, 14)) Then curSta.HighOutlier = CSng(.CellValue(i, 14))
-                If IsNumeric(.CellValue(i, 15)) Then curSta.GageBaseDischarge = CSng(.CellValue(i, 15))
-                If .CellValue(i, 16) = "Yes" Then
+                If .CellValue(i, 7) = "Yes" Then
+                    curSta.UseSkewMap = True
+                Else
+                    curSta.UseSkewMap = False
+                End If
+                If IsNumeric(.CellValue(i, 8)) Then curSta.GenSkew = CSng(.CellValue(i, 8))
+                If IsNumeric(.CellValue(i, 9)) Then curSta.SESkew = CSng(.CellValue(i, 9))
+                If IsNumeric(.CellValue(i, 12)) Then curSta.LowOutlier = CSng(.CellValue(i, 12))
+                curSta.LOTestType = .CellValue(i, 13)
+                If IsNumeric(.CellValue(i, 15)) Then curSta.HighOutlier = CSng(.CellValue(i, 15))
+                If IsNumeric(.CellValue(i, 16)) Then curSta.GageBaseDischarge = CSng(.CellValue(i, 16))
+                If .CellValue(i, 17) = "Yes" Then
                     curSta.UrbanRegPeaks = True
                 Else
                     curSta.UrbanRegPeaks = False
                 End If
-                If IsNumeric(.CellValue(i, 17)) Then curSta.Lat = CSng(.CellValue(i, 17))
-                If IsNumeric(.CellValue(i, 18)) Then curSta.Lng = CSng(.CellValue(i, 18))
-                curSta.PlotName = .CellValue(i, 19)
+                If IsNumeric(.CellValue(i, 18)) Then curSta.Lat = CSng(.CellValue(i, 18))
+                If IsNumeric(.CellValue(i, 19)) Then curSta.Lng = CSng(.CellValue(i, 19))
+                curSta.PlotName = .CellValue(i, 20)
                 'PfqPrj.Stations.Add(curSta)
             Next
         End With
@@ -483,38 +495,57 @@ FileCancel:
         Dim i As Integer
         Dim s As String
         Dim lStnInd As Integer
+        Dim lBackToSpecs As Boolean = False
 
-        If Len(PfqPrj.SpecFileName) > 0 Then
-            Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-            lstGraphs.Items.Clear()
-            ProcessGrid()
-            If CurStationIndex >= 0 Then ProcessThresholds()
-            If cboDataGraphFormat.SelectedIndex > 0 Then
-                'save all data input graphs in specified format
-                lStnInd = CurStationIndex
-                For CurStationIndex = 0 To PfqPrj.Stations.Count - 1
-                    If PfqPrj.Stations(CurStationIndex).AnalysisOption.ToUpper <> "SKIP" Then
-                        UpdateInputGraph(vbTrue)
-                    End If
-                Next
-                CurStationIndex = lStnInd
+        For i = 0 To PfqPrj.Stations.Count - 1
+            If PfqPrj.Stations(i).UseSkewMap Then
+                If MsgBox("The Bulletin 17B map skew is selected for one or more stations. " &
+                          "Note that improved methods for estimating regional skew have been " &
+                          "developed and this option is included in PeakFQ only to allow " &
+                          "reproduction of a previous Bulletin 17B analysis." & vbCrLf & vbCrLf &
+                          "Click OK to continue." & vbCrLf &
+                          "Click Cancel to return to Station Specifications.", MsgBoxStyle.OkCancel,
+                          "PeakFQ Run Issue") = MsgBoxResult.Cancel Then
+                    lBackToSpecs = True
+                End If
             End If
-            ProcessOutput()
-            s = PfqPrj.SaveAsString
-            If s.Length > 0 Then
-                SaveFileString((PfqPrj.SpecFileName), s)
-                Application.DoEvents()
-                PfqPrj.RunBatchModel()
-                Application.DoEvents()
+        Next
 
-                SetGraphNames()
-                cmdGraph.Enabled = True
-                sstPfq.TabPages.Item(3).Enabled = True
-                sstPfq.SelectedIndex = 3
-            End If
-            Me.Cursor = System.Windows.Forms.Cursors.Default
+        If lBackToSpecs Then
+            Me.sstPfq.SelectedIndex = 0
         Else
-            MsgBox("PeakFQ Specfication or Data File must be opened before viewing results.", MsgBoxStyle.Information, "PeakFQ Results")
+            If Len(PfqPrj.SpecFileName) > 0 Then
+                Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
+                lstGraphs.Items.Clear()
+                ProcessGrid()
+                If CurStationIndex >= 0 Then ProcessThresholds()
+                If cboDataGraphFormat.SelectedIndex > 0 Then
+                    'save all data input graphs in specified format
+                    lStnInd = CurStationIndex
+                    For CurStationIndex = 0 To PfqPrj.Stations.Count - 1
+                        If PfqPrj.Stations(CurStationIndex).AnalysisOption.ToUpper <> "SKIP" Then
+                            UpdateInputGraph(vbTrue)
+                        End If
+                    Next
+                    CurStationIndex = lStnInd
+                End If
+                ProcessOutput()
+                s = PfqPrj.SaveAsString
+                If s.Length > 0 Then
+                    SaveFileString((PfqPrj.SpecFileName), s)
+                    Application.DoEvents()
+                    PfqPrj.RunBatchModel()
+                    Application.DoEvents()
+
+                    SetGraphNames()
+                    cmdGraph.Enabled = True
+                    sstPfq.TabPages.Item(3).Enabled = True
+                    sstPfq.SelectedIndex = 3
+                End If
+                Me.Cursor = System.Windows.Forms.Cursors.Default
+            Else
+                MsgBox("PeakFQ Specfication or Data File must be opened before viewing results.", MsgBoxStyle.Information, "PeakFQ Results")
+            End If
         End If
 
     End Sub
@@ -549,30 +580,32 @@ FileCancel:
             .CellValue(1, 5) = "Peaks"
             .CellValue(0, 6) = "Skew"
             .CellValue(1, 6) = "Option"
-            .CellValue(0, 7) = "Regional"
-            .CellValue(1, 7) = "Skew"
-            .CellValue(0, 8) = "Reg Skew"
-            .CellValue(1, 8) = "Std Error"
-            .CellValue(0, 9) = "Mean"
-            .CellValue(1, 9) = "Sqr Err"
-            .CellValue(0, 10) = "Low Hist"
-            .CellValue(1, 10) = "Peak"
-            .CellValue(0, 11) = "PILF (LO)"
-            .CellValue(1, 11) = "Threshold"
+            .CellValue(0, 7) = "Use B17B"
+            .CellValue(1, 7) = "Map Skew"
+            .CellValue(0, 8) = "Regional"
+            .CellValue(1, 8) = "Skew"
+            .CellValue(0, 9) = "Reg Skew"
+            .CellValue(1, 9) = "Std Error"
+            .CellValue(0, 10) = "Mean"
+            .CellValue(1, 10) = "Sqr Err"
+            .CellValue(0, 11) = "Low Hist"
+            .CellValue(1, 11) = "Peak"
             .CellValue(0, 12) = "PILF (LO)"
-            .CellValue(1, 12) = "Test"
-            .CellValue(0, 13) = "High Sys"
-            .CellValue(1, 13) = "Peak"
-            .CellValue(0, 14) = "Hi-Outlier"
-            .CellValue(1, 14) = "Threshold"
-            .CellValue(0, 15) = "Gage Base"
-            .CellValue(1, 15) = "Discharge"
-            .CellValue(0, 16) = "Urban/Reg"
-            .CellValue(1, 16) = "Peaks"
-            .CellValue(1, 17) = "Latitude"
-            .CellValue(1, 18) = "Longitude"
-            .CellValue(0, 19) = "Plot"
-            .CellValue(1, 19) = "Name"
+            .CellValue(1, 12) = "Threshold"
+            .CellValue(0, 13) = "PILF (LO)"
+            .CellValue(1, 13) = "Test"
+            .CellValue(0, 14) = "High Sys"
+            .CellValue(1, 14) = "Peak"
+            .CellValue(0, 15) = "Hi-Outlier"
+            .CellValue(1, 15) = "Threshold"
+            .CellValue(0, 16) = "Gage Base"
+            .CellValue(1, 16) = "Discharge"
+            .CellValue(0, 17) = "Urban/Reg"
+            .CellValue(1, 17) = "Peaks"
+            .CellValue(1, 18) = "Latitude"
+            .CellValue(1, 19) = "Longitude"
+            .CellValue(0, 20) = "Plot"
+            .CellValue(1, 20) = "Name"
 
         End With
 
@@ -720,9 +753,11 @@ FileCancel:
         cdlOpenSave.Title = "Open PeakFQ File"
         cdlOpenOpen.Filter = "PeakFQ Watstore Data (*.pkf,*.inp,*.txt)|*.pkf;*.inp;*.txt|PeakFQ Watstore Data (*.*)|*.*|PeakFQ WDM Data (*.wdm)|*.wdm|PKFQWin Spec (*.psf)|*.psf"
         cdlOpenSave.Filter = "PeakFQ Watstore Data (*.pkf,*.inp,*.txt)|*.pkf;*.inp;*.txt|PeakFQ Watstore Data (*.*)|*.*|PeakFQ WDM Data (*.wdm)|*.wdm|PKFQWin Spec (*.psf)|*.psf"
-        cdlOpenOpen.ShowDialog()
-        cdlOpenSave.FileName = cdlOpenOpen.FileName
-        FName = cdlOpenOpen.FileName
+
+        If cdlOpenOpen.ShowDialog = Windows.Forms.DialogResult.OK Then
+            cdlOpenSave.FileName = cdlOpenOpen.FileName
+            FName = cdlOpenOpen.FileName
+            If FName.Length < 114 Then 'acceptable file name length
         PfqPrj.Stations.Clear()
         PfqPrj = New pfqProject
         PfqPrj.InputDir = PathNameOnly(FName)
@@ -753,10 +788,13 @@ FileCancel:
                 DefPfqPrj.BuildNewSpecFile() 'build basic spec file (I/O files)
                 DefPfqPrj.RunBatchModel() 'run model to generate verbose spec file
                 DefPfqPrj.ReadSpecFile() 'read verbose spec file
-            End If
-        End If
-        Me.Cursor = System.Windows.Forms.Cursors.Default
-        If FileExists(PfqPrj.DataFileName) Then
+                        If FileExists(PfqPrj.DataFileName.Substring(0, PfqPrj.DataFileName.Length - 3) & "PRT") Then
+                            IO.File.Delete(PfqPrj.DataFileName.Substring(0, PfqPrj.DataFileName.Length - 3) & "PRT")
+                        End If
+                    End If
+                End If
+                Me.Cursor = System.Windows.Forms.Cursors.Default
+                If FileExists(PfqPrj.DataFileName) Then
             If PfqPrj.Stations.Count > 0 Then
                 'read peak data for each station from output file
                 PfqPrj.ReadPeaks()
@@ -786,8 +824,13 @@ FileCancel:
                 cmdSave.Enabled = True
                 mnuSaveSpecs.Enabled = True
                 '    PfqPrj.SpecFileName = tmpSpecName 'use temporary name for active spec file
+                    Else
+                        MessageBox.Show("Problem processing peak station data." & vbCrLf & _
+                                        "Check file and path names of selected files", "File-Open Problem")
+                    End If
+                End If
             Else
-                MessageBox.Show("Problem processing peak station data." & vbCrLf & _
+                MessageBox.Show("File name exceeds maximum allowable length (113 characters)." & vbCrLf & _
                                 "Check file and path names of selected files", "File-Open Problem")
             End If
         End If
@@ -796,8 +839,8 @@ FileCancel:
 
     Private Sub EnableGrid()
         Dim i As Short
-        For i = 1 To 19
-            If i <> 4 AndAlso i <> 9 AndAlso i <> 10 AndAlso i <> 13 Then
+        For i = 1 To 20
+            If i <> 4 AndAlso i <> 10 AndAlso i <> 11 AndAlso i <> 14 Then
                 'grdSpecs.set_ColEditable(i, True)
                 With grdSpecs.Source
                     For lrow As Integer = .FixedRows To .Rows - 1
@@ -871,7 +914,7 @@ FileCancel:
                 If .CellValue(i + 1, 1) <> "Skip" Then
                     j = j + 1
                     'oldName = "PKFQ-" & j & ".BMP"
-                    newName = .CellValue(i + 1, 19)
+                    newName = .CellValue(i + 1, 20)
                     If i > 1 Then 'look for repeating station IDs
                         ilen = Len(newName)
                         For k = i - 1 To 1 Step -1
@@ -921,29 +964,34 @@ FileCancel:
             With grdSpecs.Source
                 Dim lStnIndex As Integer = aRow - .FixedRows
                 Select Case aColumn
-                    Case 1'check to see if switching to EMA
-                            If .CellValue(aRow, aColumn) = "EMA" Then 'force inclusion of historic peaks
-                                .CellValue(aRow, 5) = "Yes"
-                                'set to Multiple G-B test
-                                .CellValue(aRow, 12) = "Multiple"
-                                'don't allow editing of hi-outlier or gage base fields
-                                .CellEditable(aRow, 14) = False
-                                .CellColor(aRow, 14) = SystemColors.ControlDark
-                                .CellEditable(aRow, 15) = False
-                                .CellColor(aRow, 15) = SystemColors.ControlDark
-                            Else
-                                'allow editing of hi-outlier and gage base fields
-                                .CellEditable(aRow, 14) = True
-                                .CellColor(aRow, 14) = Color.White
-                                .CellEditable(aRow, 15) = True
-                                .CellColor(aRow, 15) = Color.White
-                            End If
-                            ProcessGrid()
-                            UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
+                    Case 1 'check to see if switching to EMA
+                        If .CellValue(aRow, aColumn) = "EMA" Then 'force inclusion of historic peaks
+                            .CellValue(aRow, 5) = "Yes"
+                            'set to Multiple G-B test
+                            .CellValue(aRow, 13) = "Multiple"
+                            'don't allow editing of hi-outlier or gage base fields
+                            .CellEditable(aRow, 15) = False
+                            .CellColor(aRow, 15) = SystemColors.ControlDark
+                            .CellEditable(aRow, 16) = False
+                            .CellColor(aRow, 16) = SystemColors.ControlDark
+                        Else
+                            'allow editing of hi-outlier and gage base fields
+                            .CellEditable(aRow, 15) = True
+                            .CellColor(aRow, 15) = Color.White
+                            .CellEditable(aRow, 16) = True
+                            .CellColor(aRow, 16) = Color.White
+                        End If
+                        ProcessGrid()
+                        UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
                     Case 2, 3 'start/end year edited, update record length field
                         lSYear = Integer.Parse(.CellValue(aRow, 2))
                         lEYear = Integer.Parse(.CellValue(aRow, 3))
                         .CellValue(aRow, 4) = lEYear - lSYear + 1
+                        Dim lThresh As pfqStation.ThresholdType = PfqPrj.Stations(lStnIndex).Thresholds(0)
+                        lThresh.SYear = lSYear
+                        lThresh.EYear = lEYear
+                        PfqPrj.Stations(lStnIndex).Thresholds(0) = lThresh
+                        UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
                         'If PfqPrj.Stations(aRow - .FixedRows).Thresholds.Count > 0 Then
                         '    Dim lThresh As pfqStation.ThresholdType = PfqPrj.Stations(aRow - .FixedRows).Thresholds(0)
                         '    If aColumn = 2 Then 'update default threshold start year
@@ -975,14 +1023,15 @@ FileCancel:
                         '    MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
                         '    .CellValue(aRow, aColumn) = "Yes"
                         'End If
-                    Case 6, 7, 8 'changed skew option or values
-                        SetSkewFields(aGrid, aRow)
-                        If aColumn = 8 Then
-                            .CellValue(aRow, 9) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
-                            .Alignment(aRow, 9) = atcAlignment.HAlignRight
+                    Case 6, 7, 8, 9 'changed skew option or values
+                        SetSkewFields(aGrid, aRow, aColumn)
+                        If aColumn = 9 Then
+                            .CellValue(aRow, 10) = Single.Parse(.CellValue(aRow, aColumn) ^ 2)
+                            .Alignment(aRow, 10) = atcAlignment.HAlignRight
                             '.CellColor(aRow, 9) = SystemColors.ControlDark
                         End If
-                    Case 16 'changed urban/regulated option, force update of Input/View tab
+                        ProcessGrid()
+                    Case 17 'changed urban/regulated option, force update of Input/View tab
                         ProcessGrid()
                         UpdateStationDataDisplay(lStnIndex) 'force re-population of info on Input/View tab
                 End Select
@@ -1003,24 +1052,48 @@ FileCancel:
 
     End Sub
 
-    Private Sub SetSkewFields(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer)
+    Private Sub SetSkewFields(ByVal aGrid As atcControls.atcGrid, ByVal aRow As Integer, aCol As Integer)
         With aGrid.Source
             If .CellValue(aRow, 6) <> "Station" Then
-                If IsNumeric(.CellValue(aRow, 7)) AndAlso _
-                   .CellValue(aRow, 7) > -10 AndAlso .CellValue(aRow, 7) < 10 Then 'valid value
-                    .CellColor(aRow, 7) = Color.White
-                Else
-                    .CellColor(aRow, 7) = Color.Yellow
-                End If
-                If IsNumeric(.CellValue(aRow, 8)) AndAlso _
-                   .CellValue(aRow, 8) > 0 Then 'valid value
-                    .CellColor(aRow, 8) = Color.White
-                Else
-                    .CellColor(aRow, 8) = Color.Yellow
-                End If
-            Else
+                .CellColor(aRow, 7) = Color.White
+                If .CellValue(aRow, 7) = "Yes" Then 'user wants B17B Skew Map value
+                    Dim lLatDec As Single = CSng(.CellValue(aRow, 18))
+                    Dim lLngDec As Single = CSng(.CellValue(aRow, 19))
+                    If IsNumeric(lLatDec) AndAlso IsNumeric(lLngDec) Then
+                        .CellValue(aRow, 8) = WCFGSM(lLatDec, lLngDec)
+                        .CellEditable(aRow, 8) = False
+                        .CellColor(aRow, 8) = SystemColors.ControlDark
+                        .CellValue(aRow, 9) = 0.55
+                        .CellEditable(aRow, 9) = False
+                        .CellColor(aRow, 9) = SystemColors.ControlDark
+                    Else
+                        MsgBox("Unable to compute B17B Skew Map value." & vbCrLf &
+                                       "Provide valid values for Latitude/Longitude in appropriate columns of grid.", MsgBoxStyle.Exclamation)
+                    End If
+                Else 'user needs to enter values
+                    If aCol = 7 Then 'switching to 'No' for use skew map, set fields to be edited
+                        .CellEditable(aRow, 8) = True
+                        .CellValue(aRow, 8) = ""
+                        .CellEditable(aRow, 9) = True
+                        .CellValue(aRow, 9) = ""
+                    End If
+                    If IsNumeric(.CellValue(aRow, 8)) AndAlso
+                   .CellValue(aRow, 8) > -10 AndAlso .CellValue(aRow, 8) < 10 Then 'valid value
+                            .CellColor(aRow, 8) = Color.White
+                        Else
+                            .CellColor(aRow, 8) = Color.Yellow
+                        End If
+                        If IsNumeric(.CellValue(aRow, 9)) AndAlso
+                   .CellValue(aRow, 9) > 0 Then 'valid value
+                            .CellColor(aRow, 9) = Color.White
+                        Else
+                            .CellColor(aRow, 9) = Color.Yellow
+                        End If
+                    End If
+                    Else
                 .CellColor(aRow, 7) = SystemColors.ControlLight
                 .CellColor(aRow, 8) = SystemColors.ControlLight
+                .CellColor(aRow, 9) = SystemColors.ControlLight
             End If
         End With
 
@@ -1043,11 +1116,15 @@ FileCancel:
             lUniqueValues.Add("Weighted")
             lUniqueValues.Add("Regional")
             aGrid.AllowNewValidValues = True
-        ElseIf aColumn = 12 Then 'Low-outlier test option
+        ElseIf aColumn = 7 Then 'Use B17B Skew Map column
+            lUniqueValues.Add("Yes")
+            lUniqueValues.Add("No")
+            aGrid.AllowNewValidValues = True
+        ElseIf aColumn = 13 Then 'Low-outlier test option
             lUniqueValues.Add("Single")
             lUniqueValues.Add("Multiple")
             aGrid.AllowNewValidValues = True
-        ElseIf aColumn = 16 Then 'Urban/Reg Peaks column
+        ElseIf aColumn = 17 Then 'Urban/Reg Peaks column
             lUniqueValues.Add("Yes")
             lUniqueValues.Add("No")
             aGrid.AllowNewValidValues = True
@@ -1458,7 +1535,7 @@ FileCancel:
                         lY(0) = lPk
                         Select Case lCode
                             Case "7", "H"
-                                lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Black, SymbolType.Triangle)
+                                lCurve = lPane.AddCurve("Historic peak discharge", lX, lY, Color.Black, SymbolType.Triangle)
                             Case "D", "3"
                                 lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, Color.Black, SymbolType.XCross)
                             Case "G", "X", "8", "3+8"
@@ -1468,7 +1545,7 @@ FileCancel:
                             Case "L", "4"
                                 lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, Color.Black, SymbolType.Diamond)
                             Case Else
-                                lCurve = lPane.AddCurve("Gaged Peaks", lX, lY, Color.Black, SymbolType.Circle)
+                                lCurve = lPane.AddCurve("Gaged peak discharge", lX, lY, Color.Black, SymbolType.Circle)
                         End Select
                         lCurve.Line.IsVisible = False
                         lCurves.Add(lCode, lCurve)
@@ -1493,8 +1570,8 @@ FileCancel:
         Dim lIntervalsPlotted As Boolean = False
         i = 0
         For Each vData As pfqStation.PeakDataType In lStn.PeakData
-            If (vData.Year >= lStn.BegYear And vData.Year <= lStn.EndYear) AndAlso _
-               vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 AndAlso _
+            If (vData.Year >= lStn.BegYear And vData.Year <= lStn.EndYear) AndAlso
+               vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso
                Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.1 Then
                 lThrshDates(0) = vData.Year
                 lThrshDates(1) = vData.Year
@@ -1505,7 +1582,7 @@ FileCancel:
                 End If
                 lThrshVals(1) = vData.UpperLimit
                 If vData.UpperLimit < 1.0E+19 AndAlso vData.UpperLimit > lDataMax Then lDataMax = vData.UpperLimit
-                lCurve = lPane.AddCurve("Interval Flows", lThrshDates, lThrshVals, Color.Black, SymbolType.HDash)
+                lCurve = lPane.AddCurve("Interval peak discharge", lThrshDates, lThrshVals, Color.Black, SymbolType.HDash)
                 If lIntervalsPlotted Then
                     lCurve.Label.IsVisible = False
                 End If
@@ -1535,7 +1612,7 @@ FileCancel:
         'set x-axis range
         lPane.XAxis.Scale.Min = lStn.BegYear - 1 ' lYearMin - 1
         lPane.XAxis.Scale.Max = lStn.EndYear + 1 ' lYearMax + 1
-        lPane.XAxis.Title.Text = "Water Year" & vbCrLf & "Station - " & lStn.PlotName ' lStn.id & " " & lStn.Name
+        lPane.XAxis.Title.Text = "Water year" & vbCrLf & "Station - " & lStn.PlotName ' lStn.id & " " & lStn.Name
 
         'plot peaks implied from thresholds and plot default threshold
         Dim lThreshFound As Boolean
@@ -1559,7 +1636,7 @@ FileCancel:
                                 lThrshDates(1) = lQ.Year
                                 lThrshVals(0) = lYAxis.Scale.Min
                                 lThrshVals(1) = vThresh.LowerLimit
-                                lCurve = lPane.AddCurve("Censored Flows", lThrshDates, lThrshVals, Color.Silver, SymbolType.HDash)
+                                lCurve = lPane.AddCurve("Censored peak discharge", lThrshDates, lThrshVals, Color.Silver, SymbolType.HDash)
                                 If lIntervalsPlotted Then
                                     lCurve.Label.IsVisible = False
                                 End If
@@ -1604,7 +1681,7 @@ FileCancel:
         lThrshDates(1) = lStn.BegYear
         lThrshVals(0) = 0
         lThrshVals(1) = 0
-        lCurve = lPane.AddCurve("Horizontal bars represent perception thresholds", lThrshDates, lThrshVals, Color.White, SymbolType.None)
+        lCurve = lPane.AddCurve("Note: horizontal bars represent perception thresholds", lThrshDates, lThrshVals, Color.White, SymbolType.None)
         i = 0
         For Each vThresh In lStn.Thresholds
             i += 1
@@ -1701,7 +1778,7 @@ FileCancel:
         zgcThresh.AxisChange()
         zgcThresh.Invalidate()
         zgcThresh.Refresh()
-        If aSaveToFile Then
+        If aSaveToFile AndAlso zgcThresh.Visible Then
             Dim lFmt As String = StrRetRem(cboDataGraphFormat.SelectedItem.ToString)
             zgcThresh.SaveIn(PfqPrj.OutputDir & "\" & cboStation.Items(CurStationIndex).ToString & "_inp." & lFmt)
         End If
@@ -1832,7 +1909,7 @@ FileCancel:
                 .DashOff = 0
                 .IsVisible = True
             End With
-            .Title.Text = "Annual Peak Discharge (cfs)"
+            .Title.Text = "Annual peak discharge, in cubic feet per second"
             If aType = "T" Then
                 '.Title.Text = "Discharge (cfs)"
                 .Title.FontSpec.Size = 8
@@ -2113,7 +2190,7 @@ FileCancel:
         If lXVals(lNPlot2 - lNPlot1) < lPane.XAxis.Scale.Min Then lPane.XAxis.Scale.Min = lXVals(lNPlot2 - lNPlot1)
         lYAxis.IsVisible = True
         lYAxis.Scale.IsVisible = True
-        lCurve = lPane.AddCurve("Fitted frequency", lXVals, lYVals, Color.Red, SymbolType.None)
+        lCurve = lPane.AddCurve("Fitted frequency curve", lXVals, lYVals, Color.Red, SymbolType.None)
         lCurve.Line.Width = 2
 
         'LO Threshold
@@ -2217,7 +2294,7 @@ FileCancel:
                             ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
                                 lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
                             Else
-                                lCurve = lPane.AddCurve("Gaged Peaks", lX, lY, Color.Turquoise, SymbolType.Circle)
+                                lCurve = lPane.AddCurve("Gaged peak discharge", lX, lY, Color.Turquoise, SymbolType.Circle)
                             End If
                             lCurve.Symbol.Fill.Type = FillType.Solid
                             lCurve.Line.IsVisible = False
@@ -2243,7 +2320,7 @@ FileCancel:
             lXVals(j) = lTxProb(i)
         Next
         Dim lCIUpperPct As Integer = CInt(100 * PfqPrj.ConfidenceLimits)
-        lCurve = lPane.AddCurve("Confidence limits: " & (100 - lCIUpperPct) & "% Lower, " & lCIUpperPct & "% Upper", lXVals, lYVals, Color.Blue, SymbolType.None)
+        lCurve = lPane.AddCurve("Confidence limits: " & (100 - lCIUpperPct) & " percent lower, " & lCIUpperPct & " percent upper", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Line.Width = 2
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
@@ -2257,7 +2334,7 @@ FileCancel:
             End If
             lXVals(j) = lTxProb(i)
         Next
-        lCurve = lPane.AddCurve("Confidence Limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Line.Width = 2
         lCurve.Label.IsVisible = False
         'lCurve.Line.Style = Drawing2D.DashStyle.Dot
@@ -2268,8 +2345,9 @@ FileCancel:
         lPane.YAxis.Scale.MaxAuto = False
 
         'plot any interval data
+        Dim lFirstInterval As Boolean = True
         For i = 0 To lNInt - 1
-            If lIntLwr(i) > 0 And lIntUpr(i) < 1000000000 Then
+            If lIntLwr(i) >= 0 And lIntUpr(i) < 1000000000 Then
                 j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
                 lX2(0) = lAllPPos(j)
                 lX2(1) = lAllPPos(j)
@@ -2281,9 +2359,10 @@ FileCancel:
                 End If
                 lY2(1) = lIntUpr(i)
                 If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
-                If i = 0 Then
-                    lCurve = lPane.AddCurve("Interval Flood Estimate", lX2, lY2, Color.Turquoise, SymbolType.HDash)
+                If lFirstInterval Then
+                    lCurve = lPane.AddCurve("Interval peak discharge", lX2, lY2, Color.Turquoise, SymbolType.HDash)
                     lCurve.Line.Width = 2
+                    lFirstInterval = False
                 Else
                     lCurve.AddPoint(Double.NaN, Double.NaN)
                     lCurve.AddPoint(lX2(0), lY2(0))
@@ -2317,7 +2396,7 @@ FileCancel:
                                 lY2(1) = 1000000000
                             End If
                             If lFirstCensored Then
-                                lCurve = lPane.AddCurve("Censored Flow", lX2, lY2, Color.Gray, SymbolType.HDash)
+                                lCurve = lPane.AddCurve("Censored peak discharge", lX2, lY2, Color.Gray, SymbolType.HDash)
                             Else
                                 lCurve.AddPoint(Double.NaN, Double.NaN)
                                 lCurve.AddPoint(lX2(0), lY2(0))
@@ -2331,7 +2410,7 @@ FileCancel:
             End If
         Next
 
-        lPane.XAxis.Title.Text = "Annual Exceedance Probability, Percent" & vbCrLf & lHeader
+        lPane.XAxis.Title.Text = "Annual exceedance probability, in percent" & vbCrLf & lHeader
 
         Dim lSkewOptionText As String
         If PfqPrj.Stations(lStnInd).SkewOpt = 0 Then
@@ -2425,14 +2504,14 @@ FileCancel:
                     'force use of historic period
                     .CellValue(i, 5) = "Yes"
                     'set to Multiple G-B test
-                    .CellValue(i, 12) = "Multiple"
+                    .CellValue(i, 13) = "Multiple"
                     'don't allow editing of hi-outlier field
-                    .CellEditable(i, 14) = False
-                    .CellColor(i, 14) = SystemColors.ControlDark
+                    .CellEditable(i, 15) = False
+                    .CellColor(i, 15) = SystemColors.ControlDark
                 Else
                     'allow editing of hi-outlier field
-                    .CellEditable(i, 14) = True
-                    .CellColor(i, 14) = Color.White
+                    .CellEditable(i, 15) = True
+                    .CellColor(i, 15) = Color.White
                 End If
             Next
         End With
@@ -2589,7 +2668,7 @@ FileCancel:
         Dim lStr As String = cboLOTest.SelectedItem
         With grdSpecs.Source
             For i As Integer = .FixedRows To .Rows - 1
-                .CellValue(i, 12) = lStr
+                .CellValue(i, 13) = lStr
             Next
         End With
         grdSpecs.Refresh()

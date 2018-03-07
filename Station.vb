@@ -47,6 +47,7 @@ Friend Class pfqStation
     Private pSkewOpt As Integer '0 - Station, 1 - Weighted, 2 - Regional
     Private pUrbanRegPeaks As Boolean
     Private pHistoricPeriod As Boolean
+    Private pUseSkewMap As Boolean
     Private pGenSkew As Single
     Private pHighSysPeak As Single
     Private pHighOutlier As Single
@@ -85,6 +86,7 @@ Friend Class pfqStation
     Private pCThresholds As String
     Private pCIntervals As String
     Private pCLOTestType As String
+    Private pCUseSkewMap As String
 
     'UPGRADE_ISSUE: Declaration type not supported: Array with lower bound less than zero. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="934BD4FF-1FF9-47BD-888F-D411E47E78FA"'
     'Private SOText(-1 To 1) As String
@@ -159,6 +161,15 @@ Friend Class pfqStation
         End Get
         Set(ByVal Value As Boolean)
             pHistoricPeriod = Value
+        End Set
+    End Property
+
+    Public Property UseSkewMap() As Boolean
+        Get
+            UseSkewMap = pUseSkewMap
+        End Get
+        Set(ByVal Value As Boolean)
+            pUseSkewMap = Value
         End Set
     End Property
 
@@ -462,6 +473,15 @@ Friend Class pfqStation
         End Set
     End Property
 
+    Public Property CUseSkewMap() As String
+        Get
+            CUseSkewMap = pCUseSkewMap
+        End Get
+        Set(ByVal Value As String)
+            pCUseSkewMap = Value
+        End Set
+    End Property
+
     Public Property FirstSystematic() As Integer
         Get
             FirstSystematic = pFirstSystematic
@@ -542,6 +562,8 @@ Friend Class pfqStation
         Next
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
         s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
+        If Len(pCUseSkewMap) > 0 Then s = s & pad & pCUseSkewMap & vbCrLf
+        If pUseSkewMap Then s = s & pad & "UseSkewMap YES" & vbCrLf
         If Len(pCGenSkew) > 0 Then s = s & pad & pCGenSkew & vbCrLf
         s = s & pad & "GenSkew " & pGenSkew & vbCrLf
         If Len(pCSESkew) > 0 Then s = s & pad & pCSESkew & vbCrLf
@@ -625,7 +647,11 @@ Friend Class pfqStation
             s = s & pad & "'NO Historic Period in use" & vbCrLf
         End If
         If Len(defsta.CSkewOpt) > 0 Then s = s & pad & defsta.CSkewOpt & vbCrLf
-        If pSkewOpt <> defsta.SkewOpt Then s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
+        'If pSkewOpt <> defsta.SkewOpt Then s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
+        'always write skew option to avoid it getting lost
+        s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
+        If Len(defsta.CUseSkewMap) > 0 Then s = s & pad & defsta.CUseSkewMap & vbCrLf
+        If pUseSkewMap <> defsta.UseSkewMap Then s = s & pad & "UseSkewMap YES" & vbCrLf
         If Len(defsta.CGenSkew) > 0 Then s = s & pad & defsta.CGenSkew & vbCrLf
         If pGenSkew <> defsta.GenSkew Then s = s & pad & "GenSkew " & pGenSkew & vbCrLf
         If Len(defsta.CSESkew) > 0 Then s = s & pad & defsta.CSESkew & vbCrLf
@@ -840,12 +866,13 @@ Friend Class pfqStation
 
         pAnalysisOption = "EMA" 'init all stations to use EMA analysis
         'pSkewOpt = 0 'Weighted skew option (middle of -1, 0, 1)
-        pSkewOpt = 1  'TODO: Need to determine if this should be assigned differently (middle of 0, 1, 2)
+        pSkewOpt = 0  'TODO: Need to determine if this should be assigned differently (middle of 0, 1, 2)
         pUrbanRegPeaks = False
         pBegYear = 0
         pEndYear = 0
         pHistoricPeriod = True
-        pGenSkew = -0.5
+        pUseSkewMap = False
+        pGenSkew = -999 '-0.5
         pHighOutlier = 0.0#
         pLowOutlier = 0.0#
         pLOTestType = "Multiple"

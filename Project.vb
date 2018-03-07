@@ -63,9 +63,9 @@ Friend Class pfqProject
 				End If
 				SaveFileString(pSpecFileName, s)
 				ReadSpecFile() 'populate what we can now (at least get output file)
-				RunBatchModel()
-				
-			End If
+                RunBatchModel()
+
+            End If
 			ReadSpecFile()
 		End Set
 	End Property
@@ -594,6 +594,13 @@ Friend Class pfqProject
                             lData.Code = Rec
                         End If
                         CurStation.PeakData.Add(lData)
+                    Case "USESKEWMAP"
+                        If UCase(Rec) = "YES" Then
+                            CurStation.UseSkewMap = 1
+                        Else
+                            CurStation.UseSkewMap = 0
+                        End If
+                        If CommentPending Then CurStation.CUseSkewMap = lCom
                 End Select
                 CommentPending = False 'assume any pending comment was stored with a specification
             End If
@@ -1034,6 +1041,7 @@ Friend Class pfqProject
         Dim lXQual(499) As String
         Dim lPeak As pfqStation.PeakDataType
         Dim lPeaks As Generic.List(Of pfqStation.PeakDataType)
+        Dim lAllRegulated As Boolean = True
 
         For Each lStn As pfqStation In PfqPrj.Stations
             lPeaks = New Generic.List(Of pfqStation.PeakDataType)
@@ -1052,6 +1060,7 @@ Friend Class pfqProject
                     If lStn.FirstSystematic = 0 Then lStn.FirstSystematic = lPeak.Year
                     lStn.LastSystematic = lPeak.Year
                 End If
+                If Not lPeak.Code.Contains("K") And Not lPeak.Code.Contains("C") And Not lPeak.Code.Contains("6") Then lAllRegulated = False
             Next i
             lPeaks.Sort()
             lStn.FirstPeak = lPeaks(0).Year
