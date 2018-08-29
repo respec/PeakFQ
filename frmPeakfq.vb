@@ -1155,7 +1155,7 @@ FileCancel:
         Else
             lblB17BWarning.Visible = True
         End If
-
+        CurStationIndex = aStationIndex
         With grdThresh.Source ' lNewSource
             .FixedRows = 1
             .Rows = .FixedRows ' row counter progress, set to be started from the last fixed header row
@@ -1373,7 +1373,11 @@ FileCancel:
     Private Sub tabThresholds_GotFocus(ByVal sender As Object, ByVal e As System.EventArgs) Handles tabThresholds.GotFocus
         ProcessGrid()
         If cboStation.Items.Count > 0 Then
-            If CurStationIndex < 0 Then cboStation.SelectedIndex = 0
+            If CurStationIndex < 0 Then
+                cboStation.SelectedIndex = 0
+            Else
+                cboStation.SelectedIndex = CurStationIndex
+            End If
             With grdThresh 'At this point, there should already be one instantiated with header rows
                 .Enabled = True
                 .BackColor = SystemColors.Control
@@ -1778,7 +1782,7 @@ FileCancel:
         zgcThresh.AxisChange()
         zgcThresh.Invalidate()
         zgcThresh.Refresh()
-        If aSaveToFile AndAlso zgcThresh.Visible Then
+        If aSaveToFile AndAlso zgcThresh.Visible AndAlso lStn.AnalysisOption.ToUpper <> "SKIP" Then
             Dim lFmt As String = StrRetRem(cboDataGraphFormat.SelectedItem.ToString)
             zgcThresh.SaveIn(PfqPrj.OutputDir & "\" & cboStation.Items(CurStationIndex).ToString & "_inp." & lFmt)
         End If
