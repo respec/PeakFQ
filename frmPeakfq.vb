@@ -2460,7 +2460,7 @@ FileCancel:
             lZGC.AxisChange()
             lZGC.Invalidate()
             lZGC.Refresh()
-            lZGC.SaveIn(PfqPrj.OutputDir & "\" & PfqPrj.Stations(aStnInd).PlotName & "." & PfqPrj.GraphFormat)
+            lZGC.SaveIn(PfqPrj.OutputDir & "\" & PfqPrj.Stations(lStnInd).PlotName & "." & PfqPrj.GraphFormat)
         Else 'display plot on form
             lZGC.AxisChange()
             lZGC.Invalidate()
