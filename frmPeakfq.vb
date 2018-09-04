@@ -148,8 +148,6 @@ Friend Class frmPeakfq
                 .CellEditable(lRow, 9) = True
                 .Alignment(lRow, 9) = atcAlignment.HAlignRight
 
-                SetSkewFields(grdSpecs, lRow, 6)
-
                 .CellValue(lRow, 10) = DecimalAlign((vSta.SESkew ^ 2).ToString, , 4)
                 .CellColor(lRow, 10) = SystemColors.ControlDark
                 .CellEditable(lRow, 10) = False
@@ -203,6 +201,9 @@ Friend Class frmPeakfq
                 .CellValue(lRow, 19) = vSta.Lng
                 .CellEditable(lRow, 19) = True
                 .Alignment(lRow, 19) = atcAlignment.HAlignRight
+
+                'setting of skew terms may be influenced by Lat/Lng, so make call here
+                SetSkewFields(grdSpecs, lRow, 6)
 
                 .CellValue(lRow, 20) = vSta.PlotName
                 .CellEditable(lRow, 20) = True
@@ -758,36 +759,36 @@ FileCancel:
             cdlOpenSave.FileName = cdlOpenOpen.FileName
             FName = cdlOpenOpen.FileName
             If FName.Length < 114 Then 'acceptable file name length
-        PfqPrj.Stations.Clear()
-        PfqPrj = New pfqProject
-        PfqPrj.InputDir = PathNameOnly(FName)
-        PfqPrj.OutputDir = PathNameOnly(FName) 'default output directory to same as input
-        grdSpecs.Source.Rows = grdSpecs.Source.FixedRows
-        cboStation.Items.Clear()
-        CurStationIndex = -1
-        'set to current directory
-        ChDriveDir(PfqPrj.InputDir)
-        sstPfq.SelectedIndex = 0
-        sstPfq.TabPages.Item(3).Enabled = False
-        Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
-        Application.DoEvents()
-        If cdlOpenOpen.FilterIndex <= 3 Then 'open data file
-            PfqPrj.DataFileName = FName
-            PfqPrj.BuildNewSpecFile() 'build basic spec file (I/O files)
-            PfqPrj.RunBatchModel() 'run model to generate verbose spec file
-            PfqPrj.ReadSpecFile() 'read verbose spec file
-            DefPfqPrj = PfqPrj.Copy
-        Else 'open spec file
-            s = WholeFileString(FName)
-            'build default project from initial version of spec file
-            SaveFileString(PathNameOnly(FName) & "\" & tmpSpecName, s)
-            PfqPrj.SpecFileName = PathNameOnly(FName) & "\" & tmpSpecName 'make working verbose copy
-            If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then
-                '                DefPfqPrj = PfqPrj.SaveDefaults(s)
-                DefPfqPrj.DataFileName = PfqPrj.DataFileName
-                DefPfqPrj.BuildNewSpecFile() 'build basic spec file (I/O files)
-                DefPfqPrj.RunBatchModel() 'run model to generate verbose spec file
-                DefPfqPrj.ReadSpecFile() 'read verbose spec file
+                PfqPrj.Stations.Clear()
+                PfqPrj = New pfqProject
+                PfqPrj.InputDir = PathNameOnly(FName)
+                PfqPrj.OutputDir = PathNameOnly(FName) 'default output directory to same as input
+                grdSpecs.Source.Rows = grdSpecs.Source.FixedRows
+                cboStation.Items.Clear()
+                CurStationIndex = -1
+                'set to current directory
+                ChDriveDir(PfqPrj.InputDir)
+                sstPfq.SelectedIndex = 0
+                sstPfq.TabPages.Item(3).Enabled = False
+                Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
+                Application.DoEvents()
+                If cdlOpenOpen.FilterIndex <= 3 Then 'open data file
+                    PfqPrj.DataFileName = FName
+                    PfqPrj.BuildNewSpecFile() 'build basic spec file (I/O files)
+                    PfqPrj.RunBatchModel() 'run model to generate verbose spec file
+                    PfqPrj.ReadSpecFile() 'read verbose spec file
+                    DefPfqPrj = PfqPrj.Copy
+                Else 'open spec file
+                    s = WholeFileString(FName)
+                    'build default project from initial version of spec file
+                    SaveFileString(PathNameOnly(FName) & "\" & tmpSpecName, s)
+                    PfqPrj.SpecFileName = PathNameOnly(FName) & "\" & tmpSpecName 'make working verbose copy
+                    If FileExists(PfqPrj.DataFileName) AndAlso PfqPrj.Stations.Count > 0 Then
+                        '                DefPfqPrj = PfqPrj.SaveDefaults(s)
+                        DefPfqPrj.DataFileName = PfqPrj.DataFileName
+                        DefPfqPrj.BuildNewSpecFile() 'build basic spec file (I/O files)
+                        DefPfqPrj.RunBatchModel() 'run model to generate verbose spec file
+                        DefPfqPrj.ReadSpecFile() 'read verbose spec file
                         If FileExists(PfqPrj.DataFileName.Substring(0, PfqPrj.DataFileName.Length - 3) & "PRT") Then
                             IO.File.Delete(PfqPrj.DataFileName.Substring(0, PfqPrj.DataFileName.Length - 3) & "PRT")
                         End If
@@ -795,37 +796,37 @@ FileCancel:
                 End If
                 Me.Cursor = System.Windows.Forms.Cursors.Default
                 If FileExists(PfqPrj.DataFileName) Then
-            If PfqPrj.Stations.Count > 0 Then
-                'read peak data for each station from output file
-                PfqPrj.ReadPeaks()
-                If FileExists(PfqPrj.OutFile) Then
-                    'delete output file generated from reading data
-                    Kill(PfqPrj.OutFile)
-                End If
-                '    txtData.Text = PfqPrj.DataFileName
-                lblData.Text = "PeakFQ Data File:  " & PfqPrj.DataFileName
-                If cdlOpenOpen.FilterIndex = 4 Then 'opened spec file, put name on main form
-                    '      txtSpec.Text = fname
-                    lblSpec.Text = "PKFQWin Spec File:  " & FName
-                End If
-                If PfqPrj.EMA Then
-                    cboAnalysisOption.SelectedItem = "EMA"
-                Else
-                    cboAnalysisOption.SelectedItem = "B17B"
-                End If
-                cboLOTest.SelectedItem = "Multiple Grubbs-Beck"
-                EnableGrid()
-                PopulateGrid()
-                PopulateOutput()
-                sstPfq.TabPages.Item(0).Enabled = True
-                sstPfq.TabPages.Item(1).Enabled = True
-                sstPfq.TabPages.Item(2).Enabled = True
-                cmdRun.Enabled = True
-                cmdSave.Enabled = True
-                mnuSaveSpecs.Enabled = True
-                '    PfqPrj.SpecFileName = tmpSpecName 'use temporary name for active spec file
+                    If PfqPrj.Stations.Count > 0 Then
+                        'read peak data for each station from output file
+                        PfqPrj.ReadPeaks()
+                        If FileExists(PfqPrj.OutFile) Then
+                            'delete output file generated from reading data
+                            Kill(PfqPrj.OutFile)
+                        End If
+                        '    txtData.Text = PfqPrj.DataFileName
+                        lblData.Text = "PeakFQ Data File:  " & PfqPrj.DataFileName
+                        If cdlOpenOpen.FilterIndex = 4 Then 'opened spec file, put name on main form
+                            '      txtSpec.Text = fname
+                            lblSpec.Text = "PKFQWin Spec File:  " & FName
+                        End If
+                        If PfqPrj.EMA Then
+                            cboAnalysisOption.SelectedItem = "EMA"
+                        Else
+                            cboAnalysisOption.SelectedItem = "B17B"
+                        End If
+                        cboLOTest.SelectedItem = "Multiple Grubbs-Beck"
+                        EnableGrid()
+                        PopulateGrid()
+                        PopulateOutput()
+                        sstPfq.TabPages.Item(0).Enabled = True
+                        sstPfq.TabPages.Item(1).Enabled = True
+                        sstPfq.TabPages.Item(2).Enabled = True
+                        cmdRun.Enabled = True
+                        cmdSave.Enabled = True
+                        mnuSaveSpecs.Enabled = True
+                        '    PfqPrj.SpecFileName = tmpSpecName 'use temporary name for active spec file
                     Else
-                        MessageBox.Show("Problem processing peak station data." & vbCrLf & _
+                        MessageBox.Show("Problem processing peak station data." & vbCrLf &
                                         "Check file and path names of selected files", "File-Open Problem")
                     End If
                 End If
