@@ -2237,7 +2237,7 @@ FileCancel:
             lX2(1) = lTxProb(1)
             lY2(0) = lGBCrit
             lY2(1) = lGBCrit
-            lCurve = lPane.AddCurve("PILF (LO) Threshold", lX2, lY2, Color.Black, SymbolType.None)
+            lCurve = lPane.AddCurve("PILF (LO) threshold", lX2, lY2, Color.Black, SymbolType.None)
             lCurve.Line.Width = 2
         End If
 
@@ -2279,7 +2279,7 @@ FileCancel:
                             If lKey <> "H" AndAlso lKey <> "7" AndAlso lThresh >= 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
                         End If
                     Else
-                        lKey = "Low Outlier"
+                        lKey = "Low outlier"
                         lNGagedPILFS += 1
                     End If
                     'If lKey = "LO Threshold" AndAlso lCurves.Keys.Contains(lKey) Then
@@ -2322,15 +2322,15 @@ FileCancel:
                             lCurve.Line.IsVisible = False
                         Else
                             If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
-                                lCurve = lPane.AddCurve("Historic Peaks", lX, lY, Color.Fuchsia, SymbolType.Triangle)
+                                lCurve = lPane.AddCurve("Historic peaks", lX, lY, Color.Fuchsia, SymbolType.Triangle)
                                 lCurve.Symbol.Size = 9
                             ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
-                                lCurve = lPane.AddCurve("Urban or Reg Peaks", lX, lY, lColor, SymbolType.Square)
+                                lCurve = lPane.AddCurve("Urban or Reg peaks", lX, lY, lColor, SymbolType.Square)
                             ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or _
                                    lXQual(i).Contains("3") Or lXQual(i).Contains("8") Or lXQual(i).Contains("3+8") Then
-                                lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, lColor, SymbolType.XCross)
+                                lCurve = lPane.AddCurve("Peaks not used", lX, lY, lColor, SymbolType.XCross)
                             ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
-                                lCurve = lPane.AddCurve("Peaks < Shown", lX, lY, lColor, SymbolType.Diamond)
+                                lCurve = lPane.AddCurve("Peaks < shown", lX, lY, lColor, SymbolType.Diamond)
                             Else
                                 lCurve = lPane.AddCurve("Gaged peak discharge", lX, lY, Color.Turquoise, SymbolType.Circle)
                             End If
