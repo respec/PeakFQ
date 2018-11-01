@@ -642,7 +642,7 @@ FileCancel:
             grdInterval.SizeColumnToString(1, .CellValue(0, 1) & .CellValue(0, 1))
         End With
 
-        InitGraph(zgcThresh, "T")
+        InitGraph(zgcThresh, "Input")
         'Dim lRed As Integer
         'Dim lGreen As Integer
         'Dim lBlue As Integer
@@ -1848,9 +1848,13 @@ FileCancel:
             .IsFontsScaled = False
             .IsPenWidthScaled = False
             .Margin.Top = 20
-            .Margin.Bottom = 20
+            If aType = "Input" Then
+                .Margin.Bottom = 20
+            Else 'Results graph needs large bottom margin for Legend/Explanation boxes
+                .Margin.Bottom = 120
+            End If
             With .XAxis
-                If aType = "T" Then
+                If aType = "Input" Then
                     .Scale.FontSpec.Size = 8
                     .Title.FontSpec.Size = 8
                 Else
@@ -1864,9 +1868,11 @@ FileCancel:
                 .MajorTic.IsOutside = False
                 .MajorTic.IsInside = True
                 .MajorTic.IsOpposite = True
+                .MajorTic.Size = 8
                 .MinorTic.IsOutside = False
                 .MinorTic.IsInside = True
                 .MinorTic.IsOpposite = True
+                .MinorTic.Size = 4
                 With .MajorGrid
                     .Color = DefaultMajorGridColor
                     .DashOn = 0
@@ -1879,7 +1885,7 @@ FileCancel:
                     .DashOff = 0
                     .IsVisible = True
                 End With
-                If aType = "T" Then
+                If aType = "Input" Then
                     If .Type <> AxisType.Linear Then
                         .Type = AxisType.Linear
                     End If
@@ -1908,9 +1914,16 @@ FileCancel:
             .Y2Axis.Scale.IsVisible = False 'Default to not labeling on Y2, will be turned on later if different from Y
             With .Legend
                 .Position = LegendPos.Float
-                .Location = New Location(0.05, 0.05, CoordType.ChartFraction, AlignH.Left, AlignV.Top)
+                If aType = "Input" Then
+                    .Location = New Location(0.05, 0.05, CoordType.ChartFraction, AlignH.Left, AlignV.Top)
+                    .FontSpec.IsBold = False
+                    .Border.IsVisible = False
+                Else
+                    .Location = New Location(0.11, 0.8, CoordType.PaneFraction, AlignH.Left, AlignV.Top)
+                    .FontSpec.IsBold = True
+                    .Border.IsVisible = True
+                End If
                 .IsHStack = False
-                .Border.IsVisible = False
                 .Fill.IsVisible = False
             End With
             .Border.IsVisible = False
@@ -1919,7 +1932,7 @@ FileCancel:
 
     Private Sub SetYaxisDefaults(ByVal aYaxis As Axis, ByVal aType As String)
         With aYaxis
-            If aType = "T" Then
+            If aType = "Input" Then
                 .Type = AxisType.Linear
             Else
                 .Type = AxisType.Log
@@ -1928,8 +1941,10 @@ FileCancel:
             .MajorGrid.IsVisible = True
             .MajorTic.IsOutside = False
             .MajorTic.IsInside = True
+            .MajorTic.Size = 10
             .MinorTic.IsOutside = False
             .MinorTic.IsInside = True
+            .MinorTic.Size = 5
             .Scale.IsUseTenPower = False
             .Scale.FontSpec.IsBold = True
             .Scale.Mag = 0
@@ -1948,7 +1963,7 @@ FileCancel:
                 .IsVisible = True
             End With
             .Title.Text = "Annual peak discharge, in cubic feet per second"
-            If aType = "T" Then
+            If aType = "Input" Then
                 '.Title.Text = "Discharge (cfs)"
                 .Title.FontSpec.Size = 8
                 .Scale.FontSpec.Size = 8
@@ -2147,7 +2162,7 @@ FileCancel:
         newform.Height = VB6.TwipsToPixelsY(9450)
         newform.Width = VB6.TwipsToPixelsX(13200)
         Dim lZGC As ZedGraphControl = newform.ZedGraphCtrl
-        InitGraph(lZGC, "R")
+        InitGraph(lZGC, "Results")
         Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
         Dim lYAxis As Axis = lPane.YAxis
 
@@ -2210,6 +2225,8 @@ FileCancel:
         lNPlCL1 = lNPlot1
         lNPlCL2 = lNPlot2
 
+        lPane.AddCurve("EXPLANATION", lX, lY, Color.White)
+
         'WRC frequency
         Dim lYVals(lNPlot2 - lNPlot1) As Double
         Dim lXVals(lNPlot2 - lNPlot1) As Double
@@ -2240,6 +2257,46 @@ FileCancel:
             lCurve = lPane.AddCurve("PILF (LO) threshold", lX2, lY2, Color.Black, SymbolType.None)
             lCurve.Line.Width = 2
         End If
+
+        'confidence limits
+        ReDim lYVals(lNPlot2 - lNPlot1)
+        ReDim lXVals(lNPlot2 - lNPlot1)
+        For i = lNPlCL1 To lNPlCL2
+            j = i - lNPlCL1
+            If lCLimL(i) >= 29.0 Then 'problem with this value
+                lYVals(j) = 0
+            Else
+                lYVals(j) = 10 ^ lCLimL(i)
+                If lYVals(j) > lPMax Then lPMax = lYVals(j)
+                If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            End If
+            lXVals(j) = lTxProb(i)
+        Next
+        Dim lCIUpperPct As Integer = CInt(100 * PfqPrj.ConfidenceLimits)
+        lCurve = lPane.AddCurve("Confidence limits: " & (100 - lCIUpperPct) & " percent lower, " & lCIUpperPct & " percent upper", lXVals, lYVals, Color.Blue, SymbolType.None)
+        lCurve.Line.Width = 2
+        'Dim lfs As New ZedGraph.FontSpec
+        'lfs.Size = 14
+        'lfs.Border.IsVisible = False
+        'lCurve.Label.FontSpec = lfs
+
+
+        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
+        For i = lNPlCL1 To lNPlCL2
+            j = i - lNPlCL1
+            If lCLimU(i) >= 29.0 Then 'problem with this value
+                lYVals(j) = 0
+            Else
+                lYVals(j) = 10 ^ lCLimU(i)
+                If lYVals(j) > lPMax Then lPMax = lYVals(j)
+                If lYVals(j) < lPMin Then lPMin = lYVals(j)
+            End If
+            lXVals(j) = lTxProb(i)
+        Next
+        lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
+        lCurve.Line.Width = 2
+        lCurve.Label.IsVisible = False
+        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
         'observed peaks
         Dim lNGagedPILFS As Integer = 0
@@ -2326,7 +2383,7 @@ FileCancel:
                                 lCurve.Symbol.Size = 9
                             ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
                                 lCurve = lPane.AddCurve("Urban or Reg peaks", lX, lY, lColor, SymbolType.Square)
-                            ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or _
+                            ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or
                                    lXQual(i).Contains("3") Or lXQual(i).Contains("8") Or lXQual(i).Contains("3+8") Then
                                 lCurve = lPane.AddCurve("Peaks not used", lX, lY, lColor, SymbolType.XCross)
                             ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
@@ -2342,40 +2399,6 @@ FileCancel:
                 End If
             End If
         Next
-
-        'confidence limits
-        ReDim lYVals(lNPlot2 - lNPlot1)
-        ReDim lXVals(lNPlot2 - lNPlot1)
-        For i = lNPlCL1 To lNPlCL2
-            j = i - lNPlCL1
-            If lCLimL(i) >= 29.0 Then 'problem with this value
-                lYVals(j) = 0
-            Else
-                lYVals(j) = 10 ^ lCLimL(i)
-                If lYVals(j) > lPMax Then lPMax = lYVals(j)
-                If lYVals(j) < lPMin Then lPMin = lYVals(j)
-            End If
-            lXVals(j) = lTxProb(i)
-        Next
-        Dim lCIUpperPct As Integer = CInt(100 * PfqPrj.ConfidenceLimits)
-        lCurve = lPane.AddCurve("Confidence limits: " & (100 - lCIUpperPct) & " percent lower, " & lCIUpperPct & " percent upper", lXVals, lYVals, Color.Blue, SymbolType.None)
-        lCurve.Line.Width = 2
-        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
-        For i = lNPlCL1 To lNPlCL2
-            j = i - lNPlCL1
-            If lCLimU(i) >= 29.0 Then 'problem with this value
-                lYVals(j) = 0
-            Else
-                lYVals(j) = 10 ^ lCLimU(i)
-                If lYVals(j) > lPMax Then lPMax = lYVals(j)
-                If lYVals(j) < lPMin Then lPMin = lYVals(j)
-            End If
-            lXVals(j) = lTxProb(i)
-        Next
-        lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
-        lCurve.Line.Width = 2
-        lCurve.Label.IsVisible = False
-        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
         'set y-axis range
         Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
@@ -2476,7 +2499,7 @@ FileCancel:
                     "   " & lNLow - lNGagedPILFS - lNZero & " Censored flows below PILF (LO) Threshold " & vbCrLf & _
                     "   " & lNGagedPILFS & " Gaged peaks below PILF (LO) Threshold " & vbCrLf
 
-        Dim lText As New TextObj(lWarning, 0.6, 0.68)
+        Dim lText As New TextObj(lWarning, 0.6, 0.8) '.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
         lText.FontSpec.IsBold = True
