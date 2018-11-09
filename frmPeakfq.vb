@@ -1919,7 +1919,7 @@ FileCancel:
                     .FontSpec.IsBold = False
                     .Border.IsVisible = False
                 Else
-                    .Location = New Location(0.11, 0.8, CoordType.PaneFraction, AlignH.Left, AlignV.Top)
+                    .Location = New Location(0.11, 0.82, CoordType.PaneFraction, AlignH.Left, AlignV.Top)
                     .FontSpec.IsBold = True
                     .Border.IsVisible = True
                 End If
@@ -2159,8 +2159,8 @@ FileCancel:
         lLOThreshSymbol.StartFigure()
         lLOThreshSymbol.AddLine(-2 * lSize, 0, 2 * lSize, 0)
 
-        newform.Height = VB6.TwipsToPixelsY(9450)
-        newform.Width = VB6.TwipsToPixelsX(13200)
+        newform.Height = VB6.TwipsToPixelsY(10000) '9450)
+        newform.Width = VB6.TwipsToPixelsX(14000) '13200)
         Dim lZGC As ZedGraphControl = newform.ZedGraphCtrl
         InitGraph(lZGC, "Results")
         Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
@@ -2168,14 +2168,18 @@ FileCancel:
 
         'for GETDATA, lStnInd is sequence index of stations that were run (i.e. not skipped)
         Dim lStnInd As Integer = aStnInd + 1
-        Dim lHeader As String = " ".PadLeft(80)
-        Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear, _
-                     lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg, _
-                     lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh, _
-                     lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lAllPPos, _
-                     lIntYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, _
-                     lHeader, lHeader.Length)
+        '        Dim lHeader As String = "test header   ".PadLeft(80)
+        Dim lIHeader(0, 79) As Integer
+        Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear,
+                     lWeiba, lNPlot, lSysRFC, lWrcFC, lTxProb, lHistFlg,
+                     lCLimL, lCLimU, lNT, lThr, lPPTh, lNObsTh,
+                     lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lAllPPos,
+                     lIntYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, lIHeader)
+        '        lHeader, lHeader.Length)
         NumChr(5, 200, lIQual, lXQual)
+        Dim lHeadArray(79) As String
+        NumChr(80, 1, lIHeader, lHeadArray)
+        Dim lHeader As String = lHeadArray(0)
         Dim lPeakYears As New Generic.LinkedList(Of Integer)
         For i = 0 To lNPkPlt - 1
             lPeakYears.AddLast(Math.Abs(lPkYear(i)))
@@ -2204,8 +2208,6 @@ FileCancel:
 
         Dim lPP1 As Double = lTxProb(lNPlot - 1)
         Dim lPP0 As Double = lTxProb(0)
-        'Dim lPP1 As Double = 0.0 ' lTxProb(lNPlot - 1)
-        'Dim lPP0 As Double = 1.0 ' lTxProb(0)
         i = 0
         While lAllPPos(i) > 0.0
             If lAllPPos(i) < lPane.XAxis.Scale.Min Then lPane.XAxis.Scale.Min = 0.8 * lAllPPos(i)
@@ -2225,7 +2227,12 @@ FileCancel:
         lNPlCL1 = lNPlot1
         lNPlCL2 = lNPlot2
 
-        lPane.AddCurve("EXPLANATION", lX, lY, Color.White)
+        lCurve = lPane.AddCurve("EXPLANATION", lX, lY, Color.White)
+        Dim lfs As New ZedGraph.FontSpec
+        lfs.Border.IsVisible = False
+        lfs.Size = 11
+        lfs.IsBold = True
+        lCurve.Label.FontSpec = lfs
 
         'WRC frequency
         Dim lYVals(lNPlot2 - lNPlot1) As Double
@@ -2281,7 +2288,6 @@ FileCancel:
         'lCurve.Label.FontSpec = lfs
 
 
-        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
         For i = lNPlCL1 To lNPlCL2
             j = i - lNPlCL1
             If lCLimU(i) >= 29.0 Then 'problem with this value
@@ -2296,111 +2302,18 @@ FileCancel:
         lCurve = lPane.AddCurve("Confidence limits", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Line.Width = 2
         lCurve.Label.IsVisible = False
-        'lCurve.Line.Style = Drawing2D.DashStyle.Dot
 
-        'observed peaks
-        Dim lNGagedPILFS As Integer = 0
-        lCurves = New atcCollection
+        'check all observed peaks for Y min/max to set scale here
         ReDim lYVals(lNPkPlt - 1), lXVals(lNPkPlt - 1)
         For i = 0 To lNPkPlt - 1
-            lIsInterval = False
             lYVals(i) = 10 ^ lPkLog(i)
             If lYVals(i) > 0.001 AndAlso lYVals(i) < 10000000000.0 Then
                 If lYVals(i) > lPMax Then lPMax = lYVals(i)
                 If lYVals(i) < lPMin Then lPMin = lYVals(i)
-                If lHistFlg = 0 Then
-                    lXVals(i) = lWrcPP(i)
-                Else
-                    lXVals(i) = lSysPP(i)
-                End If
-                lThresh = -1
-                For j = 0 To lNT - 1
-                    If Math.Abs(lPkYear(i)) >= lThrSYr(j) AndAlso Math.Abs(lPkYear(i)) <= lThrEYr(j) Then 'peak is in a threshold
-                        lThresh = j
-                        If j > 0 Then Exit For 'don't exit loop if this is the default (0th) threshold
-                    End If
-                Next
-                For j = 0 To lNInt - 1
-                    If Math.Abs(lPkYear(i)) = lIntYr(j) Then 'this year is a flow interval, don't plot a point
-                        lIsInterval = True
-                        Exit For
-                    End If
-                Next
-                If Not lIsInterval Then
-                    'If Math.Abs(lYVals(i) - lGBCrit) < 0.1 Then
-                    '    lKey = "LO Threshold"
-                    'ElseIf lYVals(i) > lGBCrit Then 'above low outlier threshold
-                    If (lYVals(i) - lGBCrit) > -0.01 Then 'above low outlier threshold
-                        lKey = lXQual(i)
-                        If lKey.Length > 0 Then
-                            If lKey <> "H" AndAlso lKey <> "7" AndAlso lThresh >= 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
-                        End If
-                    Else
-                        lKey = "Low outlier"
-                        lNGagedPILFS += 1
-                    End If
-                    'If lKey = "LO Threshold" AndAlso lCurves.Keys.Contains(lKey) Then
-                    '    'don't want duplicates for LO Threshold, set this to normal peak
-                    '    Dim lProb As Double = lCurves.ItemByKey(lKey).points(0).x
-                    '    If lXVals(i) > lProb Then 'make leftmost LO the indicator
-                    '        lCurves.ItemByKey(lKey).points(0).x = lXVals(i)
-                    '        lXVals(i) = lProb
-                    '    End If
-                    '    lKey = lXQual(i) & CStr(lThresh)
-                    'End If
-                    If lCurves.Keys.Contains(lKey) Then 'add point to this curve
-                        lCurve = lCurves.ItemByKey(lKey)
-                        lCurve.AddPoint(lXVals(i), lYVals(i))
-                    Else 'need a new curve
-                        If lThresh = 0 Then 'use specific color for default threshold
-                            lColor = Color.DarkCyan
-                        ElseIf lThresh > 0 Then 'match color of threshold
-                            lColor = ThreshColors(lThresh)
-                        Else
-                            lColor = Color.Black
-                        End If
-                        lX(0) = lXVals(i) 'lSysPP(i)
-                        lY(0) = lYVals(i) '10 ^ lPkLog(i)
-                        'If Math.Abs(lY(0) - lGBCrit) < 0.1 Then 'this is the low outlier threshold
-                        '    lX2(0) = 1.0
-                        '    lX2(1) = lTxProb(1)
-                        '    lY2(0) = lY(0)
-                        '    lY2(1) = lY(0)
-                        '    lCurve = lPane.AddCurve("PILF (LO) Threshold", lX2, lY2, Color.Black, SymbolType.None)
-                        '    lCurve.Line.Width = 2
-                        '    'lCurve.Symbol.UserSymbol = lLOThreshSymbol
-                        '    'lCurve.Symbol.Fill.Type = FillType.Solid
-                        '    'lCurve.Symbol.Size = 15
-                        '    'lCurve = lPane.AddCurve("Low Outlier Threshold", lX, lY, Color.Red, SymbolType.Circle)
-                        '    'lCurve.Label.IsVisible = False
-                        'ElseIf lY(0) < lGBCrit Then
-                        If lY(0) < lGBCrit Then
-                            lCurve = lPane.AddCurve("PILF (LO)", lX, lY, Color.Black, SymbolType.Circle)
-                            lCurve.Line.IsVisible = False
-                        Else
-                            If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
-                                lCurve = lPane.AddCurve("Historic peaks", lX, lY, Color.Fuchsia, SymbolType.Triangle)
-                                lCurve.Symbol.Size = 9
-                            ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
-                                lCurve = lPane.AddCurve("Urban or Reg peaks", lX, lY, lColor, SymbolType.Square)
-                            ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or
-                                   lXQual(i).Contains("3") Or lXQual(i).Contains("8") Or lXQual(i).Contains("3+8") Then
-                                lCurve = lPane.AddCurve("Peaks not used", lX, lY, lColor, SymbolType.XCross)
-                            ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
-                                lCurve = lPane.AddCurve("Peaks < shown", lX, lY, lColor, SymbolType.Diamond)
-                            Else
-                                lCurve = lPane.AddCurve("Gaged peak discharge", lX, lY, Color.Turquoise, SymbolType.Circle)
-                            End If
-                            lCurve.Symbol.Fill.Type = FillType.Solid
-                            lCurve.Line.IsVisible = False
-                        End If
-                        lCurves.Add(lKey, lCurve)
-                    End If
-                End If
             End If
         Next
 
-        'set y-axis range
+        'use y-axis range to set graph Y-axis scale
         Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
         lPane.YAxis.Scale.MinAuto = False
         lPane.YAxis.Scale.MaxAuto = False
@@ -2471,6 +2384,80 @@ FileCancel:
             End If
         Next
 
+        'observed peaks
+        Dim lNGagedPILFS As Integer = 0
+        lCurves = New atcCollection
+        For i = 0 To lNPkPlt - 1
+            lIsInterval = False
+            lYVals(i) = 10 ^ lPkLog(i)
+            If lYVals(i) > 0.001 AndAlso lYVals(i) < 10000000000.0 Then
+                If lHistFlg = 0 Then
+                    lXVals(i) = lWrcPP(i)
+                Else
+                    lXVals(i) = lSysPP(i)
+                End If
+                lThresh = -1
+                For j = 0 To lNT - 1
+                    If Math.Abs(lPkYear(i)) >= lThrSYr(j) AndAlso Math.Abs(lPkYear(i)) <= lThrEYr(j) Then 'peak is in a threshold
+                        lThresh = j
+                        If j > 0 Then Exit For 'don't exit loop if this is the default (0th) threshold
+                    End If
+                Next
+                For j = 0 To lNInt - 1
+                    If Math.Abs(lPkYear(i)) = lIntYr(j) Then 'this year is a flow interval, don't plot a point
+                        lIsInterval = True
+                        Exit For
+                    End If
+                Next
+                If Not lIsInterval Then
+                    If (lYVals(i) - lGBCrit) > -0.01 Then 'above low outlier threshold
+                        lKey = lXQual(i)
+                        If lKey.Length > 0 Then
+                            If lKey <> "H" AndAlso lKey <> "7" AndAlso lThresh >= 0 Then lKey &= CStr(lPPTh(lThresh)) ' CStr(lThresh)
+                        End If
+                    Else
+                        lKey = "Low outlier"
+                        lNGagedPILFS += 1
+                    End If
+                    If lCurves.Keys.Contains(lKey) Then 'add point to this curve
+                        lCurve = lCurves.ItemByKey(lKey)
+                        lCurve.AddPoint(lXVals(i), lYVals(i))
+                    Else 'need a new curve
+                        If lThresh = 0 Then 'use specific color for default threshold
+                            lColor = Color.DarkCyan
+                        ElseIf lThresh > 0 Then 'match color of threshold
+                            lColor = ThreshColors(lThresh)
+                        Else
+                            lColor = Color.Black
+                        End If
+                        lX(0) = lXVals(i) 'lSysPP(i)
+                        lY(0) = lYVals(i) '10 ^ lPkLog(i)
+                        If lY(0) < lGBCrit Then
+                            lCurve = lPane.AddCurve("PILF (LO)", lX, lY, Color.Black, SymbolType.Circle)
+                            lCurve.Line.IsVisible = False
+                        Else
+                            If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
+                                lCurve = lPane.AddCurve("Historic peaks", lX, lY, Color.Fuchsia, SymbolType.Triangle)
+                                lCurve.Symbol.Size = 9
+                            ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
+                                lCurve = lPane.AddCurve("Urban or Reg peaks", lX, lY, lColor, SymbolType.Square)
+                            ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or
+                                   lXQual(i).Contains("3") Or lXQual(i).Contains("8") Or lXQual(i).Contains("3+8") Then
+                                lCurve = lPane.AddCurve("Peaks not used", lX, lY, lColor, SymbolType.XCross)
+                            ElseIf lXQual(i).Contains("L") Or lXQual(i).Contains("4") Then
+                                lCurve = lPane.AddCurve("Peaks < shown", lX, lY, lColor, SymbolType.Diamond)
+                            Else
+                                lCurve = lPane.AddCurve("Gaged peak discharge", lX, lY, Color.Turquoise, SymbolType.Circle)
+                            End If
+                            lCurve.Symbol.Fill.Type = FillType.Solid
+                            lCurve.Line.IsVisible = False
+                        End If
+                        lCurves.Add(lKey, lCurve)
+                    End If
+                End If
+            End If
+        Next
+
         lPane.XAxis.Title.Text = "Annual exceedance probability, in percent" & vbCrLf & lHeader
 
         Dim lSkewOptionText As String
@@ -2489,9 +2476,9 @@ FileCancel:
             lLOTestStr = "Multiple Grubbs-Beck"
         End If
 
-        Dim lWarning As String = "Peakfq v 7.2 run " & System.DateTime.Now & vbCrLf & _
-                                 PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf & _
-                                 DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G)" & vbCrLf
+        Dim lWarning As String = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.2 run " & System.DateTime.Now & vbCrLf &
+                                 PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf &
+                                 DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G);  " '& vbCrLf
         If PfqPrj.Stations(lStnInd).SkewOpt <> 1 Then
             lWarning &= DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf
         End If
@@ -2499,7 +2486,7 @@ FileCancel:
                     "   " & lNLow - lNGagedPILFS - lNZero & " Censored flows below PILF (LO) Threshold " & vbCrLf & _
                     "   " & lNGagedPILFS & " Gaged peaks below PILF (LO) Threshold " & vbCrLf
 
-        Dim lText As New TextObj(lWarning, 0.6, 0.8) '.68)
+        Dim lText As New TextObj(lWarning, 0.58, 0.82) '.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
         lText.FontSpec.IsBold = True

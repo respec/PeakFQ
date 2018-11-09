@@ -31,8 +31,8 @@ Module modPeakfq
                                                  ByVal aIntYr() As Integer, ByRef aGBCrit As Single,
                                                  ByRef aNLow As Integer, ByRef aNZero As Integer,
                                                  ByRef aSkew As Single, ByRef aRMSegs As Single,
-                                                 ByVal aHeader As String, ByVal aHeaderLength As Short)
-
+                                                 ByVal aIHeader(,) As Integer)
+        '                                                 ByVal aHeader As String, ByVal aHeaderLength As Short)
     End Sub
 
     <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Unicode)>
