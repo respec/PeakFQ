@@ -2352,13 +2352,8 @@ FileCancel:
                 j = i - PfqPrj.Stations(lStnInd).BegYear
                 If lAllPPos(j) > 0 AndAlso lAllPPos(j) < 1.0 Then
                     For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(lStnInd).Thresholds
-                        If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso (vThresh.LowerLimit > 0 Or vThresh.UpperLimit < 1.0E+20) Then
-                            'If vThresh.EYear - vThresh.SYear > 100 Then 'don't plot every interval for large time spans
-                            '    Dim lYearIntervalsToPlot As Integer = CInt((vThresh.EYear - vThresh.SYear) / 100)
-                            '    Dim lRemainder As Integer
-                            '    Math.DivRem(i, lYearIntervalsToPlot, lRemainder)
-                            '    If Not lRemainder = 0 Then Exit For
-                            'End If
+                        If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso
+                            ((vThresh.LowerLimit > 0 And vThresh.LowerLimit < 1.0E+20) Or vThresh.UpperLimit < 1.0E+20) Then
                             lX2(0) = lAllPPos(j)
                             lX2(1) = lAllPPos(j)
                             If vThresh.LowerLimit > 0 Then
