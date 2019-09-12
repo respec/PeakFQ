@@ -72,7 +72,7 @@
     Public WithEvents optAddFormat As Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray
     Public WithEvents optGraphFormat As Microsoft.VisualBasic.Compatibility.VB6.RadioButtonArray
     Friend WithEvents grdSpecs As atcControls.atcGrid
-    Friend WithEvents txtCL As atcControls.atcText
+    Friend WithEvents txtCI As atcControls.atcText
     Friend WithEvents txtPlotPos As atcControls.atcText
 
     'NOTE: The following procedure is required by the Windows Form Designer
@@ -138,10 +138,13 @@
         Me._cmdOpenOut_1 = New System.Windows.Forms.Button()
         Me._lblOutFile_1 = New System.Windows.Forms.Label()
         Me.fraOutRight = New System.Windows.Forms.Panel()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.lblCLL = New System.Windows.Forms.Label()
+        Me.txtCLU = New atcControls.atcText()
+        Me.txtCLL = New atcControls.atcText()
         Me.chkExtendedOutput = New System.Windows.Forms.CheckBox()
-        Me.lblCL2 = New System.Windows.Forms.Label()
         Me.cboGraphFormat = New System.Windows.Forms.ComboBox()
-        Me.txtCL = New atcControls.atcText()
+        Me.txtCI = New atcControls.atcText()
         Me.txtPlotPos = New atcControls.atcText()
         Me.chkPlotPos = New System.Windows.Forms.CheckBox()
         Me.lblGraphics = New System.Windows.Forms.Label()
@@ -928,10 +931,13 @@
         '
         Me.fraOutRight.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.fraOutRight.BackColor = System.Drawing.SystemColors.Control
+        Me.fraOutRight.Controls.Add(Me.Label1)
+        Me.fraOutRight.Controls.Add(Me.lblCLL)
+        Me.fraOutRight.Controls.Add(Me.txtCLU)
+        Me.fraOutRight.Controls.Add(Me.txtCLL)
         Me.fraOutRight.Controls.Add(Me.chkExtendedOutput)
-        Me.fraOutRight.Controls.Add(Me.lblCL2)
         Me.fraOutRight.Controls.Add(Me.cboGraphFormat)
-        Me.fraOutRight.Controls.Add(Me.txtCL)
+        Me.fraOutRight.Controls.Add(Me.txtCI)
         Me.fraOutRight.Controls.Add(Me.txtPlotPos)
         Me.fraOutRight.Controls.Add(Me.chkPlotPos)
         Me.fraOutRight.Controls.Add(Me.lblGraphics)
@@ -943,8 +949,84 @@
         Me.fraOutRight.Location = New System.Drawing.Point(533, 12)
         Me.fraOutRight.Name = "fraOutRight"
         Me.fraOutRight.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.fraOutRight.Size = New System.Drawing.Size(288, 230)
+        Me.fraOutRight.Size = New System.Drawing.Size(296, 261)
         Me.fraOutRight.TabIndex = 21
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.BackColor = System.Drawing.SystemColors.Control
+        Me.Label1.Cursor = System.Windows.Forms.Cursors.Default
+        Me.Label1.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label1.Location = New System.Drawing.Point(162, 180)
+        Me.Label1.Name = "Label1"
+        Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.Label1.Size = New System.Drawing.Size(131, 14)
+        Me.Label1.TabIndex = 54
+        Me.Label1.Text = "-percent confidence limits"
+        '
+        'lblCLL
+        '
+        Me.lblCLL.AutoSize = True
+        Me.lblCLL.BackColor = System.Drawing.SystemColors.Control
+        Me.lblCLL.Cursor = System.Windows.Forms.Cursors.Default
+        Me.lblCLL.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCLL.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.lblCLL.Location = New System.Drawing.Point(55, 180)
+        Me.lblCLL.Name = "lblCLL"
+        Me.lblCLL.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblCLL.Size = New System.Drawing.Size(69, 14)
+        Me.lblCLL.TabIndex = 53
+        Me.lblCLL.Text = "-percent and"
+        '
+        'txtCLU
+        '
+        Me.txtCLU.Alignment = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCLU.DataType = atcControls.atcText.ATCoDataType.ATCoDbl
+        Me.txtCLU.DefaultValue = ""
+        Me.txtCLU.Enabled = False
+        Me.txtCLU.HardMax = -999.0R
+        Me.txtCLU.HardMin = -999.0R
+        Me.txtCLU.InsideLimitsBackground = System.Drawing.Color.White
+        Me.txtCLU.Location = New System.Drawing.Point(130, 177)
+        Me.txtCLU.MaxWidth = 20
+        Me.txtCLU.Name = "txtCLU"
+        Me.txtCLU.NumericFormat = "0.#####"
+        Me.txtCLU.OutsideHardLimitBackground = System.Drawing.Color.Coral
+        Me.txtCLU.OutsideSoftLimitBackground = System.Drawing.Color.Yellow
+        Me.txtCLU.SelLength = 0
+        Me.txtCLU.SelStart = 0
+        Me.txtCLU.Size = New System.Drawing.Size(34, 20)
+        Me.txtCLU.SoftMax = -999.0R
+        Me.txtCLU.SoftMin = -999.0R
+        Me.txtCLU.TabIndex = 52
+        Me.txtCLU.ValueDouble = 95.0R
+        Me.txtCLU.ValueInteger = 95
+        '
+        'txtCLL
+        '
+        Me.txtCLL.Alignment = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCLL.DataType = atcControls.atcText.ATCoDataType.ATCoDbl
+        Me.txtCLL.DefaultValue = ""
+        Me.txtCLL.Enabled = False
+        Me.txtCLL.HardMax = -999.0R
+        Me.txtCLL.HardMin = -999.0R
+        Me.txtCLL.InsideLimitsBackground = System.Drawing.Color.White
+        Me.txtCLL.Location = New System.Drawing.Point(24, 177)
+        Me.txtCLL.MaxWidth = 20
+        Me.txtCLL.Name = "txtCLL"
+        Me.txtCLL.NumericFormat = "0.#####"
+        Me.txtCLL.OutsideHardLimitBackground = System.Drawing.Color.Coral
+        Me.txtCLL.OutsideSoftLimitBackground = System.Drawing.Color.Yellow
+        Me.txtCLL.SelLength = 0
+        Me.txtCLL.SelStart = 0
+        Me.txtCLL.Size = New System.Drawing.Size(34, 20)
+        Me.txtCLL.SoftMax = -999.0R
+        Me.txtCLL.SoftMin = -999.0R
+        Me.txtCLL.TabIndex = 51
+        Me.txtCLL.ValueDouble = 5.0R
+        Me.txtCLL.ValueInteger = 5
         '
         'chkExtendedOutput
         '
@@ -952,27 +1034,13 @@
         Me.chkExtendedOutput.Cursor = System.Windows.Forms.Cursors.Default
         Me.chkExtendedOutput.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.chkExtendedOutput.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.chkExtendedOutput.Location = New System.Drawing.Point(7, 203)
+        Me.chkExtendedOutput.Location = New System.Drawing.Point(6, 231)
         Me.chkExtendedOutput.Name = "chkExtendedOutput"
         Me.chkExtendedOutput.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.chkExtendedOutput.Size = New System.Drawing.Size(201, 17)
         Me.chkExtendedOutput.TabIndex = 50
         Me.chkExtendedOutput.Text = "Extended Analysis"
         Me.chkExtendedOutput.UseVisualStyleBackColor = False
-        '
-        'lblCL2
-        '
-        Me.lblCL2.AutoSize = True
-        Me.lblCL2.BackColor = System.Drawing.SystemColors.Control
-        Me.lblCL2.Cursor = System.Windows.Forms.Cursors.Default
-        Me.lblCL2.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblCL2.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblCL2.Location = New System.Drawing.Point(18, 159)
-        Me.lblCL2.Name = "lblCL2"
-        Me.lblCL2.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCL2.Size = New System.Drawing.Size(186, 14)
-        Me.lblCL2.TabIndex = 43
-        Me.lblCL2.Text = "alpha value of upper confidence limit:"
         '
         'cboGraphFormat
         '
@@ -984,28 +1052,28 @@
         Me.cboGraphFormat.Size = New System.Drawing.Size(187, 22)
         Me.cboGraphFormat.TabIndex = 42
         '
-        'txtCL
+        'txtCI
         '
-        Me.txtCL.Alignment = System.Windows.Forms.HorizontalAlignment.Left
-        Me.txtCL.DataType = atcControls.atcText.ATCoDataType.ATCoDbl
-        Me.txtCL.DefaultValue = ""
-        Me.txtCL.HardMax = 0.995R
-        Me.txtCL.HardMin = 0.5R
-        Me.txtCL.InsideLimitsBackground = System.Drawing.Color.White
-        Me.txtCL.Location = New System.Drawing.Point(206, 157)
-        Me.txtCL.MaxWidth = 20
-        Me.txtCL.Name = "txtCL"
-        Me.txtCL.NumericFormat = "0.#####"
-        Me.txtCL.OutsideHardLimitBackground = System.Drawing.Color.Coral
-        Me.txtCL.OutsideSoftLimitBackground = System.Drawing.Color.Yellow
-        Me.txtCL.SelLength = 0
-        Me.txtCL.SelStart = 0
-        Me.txtCL.Size = New System.Drawing.Size(49, 20)
-        Me.txtCL.SoftMax = -999.0R
-        Me.txtCL.SoftMin = -999.0R
-        Me.txtCL.TabIndex = 41
-        Me.txtCL.ValueDouble = 0.995R
-        Me.txtCL.ValueInteger = 0
+        Me.txtCI.Alignment = System.Windows.Forms.HorizontalAlignment.Left
+        Me.txtCI.DataType = atcControls.atcText.ATCoDataType.ATCoDbl
+        Me.txtCI.DefaultValue = "0.90"
+        Me.txtCI.HardMax = 1.0R
+        Me.txtCI.HardMin = 0.5R
+        Me.txtCI.InsideLimitsBackground = System.Drawing.Color.White
+        Me.txtCI.Location = New System.Drawing.Point(165, 149)
+        Me.txtCI.MaxWidth = 20
+        Me.txtCI.Name = "txtCI"
+        Me.txtCI.NumericFormat = "0.#####"
+        Me.txtCI.OutsideHardLimitBackground = System.Drawing.Color.Coral
+        Me.txtCI.OutsideSoftLimitBackground = System.Drawing.Color.Yellow
+        Me.txtCI.SelLength = 0
+        Me.txtCI.SelStart = 0
+        Me.txtCI.Size = New System.Drawing.Size(42, 20)
+        Me.txtCI.SoftMax = -999.0R
+        Me.txtCI.SoftMin = -999.0R
+        Me.txtCI.TabIndex = 41
+        Me.txtCI.ValueDouble = 0.9R
+        Me.txtCI.ValueInteger = 0
         '
         'txtPlotPos
         '
@@ -1079,12 +1147,12 @@
         Me.lblCL.Cursor = System.Windows.Forms.Cursors.Default
         Me.lblCL.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblCL.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.lblCL.Location = New System.Drawing.Point(3, 141)
+        Me.lblCL.Location = New System.Drawing.Point(3, 149)
         Me.lblCL.Name = "lblCL"
         Me.lblCL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCL.Size = New System.Drawing.Size(148, 14)
+        Me.lblCL.Size = New System.Drawing.Size(156, 14)
         Me.lblCL.TabIndex = 27
-        Me.lblCL.Text = "Symmetric Confidence Limits:"
+        Me.lblCL.Text = "Symmetric Confidence Interval:"
         '
         'tabResults
         '
@@ -1462,7 +1530,10 @@
     Friend WithEvents lblLegendMove As System.Windows.Forms.Label
     Friend WithEvents lblB17BWarning As System.Windows.Forms.Label
     Friend WithEvents cmdLogReal As System.Windows.Forms.Button
-    Public WithEvents lblCL2 As System.Windows.Forms.Label
     Public WithEvents chkExtendedOutput As System.Windows.Forms.CheckBox
+    Public WithEvents Label1 As Label
+    Public WithEvents lblCLL As Label
+    Friend WithEvents txtCLU As atcControls.atcText
+    Friend WithEvents txtCLL As atcControls.atcText
 #End Region
 End Class

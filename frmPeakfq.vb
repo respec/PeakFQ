@@ -370,7 +370,7 @@ Friend Class frmPeakfq
         Else
             chkPlotPos.CheckState = CheckState.Unchecked
         End If
-        txtCL.Text = PfqPrj.ConfidenceLimits
+        txtCI.Text = PfqPrj.ConfidenceInterval
         txtPlotPos.Text = PfqPrj.PlotPos
     End Sub
 
@@ -430,7 +430,7 @@ Friend Class frmPeakfq
             PfqPrj.PrintPlotPos = False
         End If
         'UPGRADE_WARNING: Couldn't resolve default property of object txtCL.Value. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-        PfqPrj.ConfidenceLimits = txtCL.Text
+        PfqPrj.ConfidenceInterval = txtCI.Text
         'UPGRADE_WARNING: Couldn't resolve default property of object txtPlotPos.Value. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
         PfqPrj.PlotPos = txtPlotPos.Text
 
@@ -831,7 +831,7 @@ FileCancel:
                     End If
                 End If
             Else
-                MessageBox.Show("File name exceeds maximum allowable length (113 characters)." & vbCrLf & _
+                MessageBox.Show("File name exceeds maximum allowable length (113 characters)." & vbCrLf &
                                 "Check file and path names of selected files", "File-Open Problem")
             End If
         End If
@@ -1080,18 +1080,18 @@ FileCancel:
                     End If
                     If IsNumeric(.CellValue(aRow, 8)) AndAlso
                    .CellValue(aRow, 8) > -10 AndAlso .CellValue(aRow, 8) < 10 Then 'valid value
-                            .CellColor(aRow, 8) = Color.White
-                        Else
-                            .CellColor(aRow, 8) = Color.Yellow
-                        End If
-                        If IsNumeric(.CellValue(aRow, 9)) AndAlso
-                   .CellValue(aRow, 9) > 0 Then 'valid value
-                            .CellColor(aRow, 9) = Color.White
-                        Else
-                            .CellColor(aRow, 9) = Color.Yellow
-                        End If
-                    End If
+                        .CellColor(aRow, 8) = Color.White
                     Else
+                        .CellColor(aRow, 8) = Color.Yellow
+                    End If
+                    If IsNumeric(.CellValue(aRow, 9)) AndAlso
+                   .CellValue(aRow, 9) > 0 Then 'valid value
+                        .CellColor(aRow, 9) = Color.White
+                    Else
+                        .CellColor(aRow, 9) = Color.Yellow
+                    End If
+                End If
+            Else
                 .CellColor(aRow, 7) = SystemColors.ControlLight
                 .CellColor(aRow, 8) = SystemColors.ControlLight
                 .CellColor(aRow, 9) = SystemColors.ControlLight
@@ -1233,8 +1233,8 @@ FileCancel:
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
-                    If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3")) OrElse _
-                        ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) OrElse _
+                    If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3")) OrElse
+                        ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) OrElse
                         (lData.Code.Contains("H") AndAlso lStn.HistoricPeriod = 0) Then
                         'gray out since it preceeds analysis start year, is unused code, or it's urban/regulated and that option is off
                         .CellEditable(j, 0) = False
@@ -1299,8 +1299,8 @@ FileCancel:
         With grdThresh.Source
             lThrColl = New Generic.List(Of pfqStation.ThresholdType)
             For i = .FixedRows To .Rows - 1
-                If IsNumeric(.CellValue(i, 0)) AndAlso IsNumeric(.CellValue(i, 1)) AndAlso _
-                   (IsNumeric(.CellValue(i, 2)) Or (.CellValue(i, 2) IsNot Nothing AndAlso .CellValue(i, 2).ToLower.Contains("inf"))) AndAlso _
+                If IsNumeric(.CellValue(i, 0)) AndAlso IsNumeric(.CellValue(i, 1)) AndAlso
+                   (IsNumeric(.CellValue(i, 2)) Or (.CellValue(i, 2) IsNot Nothing AndAlso .CellValue(i, 2).ToLower.Contains("inf"))) AndAlso
                    (IsNumeric(.CellValue(i, 3)) Or (.CellValue(i, 3) IsNot Nothing AndAlso .CellValue(i, 3).ToLower.Contains("inf"))) Then
                     Dim lThresh As New pfqStation.ThresholdType
                     lThresh.SYear = CInt(.CellValue(i, 0))
@@ -1520,6 +1520,8 @@ FileCancel:
                     ElseIf lPeak.Code.Length > 1 Then
                         If lPeak.Code.Contains("3") Or lPeak.Code.Contains("D") Then 'check for code 3 or D first - never used
                             lCode = "D"
+                        ElseIf lPeak.Code.Contains("O") Then
+                            lCode = "O"
                         ElseIf lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'next check for historic first
                             lCode = "H"
                         ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
@@ -1541,7 +1543,7 @@ FileCancel:
                         Select Case lCode
                             Case "7", "H"
                                 lCurve = lPane.AddCurve("Historic peak discharge", lX, lY, Color.Black, SymbolType.Triangle)
-                            Case "D", "3"
+                            Case "D", "3", "O"
                                 lCurve = lPane.AddCurve("Peaks Not Used", lX, lY, Color.Black, SymbolType.XCross)
                             Case "G", "X", "8", "3+8"
                                 lCurve = lPane.AddCurve("Peaks > Shown", lX, lY, Color.Black, SymbolType.Star)
@@ -1789,7 +1791,7 @@ FileCancel:
         For Each i In lStn.FindMissingYears
             lThreshDefined = False
             For Each vThresh In lStn.Thresholds
-                If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso _
+                If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso
                     (vThresh.LowerLimit <> 0 Or vThresh.UpperLimit < 1.0E+20) Then
                     'valid threshold for this missing year
                     lThreshDefined = True
@@ -1986,7 +1988,7 @@ FileCancel:
     ''' <param name="aScaleMin"></param>
     ''' <param name="aScaleMax"></param>
     ''' <remarks></remarks>
-    Public Sub Scalit(ByVal aDataMin As Double, ByVal aDataMax As Double, ByVal aLogScale As Boolean, _
+    Public Sub Scalit(ByVal aDataMin As Double, ByVal aDataMax As Double, ByVal aLogScale As Boolean,
                       ByRef aScaleMin As Double, ByRef aScaleMax As Double)
         'TODO: should existing ScaleMin and ScaleMax be respected?
         If Not aLogScale Then 'arithmetic scale
@@ -2279,8 +2281,16 @@ FileCancel:
             End If
             lXVals(j) = lTxProb(i)
         Next
-        Dim lCIUpperPct As Integer = CInt(100 * PfqPrj.ConfidenceLimits)
-        lCurve = lPane.AddCurve("Confidence limits: " & (100 - lCIUpperPct) & " percent lower, " & lCIUpperPct & " percent upper", lXVals, lYVals, Color.Blue, SymbolType.None)
+        Dim lCLLowerPct As String
+        Dim lCLUpperPct As String
+        If CInt(100 * PfqPrj.ConfidenceInterval) Mod 2 = 0 Then
+            lCLLowerPct = CInt(100 * (1.0 - PfqPrj.ConfidenceInterval) / 2).ToString
+            lCLUpperPct = CInt(100 * (1.0 + PfqPrj.ConfidenceInterval) / 2).ToString
+        Else
+            lCLLowerPct = DoubleToString(100 * (1.0 - PfqPrj.ConfidenceInterval) / 2, 4, "#0.0",,,)
+            lCLUpperPct = DoubleToString(100 * (1.0 + PfqPrj.ConfidenceInterval) / 2, 4, "00.0",,,)
+        End If
+        lCurve = lPane.AddCurve("Confidence limits: " & lCLLowerPct & " percent lower, " & lCLUpperPct & " percent upper", lXVals, lYVals, Color.Blue, SymbolType.None)
         lCurve.Line.Width = 2
         'Dim lfs As New ZedGraph.FontSpec
         'lfs.Size = 14
@@ -2317,67 +2327,6 @@ FileCancel:
         Scalit(lPMin, lPMax, True, lPane.YAxis.Scale.Min, lPane.YAxis.Scale.Max)
         lPane.YAxis.Scale.MinAuto = False
         lPane.YAxis.Scale.MaxAuto = False
-
-        'plot any interval data
-        Dim lFirstInterval As Boolean = True
-        For i = 0 To lNInt - 1
-            If lIntLwr(i) >= 0 And lIntUpr(i) < 1000000000 Then
-                j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
-                lX2(0) = lAllPPos(j)
-                lX2(1) = lAllPPos(j)
-                'lY2(0) = lIntLwr(i)
-                If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
-                    lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
-                Else
-                    lY2(0) = lIntLwr(i)
-                End If
-                lY2(1) = lIntUpr(i)
-                If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
-                If lFirstInterval Then
-                    lCurve = lPane.AddCurve("Interval peak discharge", lX2, lY2, Color.Turquoise, SymbolType.HDash)
-                    lCurve.Line.Width = 2
-                    lFirstInterval = False
-                Else
-                    lCurve.AddPoint(Double.NaN, Double.NaN)
-                    lCurve.AddPoint(lX2(0), lY2(0))
-                    lCurve.AddPoint(lX2(1), lY2(1))
-                End If
-            End If
-        Next
-
-        'plot any censored data
-        Dim lFirstCensored As Boolean = True
-        For i = PfqPrj.Stations(lStnInd).BegYear To PfqPrj.Stations(lStnInd).EndYear
-            If Not lPeakYears.Contains(i) Then 'not an observed peak, may be censored data
-                j = i - PfqPrj.Stations(lStnInd).BegYear
-                If lAllPPos(j) > 0 AndAlso lAllPPos(j) < 1.0 Then
-                    For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(lStnInd).Thresholds
-                        If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso
-                            ((vThresh.LowerLimit > 0 And vThresh.LowerLimit < 1.0E+20) Or vThresh.UpperLimit < 1.0E+20) Then
-                            lX2(0) = lAllPPos(j)
-                            lX2(1) = lAllPPos(j)
-                            If vThresh.LowerLimit > 0 Then
-                                'censored value from 0 to lower threshold
-                                lY2(0) = lYAxis.Scale.Min
-                                lY2(1) = vThresh.LowerLimit
-                            Else
-                                lY2(0) = vThresh.UpperLimit
-                                lY2(1) = 1000000000
-                            End If
-                            If lFirstCensored Then
-                                lCurve = lPane.AddCurve("Censored peak discharge", lX2, lY2, Color.Gray, SymbolType.HDash)
-                            Else
-                                lCurve.AddPoint(Double.NaN, Double.NaN)
-                                lCurve.AddPoint(lX2(0), lY2(0))
-                                lCurve.AddPoint(lX2(1), lY2(1))
-                            End If
-                            lFirstCensored = False
-                            Exit For
-                        End If
-                    Next
-                End If
-            End If
-        Next
 
         'observed peaks
         Dim lNGagedPILFS As Integer = 0
@@ -2453,6 +2402,67 @@ FileCancel:
             End If
         Next
 
+        'plot any interval data
+        Dim lFirstInterval As Boolean = True
+        For i = 0 To lNInt - 1
+            If lIntLwr(i) >= 0 And lIntUpr(i) < 1000000000 Then
+                j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
+                lX2(0) = lAllPPos(j)
+                lX2(1) = lAllPPos(j)
+                'lY2(0) = lIntLwr(i)
+                If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
+                    lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
+                Else
+                    lY2(0) = lIntLwr(i)
+                End If
+                lY2(1) = lIntUpr(i)
+                If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
+                If lFirstInterval Then
+                    lCurve = lPane.AddCurve("Interval peak discharge", lX2, lY2, Color.Turquoise, SymbolType.HDash)
+                    lCurve.Line.Width = 2
+                    lFirstInterval = False
+                Else
+                    lCurve.AddPoint(Double.NaN, Double.NaN)
+                    lCurve.AddPoint(lX2(0), lY2(0))
+                    lCurve.AddPoint(lX2(1), lY2(1))
+                End If
+            End If
+        Next
+
+        'plot any censored data
+        Dim lFirstCensored As Boolean = True
+        For i = PfqPrj.Stations(lStnInd).BegYear To PfqPrj.Stations(lStnInd).EndYear
+            If Not lPeakYears.Contains(i) Then 'not an observed peak, may be censored data
+                j = i - PfqPrj.Stations(lStnInd).BegYear
+                If lAllPPos(j) > 0 AndAlso lAllPPos(j) < 1.0 Then
+                    For Each vThresh As pfqStation.ThresholdType In PfqPrj.Stations(lStnInd).Thresholds
+                        If i >= vThresh.SYear AndAlso i <= vThresh.EYear AndAlso
+                            ((vThresh.LowerLimit > 0 And vThresh.LowerLimit < 1.0E+20) Or vThresh.UpperLimit < 1.0E+20) Then
+                            lX2(0) = lAllPPos(j)
+                            lX2(1) = lAllPPos(j)
+                            If vThresh.LowerLimit > 0 Then
+                                'censored value from 0 to lower threshold
+                                lY2(0) = lYAxis.Scale.Min
+                                lY2(1) = vThresh.LowerLimit
+                            Else
+                                lY2(0) = vThresh.UpperLimit
+                                lY2(1) = 1000000000
+                            End If
+                            If lFirstCensored Then
+                                lCurve = lPane.AddCurve("Censored peak discharge", lX2, lY2, Color.Gray, SymbolType.HDash)
+                            Else
+                                lCurve.AddPoint(Double.NaN, Double.NaN)
+                                lCurve.AddPoint(lX2(0), lY2(0))
+                                lCurve.AddPoint(lX2(1), lY2(1))
+                            End If
+                            lFirstCensored = False
+                            Exit For
+                        End If
+                    Next
+                End If
+            End If
+        Next
+
         lPane.XAxis.Title.Text = "Annual exceedance probability, in percent" & vbCrLf & lHeader
 
         Dim lSkewOptionText As String
@@ -2477,8 +2487,8 @@ FileCancel:
         If PfqPrj.Stations(lStnInd).SkewOpt <> 1 Then
             lWarning &= DoubleToString(CDbl(lRMSegs), , , , , 3) & " = Mean Sq Error (MSE sub G)" & vbCrLf
         End If
-        lWarning &= lLOTestStr & vbCrLf & "   " & lNZero & " Zeroes not displayed" & vbCrLf & _
-                    "   " & lNLow - lNGagedPILFS - lNZero & " Censored flows below PILF (LO) Threshold " & vbCrLf & _
+        lWarning &= lLOTestStr & vbCrLf & "   " & lNZero & " Zeroes not displayed" & vbCrLf &
+                    "   " & lNLow - lNGagedPILFS - lNZero & " Censored flows below PILF (LO) Threshold " & vbCrLf &
                     "   " & lNGagedPILFS & " Gaged peaks below PILF (LO) Threshold " & vbCrLf
 
         Dim lText As New TextObj(lWarning, 0.58, 0.82) '.68)
@@ -2493,8 +2503,8 @@ FileCancel:
         lPane.GraphObjList.Add(lText)
 
         If aToFile Then 'save plot to file
-            lZGC.MasterPane.PaneList(0).Rect = New System.Drawing.Rectangle( _
-                    0, 0, _
+            lZGC.MasterPane.PaneList(0).Rect = New System.Drawing.Rectangle(
+                    0, 0,
                     lZGC.Width, lZGC.Height)
             lZGC.AxisChange()
             lZGC.Invalidate()
@@ -2525,8 +2535,8 @@ FileCancel:
     Private Sub zgcThresh_MouseClick1(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles zgcThresh.MouseClick
         With zgcThresh.MasterPane.PaneList(0).Legend 'pPane.Legend
             .Position = LegendPos.Float
-            .Location = New Location((e.X - zgcThresh.MasterPane.Rect.Left) / zgcThresh.Width, _
-                                     (e.Y - zgcThresh.MasterPane.Rect.Top) / zgcThresh.MasterPane.Rect.Height, _
+            .Location = New Location((e.X - zgcThresh.MasterPane.Rect.Left) / zgcThresh.Width,
+                                     (e.Y - zgcThresh.MasterPane.Rect.Top) / zgcThresh.MasterPane.Rect.Height,
                                      CoordType.PaneFraction)
             .IsVisible = True
         End With
@@ -2644,14 +2654,14 @@ FileCancel:
                 End If
             End If
             If IsNumeric(.CellValue(aRow, 0)) Then 'valid year entered
-                If IsNumeric(.CellValue(aRow, 1)) AndAlso _
+                If IsNumeric(.CellValue(aRow, 1)) AndAlso
                    (Not .CellValue(aRow, 5) Is Nothing AndAlso .CellValue(aRow, 5).Length > 0) Then 'valid peak value entry
                     lGoodRow = True
                 End If
                 If IsNumeric(.CellValue(aRow, 3)) And IsNumeric(.CellValue(aRow, 4)) Then 'some interval data entered, check it
-                    If IsNumeric(.CellValue(aRow, 0)) AndAlso _
-                       (IsNumeric(.CellValue(aRow, 3)) OrElse .CellValue(aRow, 3).ToLower.Contains("inf")) AndAlso _
-                       (IsNumeric(.CellValue(aRow, 4)) OrElse .CellValue(aRow, 4).ToLower.Contains("inf")) AndAlso _
+                    If IsNumeric(.CellValue(aRow, 0)) AndAlso
+                       (IsNumeric(.CellValue(aRow, 3)) OrElse .CellValue(aRow, 3).ToLower.Contains("inf")) AndAlso
+                       (IsNumeric(.CellValue(aRow, 4)) OrElse .CellValue(aRow, 4).ToLower.Contains("inf")) AndAlso
                        (Not .CellValue(aRow, 5) Is Nothing AndAlso .CellValue(aRow, 5).Length > 0) Then 'valid interval value entry
                         lGoodRow = True
                     Else
@@ -2868,4 +2878,8 @@ FileCancel:
         UpdateInputGraph()
     End Sub
 
+    Private Sub txtCI_CommitChange() Handles txtCI.CommitChange
+        txtCLL.ValueDouble = 100 * ((1 - txtCI.ValueDouble) / 2)
+        txtCLU.ValueDouble = 100 * ((1 + txtCI.ValueDouble) / 2)
+    End Sub
 End Class

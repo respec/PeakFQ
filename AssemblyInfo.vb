@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 ' TODO: Review the values of the assembly attributes
 
 
-<Assembly: AssemblyTitle("")>
+<Assembly: AssemblyTitle("PKFQWin_2019-09-12")>
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("RESPEC")>
 <Assembly: AssemblyProduct("")>

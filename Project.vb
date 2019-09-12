@@ -23,71 +23,71 @@ Friend Class pfqProject
 	Private pGraphFormat As String
 	Private pPrintPlotPos As Boolean
 	Private pPlotPos As Single
-	Private pConfidenceLimits As Single
-	Private pInputDir As String
-	Private pOutputDir As String
+    Private pConfidenceInterval As Single
+    Private pInputDir As String
+    Private pOutputDir As String
     Private pEMA As Boolean
     Private pExtendedOutput As Boolean
     'the following are for storing comments for various specification records
-	Private pCDataFile As String
-	Private pCOutFile As String
-	Private pCPlotStyle As String
-	Private pCPlotFormat As String
-	Private pCPrintPlotPos As String
-	Private pCPlotPos As String
-	Private pCAdditional As String
+    Private pCDataFile As String
+    Private pCOutFile As String
+    Private pCPlotStyle As String
+    Private pCPlotFormat As String
+    Private pCPrintPlotPos As String
+    Private pCPlotPos As String
+    Private pCAdditional As String
     Private pCExportFileName As String
     Private pCEmpiricalFileName As String
     Private pCIntermediate As String
-	Private pCConfidenceLimits As String
+    Private pCConfidenceInterval As String
     Private pCEMA As String
     Private pCExtendedOutput As String
 
-	Private FType(1) As String
+    Private FType(1) As String
 
-	Public Property SpecFileName() As String
-		Get
-			SpecFileName = pSpecFileName
-		End Get
-		Set(ByVal Value As String)
+    Public Property SpecFileName() As String
+        Get
+            SpecFileName = pSpecFileName
+        End Get
+        Set(ByVal Value As String)
             Dim s As String
 
-			pSpecFileName = Value
+            pSpecFileName = Value
             s = WholeFileString(pSpecFileName)
-			If UCase(Left(s, 7)) <> "VERBOSE" Then
-				'update spec file to verbose mode that explicitly defines all station specs
-				If InStr(Right(s, 2), vbLf) > 0 Then 'already have line feed
-					s = s & "Update"
-				Else 'include CR/LF
-					s = s & vbCrLf & "Update"
-				End If
-				SaveFileString(pSpecFileName, s)
-				ReadSpecFile() 'populate what we can now (at least get output file)
+            If UCase(Left(s, 7)) <> "VERBOSE" Then
+                'update spec file to verbose mode that explicitly defines all station specs
+                If InStr(Right(s, 2), vbLf) > 0 Then 'already have line feed
+                    s = s & "Update"
+                Else 'include CR/LF
+                    s = s & vbCrLf & "Update"
+                End If
+                SaveFileString(pSpecFileName, s)
+                ReadSpecFile() 'populate what we can now (at least get output file)
                 RunBatchModel()
 
             End If
-			ReadSpecFile()
-		End Set
-	End Property
-	
-	Public Property DataFileName() As String
-		Get
-			DataFileName = pDataFileName
-		End Get
-		Set(ByVal Value As String)
-			pDataFileName = Value
-		End Set
-	End Property
-	
-	Public Property DataType() As Integer
-		Get
-			DataType = pDataType
-		End Get
-		Set(ByVal Value As Integer)
-			pDataType = Value
-		End Set
-	End Property
-	
+            ReadSpecFile()
+        End Set
+    End Property
+
+    Public Property DataFileName() As String
+        Get
+            DataFileName = pDataFileName
+        End Get
+        Set(ByVal Value As String)
+            pDataFileName = Value
+        End Set
+    End Property
+
+    Public Property DataType() As Integer
+        Get
+            DataType = pDataType
+        End Get
+        Set(ByVal Value As Integer)
+            pDataType = Value
+        End Set
+    End Property
+
     Public Property Stations() As Generic.List(Of pfqStation)
         Get
             If pStations Is Nothing Then pStations = New Generic.List(Of pfqStation)
@@ -97,25 +97,25 @@ Friend Class pfqProject
             pStations = Value
         End Set
     End Property
-	
-	Public Property OutFile() As String
-		Get
-			OutFile = pOutFile
-		End Get
-		Set(ByVal Value As String)
-			pOutFile = Value
-		End Set
-	End Property
-	
-	Public Property AdditionalOutput() As Integer
-		Get
-			AdditionalOutput = pAdditionalOutput
-		End Get
-		Set(ByVal Value As Integer)
-			pAdditionalOutput = Value
-		End Set
-	End Property
-	
+
+    Public Property OutFile() As String
+        Get
+            OutFile = pOutFile
+        End Get
+        Set(ByVal Value As String)
+            pOutFile = Value
+        End Set
+    End Property
+
+    Public Property AdditionalOutput() As Integer
+        Get
+            AdditionalOutput = pAdditionalOutput
+        End Get
+        Set(ByVal Value As Integer)
+            pAdditionalOutput = Value
+        End Set
+    End Property
+
     Public Property AddOutFileName() As String
         Get
             AddOutFileName = pAddOutFileName
@@ -151,79 +151,79 @@ Friend Class pfqProject
             pIntermediateResults = Value
         End Set
     End Property
-	
-	Public Property ConfidenceLimits() As Single
-		Get
-			ConfidenceLimits = pConfidenceLimits
-		End Get
-		Set(ByVal Value As Single)
-			pConfidenceLimits = Value
-		End Set
-	End Property
-	
-	Public Property LinePrinter() As Boolean
-		Get
-			LinePrinter = pLinePrinter
-		End Get
-		Set(ByVal Value As Boolean)
-			pLinePrinter = Value
-		End Set
-	End Property
-	
-	Public Property Graphic() As Boolean
-		Get
-			Graphic = pGraphic
-		End Get
-		Set(ByVal Value As Boolean)
-			pGraphic = Value
-		End Set
-	End Property
-	
-	Public Property GraphFormat() As String
-		Get
-			GraphFormat = pGraphFormat
-		End Get
-		Set(ByVal Value As String)
-			pGraphFormat = Value
-		End Set
-	End Property
-	
-	Public Property PlotPos() As Single
-		Get
-			PlotPos = pPlotPos
-		End Get
-		Set(ByVal Value As Single)
-			pPlotPos = Value
-		End Set
-	End Property
-	
-	Public Property PrintPlotPos() As Boolean
-		Get
-			PrintPlotPos = pPrintPlotPos
-		End Get
-		Set(ByVal Value As Boolean)
-			pPrintPlotPos = Value
-		End Set
-	End Property
-	
-	Public Property InputDir() As String
-		Get
-			InputDir = pInputDir
-		End Get
-		Set(ByVal Value As String)
-			pInputDir = Value
-		End Set
-	End Property
-	
-	Public Property OutputDir() As String
-		Get
-			OutputDir = pOutputDir
-		End Get
-		Set(ByVal Value As String)
-			pOutputDir = Value
-		End Set
-	End Property
-	
+
+    Public Property ConfidenceInterval() As Single
+        Get
+            ConfidenceInterval = pConfidenceInterval
+        End Get
+        Set(ByVal Value As Single)
+            pConfidenceInterval = Value
+        End Set
+    End Property
+
+    Public Property LinePrinter() As Boolean
+        Get
+            LinePrinter = pLinePrinter
+        End Get
+        Set(ByVal Value As Boolean)
+            pLinePrinter = Value
+        End Set
+    End Property
+
+    Public Property Graphic() As Boolean
+        Get
+            Graphic = pGraphic
+        End Get
+        Set(ByVal Value As Boolean)
+            pGraphic = Value
+        End Set
+    End Property
+
+    Public Property GraphFormat() As String
+        Get
+            GraphFormat = pGraphFormat
+        End Get
+        Set(ByVal Value As String)
+            pGraphFormat = Value
+        End Set
+    End Property
+
+    Public Property PlotPos() As Single
+        Get
+            PlotPos = pPlotPos
+        End Get
+        Set(ByVal Value As Single)
+            pPlotPos = Value
+        End Set
+    End Property
+
+    Public Property PrintPlotPos() As Boolean
+        Get
+            PrintPlotPos = pPrintPlotPos
+        End Get
+        Set(ByVal Value As Boolean)
+            pPrintPlotPos = Value
+        End Set
+    End Property
+
+    Public Property InputDir() As String
+        Get
+            InputDir = pInputDir
+        End Get
+        Set(ByVal Value As String)
+            pInputDir = Value
+        End Set
+    End Property
+
+    Public Property OutputDir() As String
+        Get
+            OutputDir = pOutputDir
+        End Get
+        Set(ByVal Value As String)
+            pOutputDir = Value
+        End Set
+    End Property
+
     Public Property EMA() As Boolean
         Get
             EMA = pEMA
@@ -250,61 +250,61 @@ Friend Class pfqProject
             pCDataFile = Value
         End Set
     End Property
-	
-	Public Property COutFile() As String
-		Get
-			COutFile = pCOutFile
-		End Get
-		Set(ByVal Value As String)
-			pCOutFile = Value
-		End Set
-	End Property
-	
-	Public Property CPlotStyle() As String
-		Get
-			CPlotStyle = pCPlotStyle
-		End Get
-		Set(ByVal Value As String)
-			pCPlotStyle = Value
-		End Set
-	End Property
-	
-	Public Property CPlotFormat() As String
-		Get
-			CPlotFormat = pCPlotFormat
-		End Get
-		Set(ByVal Value As String)
-			pCPlotFormat = Value
-		End Set
-	End Property
-	
-	Public Property CPrintPlotPos() As String
-		Get
-			CPrintPlotPos = pCPrintPlotPos
-		End Get
-		Set(ByVal Value As String)
-			pCPrintPlotPos = Value
-		End Set
-	End Property
-	
-	Public Property CPlotPos() As String
-		Get
-			CPlotPos = pCPlotPos
-		End Get
-		Set(ByVal Value As String)
-			pCPlotPos = Value
-		End Set
-	End Property
-	
-	Public Property CAdditional() As String
-		Get
-			CAdditional = pCAdditional
-		End Get
-		Set(ByVal Value As String)
-			pCAdditional = Value
-		End Set
-	End Property
-	
+
+    Public Property COutFile() As String
+        Get
+            COutFile = pCOutFile
+        End Get
+        Set(ByVal Value As String)
+            pCOutFile = Value
+        End Set
+    End Property
+
+    Public Property CPlotStyle() As String
+        Get
+            CPlotStyle = pCPlotStyle
+        End Get
+        Set(ByVal Value As String)
+            pCPlotStyle = Value
+        End Set
+    End Property
+
+    Public Property CPlotFormat() As String
+        Get
+            CPlotFormat = pCPlotFormat
+        End Get
+        Set(ByVal Value As String)
+            pCPlotFormat = Value
+        End Set
+    End Property
+
+    Public Property CPrintPlotPos() As String
+        Get
+            CPrintPlotPos = pCPrintPlotPos
+        End Get
+        Set(ByVal Value As String)
+            pCPrintPlotPos = Value
+        End Set
+    End Property
+
+    Public Property CPlotPos() As String
+        Get
+            CPlotPos = pCPlotPos
+        End Get
+        Set(ByVal Value As String)
+            pCPlotPos = Value
+        End Set
+    End Property
+
+    Public Property CAdditional() As String
+        Get
+            CAdditional = pCAdditional
+        End Get
+        Set(ByVal Value As String)
+            pCAdditional = Value
+        End Set
+    End Property
+
     Public Property CExportFileName() As String
         Get
             CExportFileName = pCExportFileName
@@ -331,16 +331,16 @@ Friend Class pfqProject
             pCIntermediate = Value
         End Set
     End Property
-	
-	Public Property CConfidenceLimits() As String
-		Get
-			CConfidenceLimits = pCConfidenceLimits
-		End Get
-		Set(ByVal Value As String)
-			pCConfidenceLimits = Value
-		End Set
-	End Property
-	
+
+    Public Property CConfidenceInterval() As String
+        Get
+            CConfidenceInterval = pCConfidenceInterval
+        End Get
+        Set(ByVal Value As String)
+            pCConfidenceInterval = Value
+        End Set
+    End Property
+
     Public Property CEMA() As String
         Get
             CEMA = pCEMA
@@ -459,9 +459,9 @@ Friend Class pfqProject
                                     pIntermediateResults = False
                                 End If
                                 If CommentPending Then pCIntermediate = lCom
-                            Case "CONFIDENCE"
-                                pConfidenceLimits = CSng(Rec)
-                                If CommentPending Then pCConfidenceLimits = lCom
+                            Case "CONFINTERVAL"
+                                pConfidenceInterval = CSng(Rec)
+                                If CommentPending Then pCConfidenceInterval = lCom
                             Case "EXTENDED"
                                 If UCase(Rec) = "YES" Then
                                     pExtendedOutput = True
@@ -612,66 +612,64 @@ Friend Class pfqProject
             CurStation = Nothing
         End If
     End Sub
-	
-	Public Function SaveAsString(Optional ByRef DefPrj As pfqProject = Nothing) As String
-		
-		Dim i As Integer
-		Dim s As String
+
+    Public Function SaveAsString(Optional ByRef DefPrj As pfqProject = Nothing) As String
+
+        Dim i As Integer
+        Dim s As String
         Dim vSta As pfqStation
-		Dim defsta As New pfqStation
-		
-		s = ""
-		If DefPrj Is Nothing Then 'no default specs, write out verbose
-			s = "Verbose" & vbCrLf
-		End If
-		If Len(pCDataFile) > 0 Then s = s & pCDataFile & vbCrLf
+        Dim defsta As New pfqStation
+
+        s = ""
+        If DefPrj Is Nothing Then 'no default specs, write out verbose
+            s = "Verbose" & vbCrLf
+        End If
+        If Len(pCDataFile) > 0 Then s = s & pCDataFile & vbCrLf
         '        s = s & "I " & FType(pDataType) & " " & pInputDir & "\" & FilenameNoPath(pDataFileName) & vbCrLf
         s = s & "I " & FType(pDataType) & " " & RelativeFilename(pDataFileName, pInputDir) & vbCrLf
         If Len(pCOutFile) > 0 Then s = s & pCOutFile & vbCrLf
         '        s = s & "O File " & pOutputDir & "\" & FilenameNoPath(pOutFile) & vbCrLf
         s = s & "O File " & RelativeFilename(pOutFile, pInputDir) & vbCrLf
         If Len(pCPlotStyle) > 0 Then s = s & pCPlotStyle & vbCrLf
-		If pLinePrinter And pGraphic Then
-			s = s & "O Plot Style Both" & vbCrLf
-		ElseIf pLinePrinter Then 
-			s = s & "O Plot Style Printer" & vbCrLf
-		ElseIf pGraphic Then 
-			s = s & "O Plot Style Graphics" & vbCrLf
-		End If
-		If Len(pCPlotFormat) > 0 Then s = s & pCPlotFormat & vbCrLf
-		If pGraphic Then s = s & "O Plot Format " & pGraphFormat & vbCrLf
-		If Len(pCPrintPlotPos) > 0 Then s = s & pCPrintPlotPos & vbCrLf
-		If pPrintPlotPos Then 'default, don't print it
-			'    S = S & "O Plot PrintPos YES" & vbCrLf
-		Else
-			s = s & "O Plot PrintPos NO" & vbCrLf
-		End If
-		If Len(pCPlotPos) > 0 Then s = s & pCPlotPos & vbCrLf
-		If System.Math.Abs(pPlotPos) > 0.000001 Then 'not using default of 0, print it
-			s = s & "O Plot Position " & CStr(pPlotPos) & vbCrLf
-		End If
-		If Len(pCAdditional) > 0 Then s = s & pCAdditional & vbCrLf
-		If pAdditionalOutput = 1 Then
-			s = s & "O Additional WDM" & vbCrLf
-		ElseIf pAdditionalOutput = 2 Then 
+        If pLinePrinter And pGraphic Then
+            s = s & "O Plot Style Both" & vbCrLf
+        ElseIf pLinePrinter Then
+            s = s & "O Plot Style Printer" & vbCrLf
+        ElseIf pGraphic Then
+            s = s & "O Plot Style Graphics" & vbCrLf
+        End If
+        If Len(pCPlotFormat) > 0 Then s = s & pCPlotFormat & vbCrLf
+        If pGraphic Then s = s & "O Plot Format " & pGraphFormat & vbCrLf
+        If Len(pCPrintPlotPos) > 0 Then s = s & pCPrintPlotPos & vbCrLf
+        If pPrintPlotPos Then 'default, don't print it
+            '    S = S & "O Plot PrintPos YES" & vbCrLf
+        Else
+            s = s & "O Plot PrintPos NO" & vbCrLf
+        End If
+        If Len(pCPlotPos) > 0 Then s = s & pCPlotPos & vbCrLf
+        If System.Math.Abs(pPlotPos) > 0.000001 Then 'not using default of 0, print it
+            s = s & "O Plot Position " & CStr(pPlotPos) & vbCrLf
+        End If
+        If Len(pCAdditional) > 0 Then s = s & pCAdditional & vbCrLf
+        If pAdditionalOutput = 1 Then
+            s = s & "O Additional WDM" & vbCrLf
+        ElseIf pAdditionalOutput = 2 Then
             s = s & "O Additional Watstore " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
-		ElseIf pAdditionalOutput = 3 Then 
+        ElseIf pAdditionalOutput = 3 Then
             s = s & "O Additional Both WAT " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
-		ElseIf pAdditionalOutput = 4 Then 
+        ElseIf pAdditionalOutput = 4 Then
             s = s & "O Additional Tab " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
-		ElseIf pAdditionalOutput = 5 Then 
+        ElseIf pAdditionalOutput = 5 Then
             s = s & "O Additional Both Tab " & RelativeFilename(pAddOutFileName, pInputDir) & vbCrLf
-		End If
+        End If
         If Len(pCExportFileName) > 0 Then s = s & pCExportFileName & vbCrLf
         If Len(pExportFileName) > 0 Then s = s & "O Export " & RelativeFilename(pExportFileName, pInputDir) & vbCrLf
         If Len(pCEmpiricalFileName) > 0 Then s = s & pCEmpiricalFileName & vbCrLf
         If Len(pEmpiricalFileName) > 0 Then s = s & "O Empirical " & RelativeFilename(pEmpiricalFileName, pInputDir) & vbCrLf
         If Len(pCIntermediate) > 0 Then s = s & pCIntermediate & vbCrLf
-		If pIntermediateResults Then s = s & "O Debug YES" & vbCrLf
-		If Len(pCConfidenceLimits) > 0 Then s = s & pCConfidenceLimits & vbCrLf
-		If System.Math.Abs(pConfidenceLimits - 0.95) > 0.000001 Then 'not using .95, print it
-			s = s & "O Confidence " & CStr(pConfidenceLimits) & vbCrLf
-		End If
+        If pIntermediateResults Then s = s & "O Debug YES" & vbCrLf
+        If Len(pCConfidenceInterval) > 0 Then s = s & pCConfidenceInterval & vbCrLf
+        s = s & "O ConfInterval " & CStr(pConfidenceInterval) & vbCrLf
         If Len(pCExtendedOutput) > 0 Then s = s & pCExtendedOutput & vbCrLf
         If pExtendedOutput Then
             s = s & "O EXTENDED YES" & vbCrLf
@@ -681,7 +679,7 @@ Friend Class pfqProject
             s = s & "O EMA YES" & vbCrLf
         End If
         i = 0
-		For	Each vSta In pStations
+        For Each vSta In pStations
             If vSta.AnalysisOption <> "Skip" Then 'write station specs to string
                 If vSta.AnalysisOption = "B17B" OrElse vSta.CheckThreshSpecs Then
                     If DefPrj Is Nothing Then 'write out all station specs
@@ -695,24 +693,24 @@ Friend Class pfqProject
                         defsta = Nothing
                     End If
                 Else
-                    MsgBox("For Station " & vSta.id & " use of a threshold range of 0 to infinity is unacceptable for periods of missing systematic record." & vbCrLf & _
-                           "Use a threshold range of infinity to infinity for periods of missing systematic record to indicate a lack of knowledge." & vbCrLf & _
-                           "If information is available, please specify a more appropriate lower threshold value (greater than 0 and less than infinity) or another more appropriate threshold range." & vbCrLf & _
-                           "Alternatively, to NOT run an EMA analysis on this site, on the Station Specifications Tab, select either Skip or B17B for the analysis option for this station.", _
+                    MsgBox("For Station " & vSta.id & " use of a threshold range of 0 to infinity is unacceptable for periods of missing systematic record." & vbCrLf &
+                           "Use a threshold range of infinity to infinity for periods of missing systematic record to indicate a lack of knowledge." & vbCrLf &
+                           "If information is available, please specify a more appropriate lower threshold value (greater than 0 and less than infinity) or another more appropriate threshold range." & vbCrLf &
+                           "Alternatively, to NOT run an EMA analysis on this site, on the Station Specifications Tab, select either Skip or B17B for the analysis option for this station.",
                            MsgBoxStyle.Information, "PeakFQ Run Problem")
                     s = ""
                     Exit For
                 End If
                 If vSta.SkewOpt > 0 AndAlso (vSta.GenSkew < -10 Or vSta.GenSkew > 10) Then
-                    MsgBox("For Station " & vSta.id & " a valid Reional Skew value has not been entered." & vbCrLf & _
-                           "When using either the Weighted or Regional Skew option, a Generalized Skew value must be provided", _
+                    MsgBox("For Station " & vSta.id & " a valid Reional Skew value has not been entered." & vbCrLf &
+                           "When using either the Weighted or Regional Skew option, a Generalized Skew value must be provided",
                            MsgBoxStyle.Information, "PeakFQ Run Problem")
                     s = ""
                     Exit For
                 End If
                 If vSta.SkewOpt > 0 AndAlso (vSta.SESkew <= 0 Or vSta.SESkew > 1) Then
-                    MsgBox("For Station " & vSta.id & " a valid Regional Skew Standard Error value has not been entered." & vbCrLf & _
-                           "When using either the Weighted or Generalized Skew option, a Regional Skew Standard Error value (> 0.0) must be provided", _
+                    MsgBox("For Station " & vSta.id & " a valid Regional Skew Standard Error value has not been entered." & vbCrLf &
+                           "When using either the Weighted or Generalized Skew option, a Regional Skew Standard Error value (> 0.0) must be provided",
                            MsgBoxStyle.Information, "PeakFQ Run Problem")
                     s = ""
                     Exit For
@@ -720,35 +718,35 @@ Friend Class pfqProject
             End If
             i = i + 1
         Next vSta
-		SaveAsString = s
-		
-	End Function
-	
-	Public Sub BuildNewSpecFile(Optional ByRef tmpSpecName As String = "PKFQWPSF.TMP")
-		'BuildNewSpecFile is called when a PeakFQ data file is opened
-		'and a new spec file is needed for it to run PeakFQ.
-		'Contains simplest set of specs: Input file, Output file, "Update" flag
-		'It is given a temporary name (tmpSpecName) that will not be saved.
-		Dim s As String
-		
+        SaveAsString = s
+
+    End Function
+
+    Public Sub BuildNewSpecFile(Optional ByRef tmpSpecName As String = "PKFQWPSF.TMP")
+        'BuildNewSpecFile is called when a PeakFQ data file is opened
+        'and a new spec file is needed for it to run PeakFQ.
+        'Contains simplest set of specs: Input file, Output file, "Update" flag
+        'It is given a temporary name (tmpSpecName) that will not be saved.
+        Dim s As String
+
         pSpecFileName = PathNameOnly(pDataFileName) & "\" & tmpSpecName
-		If UCase(Right(pDataFileName, 3)) = "WDM" Then 'WDM data file
-			s = "I WDM " & FilenameNoPath(pDataFileName) & vbCrLf
-		Else 'assume asci text data file
-			s = "I ASCI " & FilenameNoPath(pDataFileName) & vbCrLf
-		End If
+        If UCase(Right(pDataFileName, 3)) = "WDM" Then 'WDM data file
+            s = "I WDM " & FilenameNoPath(pDataFileName) & vbCrLf
+        Else 'assume asci text data file
+            s = "I ASCI " & FilenameNoPath(pDataFileName) & vbCrLf
+        End If
         pOutFile = IO.Path.ChangeExtension(pDataFileName, ".prt") '".out"
-		s = s & "O File " & FilenameNoPath(pOutFile) & vbCrLf
-		s = s & "Update"
+        s = s & "O File " & FilenameNoPath(pOutFile) & vbCrLf
+        s = s & "Update"
         SaveFileString(pSpecFileName, s) '(PathNameOnly(pDataFileName) & "\" & pSpecFileName, s)
-		
-	End Sub
-	
-	Public Sub RunBatchModel()
-		Dim s As String
-		Dim oldlen, i, curlen As Integer
-		
-		On Error Resume Next
+
+    End Sub
+
+    Public Sub RunBatchModel()
+        Dim s As String
+        Dim oldlen, i, curlen As Integer
+
+        On Error Resume Next
 
         If CurDir() <> PFQExePath Then
             'copy support files for fortran dll
@@ -785,44 +783,44 @@ Friend Class pfqProject
         End If
 
     End Sub
-	
-	Public Function Copy() As pfqProject
+
+    Public Function Copy() As pfqProject
         Dim oldStation As pfqStation = Nothing
         Dim newStation As pfqStation = Nothing
         Dim retval As New pfqProject
         Dim vPT As Object = Nothing
 
-		With retval
-			.AdditionalOutput = pAdditionalOutput
+        With retval
+            .AdditionalOutput = pAdditionalOutput
             .AddOutFileName = pAddOutFileName
             .ExportFileName = pExportFileName
             .EmpiricalFileName = pEmpiricalFileName
-			.ConfidenceLimits = pConfidenceLimits
-			.DataFileName = pDataFileName
-			.DataType = pDataType
-			.Graphic = pGraphic
-			.GraphFormat = pGraphFormat
-			.IntermediateResults = pIntermediateResults
-			.LinePrinter = pLinePrinter
-			.OutFile = pOutFile
+            .ConfidenceInterval = pConfidenceInterval
+            .DataFileName = pDataFileName
+            .DataType = pDataType
+            .Graphic = pGraphic
+            .GraphFormat = pGraphFormat
+            .IntermediateResults = pIntermediateResults
+            .LinePrinter = pLinePrinter
+            .OutFile = pOutFile
             .PlotPos = pPlotPos
-			.PrintPlotPos = pPrintPlotPos
-			.InputDir = pInputDir
-			.OutputDir = pOutputDir
+            .PrintPlotPos = pPrintPlotPos
+            .InputDir = pInputDir
+            .OutputDir = pOutputDir
             .EMA = pEMA
             .CDataFile = pCDataFile
-			.COutFile = pCOutFile
-			.CPlotStyle = pCPlotStyle
-			.CPlotFormat = pCPlotFormat
-			.CPrintPlotPos = pCPrintPlotPos
-			.CPlotPos = pCPlotPos
+            .COutFile = pCOutFile
+            .CPlotStyle = pCPlotStyle
+            .CPlotFormat = pCPlotFormat
+            .CPrintPlotPos = pCPrintPlotPos
+            .CPlotPos = pCPlotPos
             .CAdditional = pCAdditional
             .CExportFileName = pCExportFileName
             .CEmpiricalFileName = pCEmpiricalFileName
-			.CIntermediate = pCIntermediate
-			.CConfidenceLimits = pCConfidenceLimits
-			.CEMA = pCEMA
-			
+            .CIntermediate = pCIntermediate
+            .CConfidenceInterval = pCConfidenceInterval
+            .CEMA = pCEMA
+
             '.SpecFileName = pSpecFileName
             'UPGRADE_NOTE: Object retval.Stations may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
             .Stations.Clear()
@@ -870,101 +868,101 @@ Friend Class pfqProject
                 'UPGRADE_NOTE: Object newStation may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
                 newStation = Nothing
             Next oldStation
-		End With
-		Copy = retval
-		'UPGRADE_NOTE: Object retval may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-		retval = Nothing
-	End Function
-	
-	Public Function SaveDefaults(ByRef FileStr As String) As pfqProject
-		'Reads an existing spec file (contained in FileStr),
-		'any station specfications found are assumed to be non-default
-		'and are set to -999 so they will be written out if file is saved
-		Dim prj As New pfqProject
-		Dim i As Integer
-		Dim Rec, Kwd As String
-		Dim lCom As String
-		Dim CommentPending As Boolean
-		'  Dim CurStation As pfqStation
-		
-		CommentPending = False
+        End With
+        Copy = retval
+        'UPGRADE_NOTE: Object retval may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
+        retval = Nothing
+    End Function
+
+    Public Function SaveDefaults(ByRef FileStr As String) As pfqProject
+        'Reads an existing spec file (contained in FileStr),
+        'any station specfications found are assumed to be non-default
+        'and are set to -999 so they will be written out if file is saved
+        Dim prj As New pfqProject
+        Dim i As Integer
+        Dim Rec, Kwd As String
+        Dim lCom As String
+        Dim CommentPending As Boolean
+        '  Dim CurStation As pfqStation
+
+        CommentPending = False
         i = -1 '0
-		prj = Me.Copy
-		With prj
-			While Len(FileStr) > 0
-				Rec = StrSplit(FileStr, vbCrLf, "")
-				If Left(Rec, 1) = "'" Then 'process comment
-					If CommentPending Then 'multiple line comment
-						lCom = lCom & vbCrLf & Rec
-					Else 'new comment
-						lCom = Rec
-						CommentPending = True
-					End If
-				Else 'process specification
-					Kwd = UCase(StrRetRem(Rec))
-					Select Case Kwd
-						'        Case "I"
-						'          Kwd = UCase(StrRetRem(Rec))
-						'          For i = 0 To 1
-						'            If Kwd = FType(i) Then .DataType = i
-						'          Next i
-						'          .DataFileName = Rec
-						'        Case "O"
-						'          Kwd = UCase(StrRetRem(Rec))
-						'          Select Case Kwd
-						'            Case "FILE"
-						'              .OutFile = Rec
-						'            Case "PLOT"
-						'              Kwd = UCase(StrRetRem(Rec))
-						'              If Kwd = "STYLE" Then
-						'                If UCase(Rec) = "PRINTER" Or UCase(Rec) = "BOTH" Then
-						'                  .LinePrinter = True
-						'                End If
-						'                If UCase(Rec) = "GRAPHICS" Or UCase(Rec) = "BOTH" Then
-						'                  .Graphic = True
-						'                End If
-						'              ElseIf Kwd = "PRINTPOS" Then
-						'                If UCase(Rec) = "YES" Then
-						'                  .PrintPlotPos = True
-						'                Else
-						'                  .PrintPlotPos = False
-						'                End If
-						'              ElseIf Kwd = "POSITION" Then
-						'                .PlotPos = CSng(Rec)
-						'              End If
-						'            Case "ADDITIONAL"
-						'              Kwd = UCase(StrRetRem(Rec))
-						'              If Kwd = "WDM" Then
-						'                .AdditionalOutput = 1
-						'              ElseIf Left(Kwd, 3) = "WAT" Then
-						'                .AdditionalOutput = 2
-						'              ElseIf Kwd = "BOTH" Then
-						'                .AdditionalOutput = 3
-						'              Else
-						'                .AdditionalOutput = 0
-						'              End If
-						'              If pAdditionalOutput >= 2 Then
-						'                'remaining text should be file name
-						'                .AddOutFileName = Rec
-						'              End If
-						'            Case "DEBUG"
-						'              If UCase(Rec) = "YES" Then
-						'                .IntermediateResults = True
-						'              Else
-						'                .IntermediateResults = False
-						'              End If
-						'            Case "CONFIDENCE"
-						'              .ConfidenceLimits = CSng(Rec)
-						'          End Select
-						Case "STATION"
-							'          If Not CurStation Is Nothing Then
-							'            'previous station info exists, add it to collection
-							'            .Stations.Add CurStation
-							'          End If
-							'          'build new station
-							'          Set CurStation = New pfqStation
-							'          CurStation.id = Rec
-							i = i + 1
+        prj = Me.Copy
+        With prj
+            While Len(FileStr) > 0
+                Rec = StrSplit(FileStr, vbCrLf, "")
+                If Left(Rec, 1) = "'" Then 'process comment
+                    If CommentPending Then 'multiple line comment
+                        lCom = lCom & vbCrLf & Rec
+                    Else 'new comment
+                        lCom = Rec
+                        CommentPending = True
+                    End If
+                Else 'process specification
+                    Kwd = UCase(StrRetRem(Rec))
+                    Select Case Kwd
+                        '        Case "I"
+                        '          Kwd = UCase(StrRetRem(Rec))
+                        '          For i = 0 To 1
+                        '            If Kwd = FType(i) Then .DataType = i
+                        '          Next i
+                        '          .DataFileName = Rec
+                        '        Case "O"
+                        '          Kwd = UCase(StrRetRem(Rec))
+                        '          Select Case Kwd
+                        '            Case "FILE"
+                        '              .OutFile = Rec
+                        '            Case "PLOT"
+                        '              Kwd = UCase(StrRetRem(Rec))
+                        '              If Kwd = "STYLE" Then
+                        '                If UCase(Rec) = "PRINTER" Or UCase(Rec) = "BOTH" Then
+                        '                  .LinePrinter = True
+                        '                End If
+                        '                If UCase(Rec) = "GRAPHICS" Or UCase(Rec) = "BOTH" Then
+                        '                  .Graphic = True
+                        '                End If
+                        '              ElseIf Kwd = "PRINTPOS" Then
+                        '                If UCase(Rec) = "YES" Then
+                        '                  .PrintPlotPos = True
+                        '                Else
+                        '                  .PrintPlotPos = False
+                        '                End If
+                        '              ElseIf Kwd = "POSITION" Then
+                        '                .PlotPos = CSng(Rec)
+                        '              End If
+                        '            Case "ADDITIONAL"
+                        '              Kwd = UCase(StrRetRem(Rec))
+                        '              If Kwd = "WDM" Then
+                        '                .AdditionalOutput = 1
+                        '              ElseIf Left(Kwd, 3) = "WAT" Then
+                        '                .AdditionalOutput = 2
+                        '              ElseIf Kwd = "BOTH" Then
+                        '                .AdditionalOutput = 3
+                        '              Else
+                        '                .AdditionalOutput = 0
+                        '              End If
+                        '              If pAdditionalOutput >= 2 Then
+                        '                'remaining text should be file name
+                        '                .AddOutFileName = Rec
+                        '              End If
+                        '            Case "DEBUG"
+                        '              If UCase(Rec) = "YES" Then
+                        '                .IntermediateResults = True
+                        '              Else
+                        '                .IntermediateResults = False
+                        '              End If
+                        '            Case "CONFIDENCE"
+                        '              .ConfidenceLimits = CSng(Rec)
+                        '          End Select
+                        Case "STATION"
+                            '          If Not CurStation Is Nothing Then
+                            '            'previous station info exists, add it to collection
+                            '            .Stations.Add CurStation
+                            '          End If
+                            '          'build new station
+                            '          Set CurStation = New pfqStation
+                            '          CurStation.id = Rec
+                            i = i + 1
                             If CommentPending Then .Stations(i).Comment = lCom
                         Case "ANALYZE"
                             .Stations(i).AnalysisOption = "-999"
@@ -978,27 +976,27 @@ Friend Class pfqProject
                         Case "SKEWSE"
                             .Stations(i).SESkew = -999.0#
                             If CommentPending Then .Stations(i).CSESkew = lCom
-						Case "BEGYEAR"
+                        Case "BEGYEAR"
                             .Stations(i).BegYear = -999.0#
                             If CommentPending Then .Stations(i).CBegYear = lCom
-						Case "ENDYEAR"
+                        Case "ENDYEAR"
                             .Stations(i).EndYear = -999.0#
                             If CommentPending Then .Stations(i).CEndYear = lCom
-						Case "HISTPERIOD"
+                        Case "HISTPERIOD"
                             .Stations(i).HistoricPeriod = -999.0#
                             If CommentPending Then .Stations(i).CHistoric = lCom
-						Case "SKEWOPT"
+                        Case "SKEWOPT"
                             .Stations(i).SkewOpt = -999.0#
                             If CommentPending Then .Stations(i).CSkewOpt = lCom
-						Case "URB/REG"
-							'set default to opposite of spec file so this spec will be written out
+                        Case "URB/REG"
+                            'set default to opposite of spec file so this spec will be written out
                             If Me.Stations(i).UrbanRegPeaks Then
                                 .Stations(i).UrbanRegPeaks = True
                             Else
                                 .Stations(i).UrbanRegPeaks = False
                             End If
                             If CommentPending Then .Stations(i).CUrban = lCom
-						Case "LOTHRESH"
+                        Case "LOTHRESH"
                             If .Stations(i).LowOutlier > 0 Then .Stations(i).LowOutlier = -999.0#
                             If CommentPending Then .Stations(i).CLowOutlier = lCom
                         Case "HITHRESH"
@@ -1017,19 +1015,19 @@ Friend Class pfqProject
                             .Stations(i).PlotName = "-999"
                             If CommentPending Then .Stations(i).CPlotName = lCom
                     End Select
-					CommentPending = False 'assume any pending comment was stored with a specification
-				End If
-			End While
-			'    If Not CurStation Is Nothing Then
-			'      'station info exists, add it to collection
-			'      .Stations.Add CurStation
-			'      Set CurStation = Nothing
-			'    End If
-		End With
-		
-		SaveDefaults = prj
-		
-	End Function
+                    CommentPending = False 'assume any pending comment was stored with a specification
+                End If
+            End While
+            '    If Not CurStation Is Nothing Then
+            '      'station info exists, add it to collection
+            '      .Stations.Add CurStation
+            '      Set CurStation = Nothing
+            '    End If
+        End With
+
+        SaveDefaults = prj
+
+    End Function
 
     Public Sub ReadPeaks()
         Dim lInd As Integer = 0
@@ -1114,23 +1112,23 @@ Friend Class pfqProject
         Next lArrayInd
     End Sub
 
-	'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
-	Private Sub Class_Initialize_Renamed()
+    'UPGRADE_NOTE: Class_Initialize was upgraded to Class_Initialize_Renamed. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="A9E4979A-37FA-4718-9994-97DD76ED70A7"'
+    Private Sub Class_Initialize_Renamed()
         pSpecFileName = ""
-		pDataFileName = ""
+        pDataFileName = ""
         pStations = New Generic.List(Of pfqStation)
         pAdditionalOutput = 0
         pAddOutFileName = ""
         pExportFileName = ""
         pEmpiricalFileName = ""
-		pIntermediateResults = False
-		pLinePrinter = False
-		pGraphic = False
-		pGraphFormat = ""
-		pPrintPlotPos = True
-		pPlotPos = 0#
-		pConfidenceLimits = 0.95
-		FType(0) = "ASCI"
+        pIntermediateResults = False
+        pLinePrinter = False
+        pGraphic = False
+        pGraphFormat = ""
+        pPrintPlotPos = True
+        pPlotPos = 0#
+        pConfidenceInterval = 0.9
+        FType(0) = "ASCI"
 		FType(1) = "WDM"
         pOutputDir = ""
         pExtendedOutput = False
