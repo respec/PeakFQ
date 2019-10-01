@@ -1004,7 +1004,7 @@ FileCancel:
                         '    PfqPrj.Stations(aRow - .FixedRows).Thresholds.Insert(0, lThresh)
                         '    'PfqPrj.Stations(aRow - .FixedRows).Thresholds(0) = lThresh
                         'End If
-                    Case 5
+                    Case 5 'Historic Peaks flag
                         If .CellValue(aRow, aColumn) = "No" Then
                             'update start/end years to systematic range
                             lSYear = PfqPrj.Stations(lStnIndex).FirstSystematic
@@ -1019,6 +1019,7 @@ FileCancel:
                             .CellValue(aRow, 3) = lEYear
                             '.CellValue(aRow, 4) = PfqPrj.Stations(aRow - .FixedRows).EndYear - PfqPrj.Stations(aRow - .FixedRows).BegYear + 1
                         End If
+                        PfqPrj.Stations(aRow - .FixedRows).Thresholds.Clear()
                         'Must use historic period if EMA is analysis option
                         'If .CellValue(aRow, 1) = "EMA" Then
                         '    MsgBox("Must use Historic Peaks when using EMA analysis method", MsgBoxStyle.Information, "PeakFQ Specification Issue")
@@ -1233,7 +1234,7 @@ FileCancel:
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
-                    If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3")) OrElse
+                    If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3") Or lData.Code.Contains("O")) OrElse
                         ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) OrElse
                         (lData.Code.Contains("H") AndAlso lStn.HistoricPeriod = 0) Then
                         'gray out since it preceeds analysis start year, is unused code, or it's urban/regulated and that option is off
@@ -1344,7 +1345,7 @@ FileCancel:
                         Else
                             lData.Code = .CellValue(i, 2)
                         End If
-                        If Not (lData.Code.Contains("D") OrElse (lData.Code.Contains("K") AndAlso Not lStn.UrbanRegPeaks)) Then
+                        If Not (lData.Code.Contains("D") OrElse lData.Code.Contains("O") OrElse (lData.Code.Contains("K") AndAlso Not lStn.UrbanRegPeaks)) Then
                             If .CellValue(i, 3).ToLower.Contains("inf") Then
                                 lData.LowerLimit = 1.0E+20
                             ElseIf IsNumeric(.CellValue(i, 3)) Then
@@ -1521,7 +1522,7 @@ FileCancel:
                         If lPeak.Code.Contains("3") Or lPeak.Code.Contains("D") Then 'check for code 3 or D first - never used
                             lCode = "D"
                         ElseIf lPeak.Code.Contains("O") Then
-                            lCode = "O"
+                            lCode = "D"
                         ElseIf lPeak.Code.Contains("7") Or lPeak.Code.Contains("H") Then 'next check for historic first
                             lCode = "H"
                         ElseIf lPeak.Code.Contains("K") OrElse lPeak.Code.Contains("6") OrElse lPeak.Code.Contains("C") Then
@@ -1578,7 +1579,7 @@ FileCancel:
         i = 0
         For Each vData As pfqStation.PeakDataType In lStn.PeakData
             If (vData.Year >= lStn.BegYear And vData.Year <= lStn.EndYear) AndAlso
-               vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso
+               vData.LowerLimit > 0 AndAlso vData.UpperLimit > 0 AndAlso
                Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.1 Then
                 lThrshDates(0) = vData.Year
                 lThrshDates(1) = vData.Year
@@ -1853,7 +1854,7 @@ FileCancel:
             If aType = "Input" Then
                 .Margin.Bottom = 20
             Else 'Results graph needs large bottom margin for Legend/Explanation boxes
-                .Margin.Bottom = 120
+                .Margin.Bottom = 160
             End If
             With .XAxis
                 If aType = "Input" Then
@@ -1921,7 +1922,7 @@ FileCancel:
                     .FontSpec.IsBold = False
                     .Border.IsVisible = False
                 Else
-                    .Location = New Location(0.11, 0.82, CoordType.PaneFraction, AlignH.Left, AlignV.Top)
+                    .Location = New Location(0.11, 0.76, CoordType.PaneFraction, AlignH.Left, AlignV.Top)
                     .FontSpec.IsBold = True
                     .Border.IsVisible = True
                 End If
@@ -2335,7 +2336,7 @@ FileCancel:
             lIsInterval = False
             lYVals(i) = 10 ^ lPkLog(i)
             If lYVals(i) > 0.001 AndAlso lYVals(i) < 10000000000.0 Then
-                If lHistFlg = 0 Then
+                If lHistFlg = 1 Then 'use historic adjusted estimates
                     lXVals(i) = lWrcPP(i)
                 Else
                     lXVals(i) = lSysPP(i)
@@ -2380,9 +2381,13 @@ FileCancel:
                             lCurve = lPane.AddCurve("PILF (LO)", lX, lY, Color.Black, SymbolType.Circle)
                             lCurve.Line.IsVisible = False
                         Else
-                            If lXQual(i).Contains("7") Or lXQual(i).Contains("H") Then
-                                lCurve = lPane.AddCurve("Historic peaks", lX, lY, Color.Fuchsia, SymbolType.Triangle)
-                                lCurve.Symbol.Size = 9
+                            If (lXQual(i).Contains("7") Or lXQual(i).Contains("H")) Then
+                                If lHistFlg > 0 Then
+                                    lCurve = lPane.AddCurve("Historic peaks", lX, lY, Color.Fuchsia, SymbolType.Triangle)
+                                    lCurve.Symbol.Size = 9
+                                Else
+                                    GoTo SkipPoint
+                                End If
                             ElseIf lXQual(i).Contains("K") Or lXQual(i).Contains("6") Or lXQual(i).Contains("C") Then
                                 lCurve = lPane.AddCurve("Urban or Reg peaks", lX, lY, lColor, SymbolType.Square)
                             ElseIf lXQual(i).Contains("D") Or lXQual(i).Contains("G") Or lXQual(i).Contains("X") Or
@@ -2397,6 +2402,7 @@ FileCancel:
                             lCurve.Line.IsVisible = False
                         End If
                         lCurves.Add(lKey, lCurve)
+SkipPoint:
                     End If
                 End If
             End If
@@ -2404,33 +2410,46 @@ FileCancel:
 
         'plot any interval data
         Dim lFirstInterval As Boolean = True
+        'assume valid Intervals to plot so they show in legend before censored - remove if none found
+        lCurve = lPane.AddCurve("Interval peak discharge", lX2, lY2, Color.Turquoise, SymbolType.HDash)
+        lCurve.Line.Width = 2
+        Dim lFirstCensored As Boolean = True
         For i = 0 To lNInt - 1
-            If lIntLwr(i) >= 0 And lIntUpr(i) < 1000000000 Then
-                j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
-                lX2(0) = lAllPPos(j)
-                lX2(1) = lAllPPos(j)
-                'lY2(0) = lIntLwr(i)
-                If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
-                    lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
+            j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
+            lX2(0) = lAllPPos(j)
+            lX2(1) = lAllPPos(j)
+            'lY2(0) = lIntLwr(i)
+            If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
+                lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
+            Else
+                lY2(0) = lIntLwr(i)
+            End If
+            lY2(1) = lIntUpr(i)
+            If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
+            If lIntLwr(i) > 0 And lIntUpr(i) < 1000000000 Then 'valid Interval
+                '                If lFirstInterval Then
+                lFirstInterval = False
+                '                Else
+                lCurve = lPane.CurveList.Item("Interval peak discharge")
+                    lCurve.AddPoint(Double.NaN, Double.NaN)
+                    lCurve.AddPoint(lX2(0), lY2(0))
+                    lCurve.AddPoint(lX2(1), lY2(1))
+                '                End If
+            Else 'plot as censored peak
+                If lFirstCensored Then
+                    lCurve = lPane.AddCurve("Censored peak discharge", lX2, lY2, Color.Gray, SymbolType.HDash)
+                    lFirstCensored = False
                 Else
-                    lY2(0) = lIntLwr(i)
-                End If
-                lY2(1) = lIntUpr(i)
-                If lY2(1) > lPMax AndAlso lY2(1) < 1000000000.0 Then lPMax = lY2(1)
-                If lFirstInterval Then
-                    lCurve = lPane.AddCurve("Interval peak discharge", lX2, lY2, Color.Turquoise, SymbolType.HDash)
-                    lCurve.Line.Width = 2
-                    lFirstInterval = False
-                Else
+                    lCurve = lPane.CurveList.Item("Censored peak discharge")
                     lCurve.AddPoint(Double.NaN, Double.NaN)
                     lCurve.AddPoint(lX2(0), lY2(0))
                     lCurve.AddPoint(lX2(1), lY2(1))
                 End If
             End If
         Next
+        If lFirstInterval Then lPane.CurveList.Remove(lPane.CurveList.Item("Interval peak discharge"))
 
         'plot any censored data
-        Dim lFirstCensored As Boolean = True
         For i = PfqPrj.Stations(lStnInd).BegYear To PfqPrj.Stations(lStnInd).EndYear
             If Not lPeakYears.Contains(i) Then 'not an observed peak, may be censored data
                 j = i - PfqPrj.Stations(lStnInd).BegYear
@@ -2491,7 +2510,7 @@ FileCancel:
                     "   " & lNLow - lNGagedPILFS - lNZero & " Censored flows below PILF (LO) Threshold " & vbCrLf &
                     "   " & lNGagedPILFS & " Gaged peaks below PILF (LO) Threshold " & vbCrLf
 
-        Dim lText As New TextObj(lWarning, 0.58, 0.82) '.68)
+        Dim lText As New TextObj(lWarning, 0.58, 0.76) '.68)
         lText.Location.CoordinateFrame = CoordType.PaneFraction
         lText.FontSpec.StringAlignment = StringAlignment.Near
         lText.FontSpec.IsBold = True

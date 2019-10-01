@@ -815,7 +815,7 @@ Friend Class pfqStation
             Next
             If lYearMissing Then 'see if there is a systematic peak for this year
                 For Each lPk As PeakDataType In PeakData
-                    If (lPk.Year = lYr AndAlso (Not lPk.Code.Contains("3") And Not lPk.Code.Contains("D")) AndAlso (lPk.Value <> -8888 OrElse _
+                    If (lPk.Year = lYr AndAlso (Not lPk.Code.Contains("3") And Not lPk.Code.Contains("D")) AndAlso (lPk.Value <> -8888 OrElse
                         (lPk.LowerLimit >= 0 AndAlso lPk.UpperLimit > 0 AndAlso lPk.Comment.Length > 0))) Then
                         lYearMissing = False
                         Exit For
