@@ -728,20 +728,25 @@ Friend Class pfqStation
         lThresh = New ThresholdType
         For Each lPk As PeakDataType In PeakData
             If lPk.Year >= lSYear AndAlso lPk.Year <= lEYear Then
-                If lPk.Code = "H" AndAlso aIncludeHistoricPeaks Then
+                If lPk.Code = "H" Then 'AndAlso aIncludeHistoricPeaks Then
                     If inHistoric Then 'continuing historic period
                         lThresh.EYear = lPk.Year
-                        If Math.Abs(lPk.Value) < lThresh.LowerLimit AndAlso lPk.Value <> -8888 Then
+                        If aIncludeHistoricPeaks AndAlso Math.Abs(lPk.Value) < lThresh.LowerLimit AndAlso lPk.Value <> -8888 Then
                             lThresh.LowerLimit = Math.Abs(lPk.Value)
                         End If
                     Else 'start of historic period
                         lThresh = New ThresholdType
                         lThresh.SYear = lPk.Year
                         lThresh.EYear = lPk.Year
-                        lThresh.Comment = "Historic " & Thresholds.Count
-                        If lPk.Value <> -8888 Then
-                            lThresh.LowerLimit = Math.Abs(lPk.Value)
-                        Else
+                        If aIncludeHistoricPeaks Then
+                            lThresh.Comment = "Historic " & Thresholds.Count
+                            If lPk.Value <> -8888 Then
+                                lThresh.LowerLimit = Math.Abs(lPk.Value)
+                            Else
+                                lThresh.LowerLimit = 1.0E+20
+                            End If
+                        Else 'not including historic peaks
+                            lThresh.Comment = "Unused Historic " & Thresholds.Count
                             lThresh.LowerLimit = 1.0E+20
                         End If
                         lThresh.UpperLimit = 1.0E+20
@@ -779,6 +784,17 @@ Friend Class pfqStation
                             lPk.LowerLimit = Math.Abs(lPk.Value)
                             lPk.UpperLimit = 1.0E+20
                             lPk.Comment = "Peak > stated value"
+                        ElseIf lPk.Code.Contains("O") Then
+                            lThresh.SYear = lPk.Year
+                            lThresh.EYear = lPk.Year
+                            lThresh.LowerLimit = 1.0E+20
+                            lThresh.UpperLimit = 1.0E+20
+                            lThresh.Comment = "Opportunistic Peak"
+                            Thresholds.Add(lThresh)
+                            lThresh.SYear = 0
+                            lPk.LowerLimit = 0
+                            lPk.UpperLimit = 1.0E+20
+                            lPk.Comment = "Opportunistic Peak"
                         End If
                     End If
                 End If
@@ -815,10 +831,12 @@ Friend Class pfqStation
             Next
             If lYearMissing Then 'see if there is a systematic peak for this year
                 For Each lPk As PeakDataType In PeakData
-                    If (lPk.Year = lYr AndAlso (Not lPk.Code.Contains("3") And Not lPk.Code.Contains("D")) AndAlso (lPk.Value <> -8888 OrElse
-                        (lPk.LowerLimit >= 0 AndAlso lPk.UpperLimit > 0 AndAlso lPk.Comment.Length > 0))) Then
-                        lYearMissing = False
-                        Exit For
+                    If lPk.Year = lYr Then
+                        If (Not lPk.Code.Contains("3") And Not lPk.Code.Contains("D")) AndAlso (lPk.Value <> -8888 OrElse
+                        (lPk.LowerLimit >= 0 AndAlso lPk.UpperLimit > 0 AndAlso lPk.Comment.Length > 0)) Then
+                            lYearMissing = False
+                            Exit For
+                        End If
                     End If
                 Next
             End If
