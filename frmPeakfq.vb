@@ -2500,7 +2500,7 @@ SkipPoint:
             lLOTestStr = "Multiple Grubbs-Beck"
         End If
 
-        Dim lWarning As String = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.2 run " & System.DateTime.Now & vbCrLf &
+        Dim lWarning As String = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.3 run " & System.DateTime.Now & vbCrLf &
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf &
                                  DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G);  " '& vbCrLf
         If PfqPrj.Stations(lStnInd).SkewOpt <> 1 Then
