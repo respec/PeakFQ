@@ -2897,8 +2897,10 @@ FileCancel:
         UpdateInputGraph()
     End Sub
 
-    Private Sub txtCI_CommitChange() Handles txtCI.CommitChange
-        txtCLL.ValueDouble = 100 * ((1 - txtCI.ValueDouble) / 2)
-        txtCLU.ValueDouble = 100 * ((1 + txtCI.ValueDouble) / 2)
+    Private Sub txtCI_Change() Handles txtCI.Change
+        If txtCI.ValueDouble > 0 Then
+            txtCLL.ValueDouble = 100 * ((1 - txtCI.ValueDouble) / 2)
+            txtCLU.ValueDouble = 100 * ((1 + txtCI.ValueDouble) / 2)
+        End If
     End Sub
 End Class
