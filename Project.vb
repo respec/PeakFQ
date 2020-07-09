@@ -1064,11 +1064,12 @@ Friend Class pfqProject
             lStn.FirstPeak = lPeaks(0).Year
             lStn.LastPeak = lPeaks(lPeaks.Count - 1).Year
 
-            'lStn.PeakDataOrig = lPeaks
+            'save original peaks read from data file
             lStn.PeakDataOrig = New Generic.List(Of pfqStation.PeakDataType)
             For Each lPeak In lPeaks
                 lStn.PeakDataOrig.Add(lPeak.Clone)
             Next
+
             If lStn.PeakData.Count > 0 Then 'merge peaks with peak info from spec file
                 Dim lMatchingYearIndex As Integer
                 For Each lSpecPeak As pfqStation.PeakDataType In lStn.PeakData
@@ -1092,8 +1093,9 @@ Friend Class pfqProject
                 Next
                 lPeaks.Sort()
             End If
+
             lStn.PeakData = lPeaks
-            If lStn.Thresholds.Count = 0 Then
+            If lStn.Thresholds.Count <= 1 Then
                 lStn.SetDefaultThresholds()
             End If
         Next

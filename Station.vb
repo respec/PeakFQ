@@ -792,8 +792,9 @@ Friend Class pfqStation
                             lThresh.Comment = "Opportunistic Peak"
                             Thresholds.Add(lThresh)
                             lThresh.SYear = 0
-                            lPk.LowerLimit = 0
-                            lPk.UpperLimit = 1.0E+20
+                            lPk.Value = -Math.Abs(lPk.Value)
+                            lPk.LowerLimit = lPk.Value ' 0
+                            lPk.UpperLimit = lPk.Value '1.0E+20
                             lPk.Comment = "Opportunistic Peak"
                         End If
                     End If

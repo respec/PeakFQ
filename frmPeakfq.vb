@@ -1331,13 +1331,25 @@ FileCancel:
                 If IsNumeric(.CellValue(i, 0)) Then
                     Dim lData As New pfqStation.PeakDataType
                     lData.Year = CInt(.CellValue(i, 0))
-                    If .CellColor(i, 0) = SystemColors.ControlDark Then 'peak not in use, set to original peak data values
-                        For Each lPeak As pfqStation.PeakDataType In lStn.PeakDataOrig
+                    If .CellColor(i, 0) = SystemColors.ControlDark Then
+                        'peak not in use, see if defined value exists in current peak collection
+                        Dim lYr As Integer = 0
+                        For Each lPeak As pfqStation.PeakDataType In lStn.PeakData
                             If Math.Abs(lData.Year) = Math.Abs(lPeak.Year) Then
                                 lData = lPeak
+                                lYr = lData.Year
                                 Exit For
                             End If
                         Next
+                        If lYr = 0 Then
+                            'peak not found in current collection, set to original peak data values
+                            For Each lPeak As pfqStation.PeakDataType In lStn.PeakDataOrig
+                                If Math.Abs(lData.Year) = Math.Abs(lPeak.Year) Then
+                                    lData = lPeak
+                                    Exit For
+                                End If
+                            Next
+                        End If
                     Else 'process peak value entry
                         lData.Value = CSng(.CellValue(i, 1))
                         If .CellValue(i, 2) Is Nothing Then
