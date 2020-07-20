@@ -1234,7 +1234,8 @@ FileCancel:
                     .Alignment(j, 1) = atcAlignment.HAlignRight
                     .CellValue(j, 2) = lData.Code
                     .Alignment(j, 2) = atcAlignment.HAlignLeft
-                    If Math.Abs(lData.Year) < lStn.BegYear OrElse (lData.Code.Contains("D") Or lData.Code.Contains("3") Or lData.Code.Contains("O")) OrElse
+                    If Math.Abs(lData.Year) < lStn.BegYear OrElse Math.Abs(lData.Year) > lStn.EndYear OrElse
+                        (lData.Code.Contains("D") Or lData.Code.Contains("3") Or lData.Code.Contains("O")) OrElse
                         ((lData.Code.Contains("K") OrElse lData.Code.Contains("6") OrElse lData.Code.Contains("C")) AndAlso Not lStn.UrbanRegPeaks) OrElse
                         (lData.Code.Contains("H") AndAlso lStn.HistoricPeriod = 0) Then
                         'gray out since it preceeds analysis start year, is unused code, or it's urban/regulated and that option is off
