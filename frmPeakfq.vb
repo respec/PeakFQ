@@ -1352,29 +1352,40 @@ FileCancel:
                             Next
                         End If
                     Else 'process peak value entry
-                        lData.Value = CSng(.CellValue(i, 1))
                         If .CellValue(i, 2) Is Nothing Then
                             lData.Code = ""
                         Else
                             lData.Code = .CellValue(i, 2)
                         End If
                         If Not (lData.Code.Contains("D") OrElse lData.Code.Contains("O") OrElse (lData.Code.Contains("K") AndAlso Not lStn.UrbanRegPeaks)) Then
-                            If .CellValue(i, 3).ToLower.Contains("inf") Then
-                                lData.LowerLimit = 1.0E+20
-                            ElseIf IsNumeric(.CellValue(i, 3)) Then
+                            lData.Value = CSng(.CellValue(i, 1))
+                        Else 'set peak value to negative so it isn't included in analysis
+                            lData.Value = -Math.Abs(CSng(.CellValue(i, 1)))
+                        End If
+                        If .CellValue(i, 3).ToLower.Contains("inf") Then
+                            lData.LowerLimit = 1.0E+20
+                        ElseIf IsNumeric(.CellValue(i, 3)) Then
+                            If Not (lData.Code.Contains("D") OrElse lData.Code.Contains("O") OrElse (lData.Code.Contains("K") AndAlso Not lStn.UrbanRegPeaks)) Then
                                 lData.LowerLimit = CSng(.CellValue(i, 3))
-                            End If
-                            If .CellValue(i, 4).ToLower.Contains("inf") Then
-                                lData.UpperLimit = 1.0E+20
-                            ElseIf IsNumeric(.CellValue(i, 4)) Then
-                                lData.UpperLimit = CSng(.CellValue(i, 4))
-                            End If
-                            If Not .CellValue(i, 5) Is Nothing Then
-                                lData.Comment = .CellValue(i, 5)
-                            Else
-                                lData.Comment = ""
+                            Else 'set value to negative so it isn't included in analysis
+                                lData.LowerLimit = -Math.Abs(CSng(.CellValue(i, 3)))
                             End If
                         End If
+                        If .CellValue(i, 4).ToLower.Contains("inf") Then
+                            lData.UpperLimit = 1.0E+20
+                        ElseIf IsNumeric(.CellValue(i, 4)) Then
+                            If Not (lData.Code.Contains("D") OrElse lData.Code.Contains("O") OrElse (lData.Code.Contains("K") AndAlso Not lStn.UrbanRegPeaks)) Then
+                                lData.UpperLimit = CSng(.CellValue(i, 4))
+                            Else 'set value to negative so it isn't included in analysis
+                                lData.UpperLimit = -Math.Abs(CSng(.CellValue(i, 4)))
+                            End If
+                        End If
+                        If Not .CellValue(i, 5) Is Nothing Then
+                            lData.Comment = .CellValue(i, 5)
+                        Else
+                            lData.Comment = ""
+                        End If
+                        'End If
                     End If
                     lDataColl.Add(lData)
                 End If
@@ -2703,6 +2714,7 @@ SkipPoint:
             End If
             If lGoodRow Then
                 ProcessThresholds()
+                UpdateStationDataDisplay(CurStationIndex)
                 UpdateInputGraph()
                 If aRow = .Rows - 1 Then
                     AddIntervalRow()
