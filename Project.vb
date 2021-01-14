@@ -376,7 +376,7 @@ Friend Class pfqProject
 
         While Len(SpecFile) > 0
             Rec = StrSplit(SpecFile, vbCrLf, "")
-            If Left(Rec, 1) = "'" Then 'process comment
+            If Left(Rec, 1) = "'" AndAlso Left(Rec, 3) <> "'NO" Then 'process comment, except for "NO Historic" record
                 If CommentPending Then 'multiple line comment
                     lCom = lCom & vbCrLf & Rec
                 Else 'new comment
@@ -511,6 +511,8 @@ Friend Class pfqProject
                     Case "HISTPERIOD"
                         CurStation.HistoricPeriod = CSng(Rec)
                         If CommentPending Then CurStation.CHistoric = lCom
+                    Case "NO HISTORIC PERIOD IN USE"
+                        CurStation.HistoricPeriod = False
                     Case "SKEWOPT"
                         If UCase(Rec) = "STATION" Then
                             CurStation.SkewOpt = 0
