@@ -30,7 +30,7 @@ Public Class frmAbout
 
     Private Sub txtOutputPath_Click(sender As Object, e As System.EventArgs) Handles txtOutputPath.Click
         With cdlSave
-            .Title = "Specify the directory for PeakFQ testing results"
+            .Title = "Specify the directory for PeakFQ test results"
             .FileName = "(PeakFQ Results)"
             If .ShowDialog() <> Windows.Forms.DialogResult.Cancel Then
                 txtOutputPath.Text = PathNameOnly(.FileName)
