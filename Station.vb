@@ -550,13 +550,15 @@ Friend Class pfqStation
         End If
         'write any interval data or updated peak data
         For Each vData As PeakDataType In pPeakData
-            If Not PeakDataOrigContains(vData) Then 'new or revised peak
-                If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso _
+            If vData.Year >= pBegYear AndAlso vData.Year <= pEndYear Then
+                If Not PeakDataOrigContains(vData) Then 'new or revised peak
+                    If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso
                     Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
-                    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                Else 'just revised peak data
-                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
-                    If vData.Comment.Length > 0 Then s = s & "  '" & vData.Comment & vbCrLf Else s = s & vbCrLf
+                        s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                    Else 'just revised peak data
+                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
+                        If vData.Comment.Length > 0 Then s = s & "  '" & vData.Comment & vbCrLf Else s = s & vbCrLf
+                    End If
                 End If
             End If
         Next
