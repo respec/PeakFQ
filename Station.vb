@@ -550,7 +550,9 @@ Friend Class pfqStation
         End If
         'write any interval data or updated peak data
         For Each vData As PeakDataType In pPeakData
-            If vData.Year >= pBegYear AndAlso vData.Year <= pEndYear Then
+            If vData.Year >= pBegYear AndAlso vData.Year <= pEndYear AndAlso
+                (Not vData.Code.Contains("K") Or Me.UrbanRegPeaks) Then
+                'within start/end of analysis range; also not an Urb/Reg peak (or UrbReg is YES)
                 If Not PeakDataOrigContains(vData) Then 'new or revised peak
                     If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso
                     Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
@@ -625,12 +627,15 @@ Friend Class pfqStation
         'write any interval data or updated peak data
         For Each vData As PeakDataType In pPeakData
             If Not PeakDataOrigContains(vData) Then 'new or revised peak/interval
-                If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso _
-                    Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
-                    s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
-                Else 'just revised peak data
-                    s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
-                    If vData.Comment.Length > 0 Then s = s & "  '" & vData.Comment & vbCrLf Else s = s & vbCrLf
+                If Not vData.Code.Contains("K") Or Me.UrbanRegPeaks Then
+                    'don't save any peaks/intervals that are regulated when Urb/Reg=NO
+                    If vData.Year > 0 AndAlso vData.LowerLimit >= 0 AndAlso vData.UpperLimit > 0 AndAlso
+                        Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
+                        s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
+                    Else 'just revised peak data
+                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
+                        If vData.Comment.Length > 0 Then s = s & "  '" & vData.Comment & vbCrLf Else s = s & vbCrLf
+                    End If
                 End If
             End If
         Next
@@ -826,22 +831,43 @@ Friend Class pfqStation
 
         For lYr As Integer = BegYear To EndYear
             lYearMissing = True
-            For Each lThresh In lThresholds
-                If lYr >= lThresh.SYear AndAlso lYr <= lThresh.EYear Then
-                    lYearMissing = False
+            Dim curPeak As PeakDataType = Nothing
+            For Each lPk As PeakDataType In PeakData
+                'look for peak value for the current year (lYr)
+                If lPk.Year = lYr Then 'peak exists for this year
+                    curPeak = lPk
                     Exit For
                 End If
             Next
-            If lYearMissing Then 'see if there is a systematic peak for this year
-                For Each lPk As PeakDataType In PeakData
-                    If lPk.Year = lYr Then
-                        If (Not lPk.Code.Contains("3") And Not lPk.Code.Contains("D") And Not lPk.Code.Contains("O") And (Not lPk.Code.Contains("K") Or Me.UrbanRegPeaks)) AndAlso (lPk.Value <> -8888 OrElse
-                        (lPk.LowerLimit >= 0 AndAlso lPk.UpperLimit > 0 AndAlso lPk.Comment.Length > 0)) Then
-                            lYearMissing = False
-                            Exit For
-                        End If
+            If curPeak IsNot Nothing AndAlso curPeak.Code.Contains("K") AndAlso Not Me.UrbanRegPeaks Then
+                'Urb/Reg peak, but UrbReg set to NO
+                For i As Integer = 0 To lThresholds.Count - 1
+                    lThresh = lThresholds(i)
+                    'check for Perception Thresholds containing peaks w/code that override them
+                    If lYr >= lThresh.SYear AndAlso lYr <= lThresh.EYear Then
+                        'peak w/code K, with UrbReg OFF, found in non-default threshold - delete the threshold
+                        Dim lDeleteInd As Integer = -1
+                        For j As Integer = 0 To Thresholds.Count - 1
+                            Dim lT As ThresholdType = Thresholds(j)
+                            If lT.SYear = lThresh.SYear AndAlso lT.EYear = lThresh.EYear AndAlso
+                               lT.LowerLimit = lThresh.LowerLimit AndAlso lT.UpperLimit = lThresh.UpperLimit Then
+                                lDeleteInd = j
+                                Exit For
+                            End If
+                        Next
+                        If lDeleteInd >= 0 Then Thresholds.RemoveAt(lDeleteInd)
                     End If
                 Next
+                lYearMissing = False
+            End If
+            If lYearMissing Then 'see if there is a systematic peak for this year
+                If curPeak IsNot Nothing Then
+                    If (Not curPeak.Code.Contains("3") And Not curPeak.Code.Contains("D") And Not curPeak.Code.Contains("O") And
+                       (Not curPeak.Code.Contains("K") Or Me.UrbanRegPeaks)) AndAlso (curPeak.Value <> -8888 OrElse
+                       (curPeak.LowerLimit >= 0 AndAlso curPeak.UpperLimit > 0 AndAlso curPeak.Comment.Length > 0)) Then
+                        lYearMissing = False
+                    End If
+                End If
             End If
             If lYearMissing Then
                 lMissingYears.Add(lYr)

@@ -22,6 +22,7 @@ Friend Class frmPeakfq
     Dim CurStationIndex As Integer = -1
     Dim CurThreshRow As Integer = 0
     Dim CurIntervalRow As Integer = 0
+    Dim GBCrit As Double = 0 'keeps track of current Grubbs-Beck Low Outlier (PILF) Threshold
 
     Dim pLastClickedRow As Integer
 
@@ -519,7 +520,23 @@ FileCancel:
                 Me.Cursor = System.Windows.Forms.Cursors.WaitCursor
                 lstGraphs.Items.Clear()
                 ProcessGrid()
-                If CurStationIndex >= 0 Then ProcessThresholds()
+                If CurStationIndex >= 0 Then
+                    'thresholds already populated on Input/View tab, retrieve values from there
+                    ProcessThresholds()
+                Else 'for case of thresholds not yet populated, check date range of perception thresholds
+                    Dim lThrColl As Generic.List(Of pfqStation.ThresholdType) = Nothing
+                    For i = 0 To PfqPrj.Stations.Count - 1
+                        lThrColl = New Generic.List(Of pfqStation.ThresholdType)
+                        For j As Integer = 0 To PfqPrj.Stations(i).Thresholds.Count - 1
+                            Dim lThresh As New pfqStation.ThresholdType
+                            lThresh = PfqPrj.Stations(i).Thresholds(j)
+                            If lThresh.SYear < PfqPrj.Stations(i).BegYear Then lThresh.SYear = PfqPrj.Stations(i).BegYear
+                            If lThresh.EYear > PfqPrj.Stations(i).EndYear Then lThresh.EYear = PfqPrj.Stations(i).EndYear
+                            lThrColl.Add(lThresh)
+                        Next
+                        PfqPrj.Stations(i).Thresholds = lThrColl
+                    Next
+                End If
                 If cboDataGraphFormat.SelectedIndex > 0 Then
                     'save all data input graphs in specified format
                     lStnInd = CurStationIndex
@@ -542,6 +559,12 @@ FileCancel:
                     cmdGraph.Enabled = True
                     sstPfq.TabPages.Item(3).Enabled = True
                     sstPfq.SelectedIndex = 3
+                    'For CurStationIndex = 0 To PfqPrj.Stations.Count - 1
+                    '    If PfqPrj.Stations(CurStationIndex).AnalysisOption.ToUpper <> "SKIP" Then
+                    '        GenEMARepresentationGraph()
+                    '    End If
+                    'Next
+                    'CurStationIndex = lStnInd
                 End If
                 Me.Cursor = System.Windows.Forms.Cursors.Default
             Else
@@ -933,9 +956,13 @@ FileCancel:
                         Next k
                     End If
                     lstGraphs.Items.Add(New GraphListItem(newName, i))
-                    If PfqPrj.Graphic Then 'save graph to file
-                        GenFrequencyGraph(lstGraphs.Items.Count - 1, True)
-                    End If
+                    'If PfqPrj.Graphic Then 'save graph to file
+                    'always call generate graphic so analysis info is retrieved 
+                    'for generating EMA representation plot 
+                    '(graphic won't be saved if no format has been selected)
+                    GenFrequencyGraph(lstGraphs.Items.Count - 1, True)
+                    GenEMARepresentationGraph(lstGraphs.Items.Count - 1)
+                    'End If
                 End If
             Next i
         End With
@@ -1843,14 +1870,220 @@ FileCancel:
         zgcThresh.AxisChange()
         zgcThresh.Invalidate()
         zgcThresh.Refresh()
-        If aSaveToFile AndAlso zgcThresh.Visible AndAlso lStn.AnalysisOption.ToUpper <> "SKIP" Then
-            Dim lFmt As String = StrRetRem(cboDataGraphFormat.SelectedItem.ToString)
-            zgcThresh.SaveIn(PfqPrj.OutputDir & "\" & cboStation.Items(CurStationIndex).ToString & "_inp." & lFmt)
+        If aSaveToFile AndAlso lStn.AnalysisOption.ToUpper <> "SKIP" Then 'AndAlso zgcThresh.Visible 
+            zgcThresh.SaveIn(PfqPrj.OutputDir & "\" & PfqPrj.Stations(CurStationIndex).PlotName & "_input." & PfqPrj.GraphFormat)
         End If
 
     End Sub
 
+    Private Sub GenEMARepresentationGraph(ByVal aStnIndex As Integer)
+        'Dim lStnIndex As Integer = Math.Max(CurStationIndex, 0)
+        Dim lStn As pfqStation = PfqPrj.Stations.Item(aStnIndex)
+        Dim lDataMin As Double = 10000
+        Dim lDataMax As Double = -10000
+        Dim lLogFlag As Boolean = (cmdLogReal.Text = "Real") 'True
+        Dim lCurve As LineItem = Nothing
+        Dim i As Integer
+        Dim NObs As Integer
+        Dim ObsYrs(24999) As Integer
+        Dim uQl(24999) As Single
+        Dim uQu(24999) As Single
+        Dim uTl(24999) As Single
+        Dim uTu(24999) As Single
+        Dim eQl(24999) As Single
+        Dim eQu(24999) As Single
+        Dim eTl(24999) As Single
+        Dim eTu(24999) As Single
+
+        Call GETEMAREP(aStnIndex + 1, NObs, ObsYrs, uQl, uQu, eQl, eQu, uTl, uTu, eTl, eTu)
+
+        Dim lGBCrit As Double = 10 ^ GBCrit
+
+        Dim lZGC As New ZedGraphControl
+        InitGraph(lZGC, "EMA")
+        lZGC.Height = VB6.TwipsToPixelsY(10000)
+        lZGC.Width = VB6.TwipsToPixelsY(14000)
+        Dim lPane As GraphPane = lZGC.MasterPane.PaneList(0)
+        Dim lYAxis As Axis = lPane.YAxis
+
+        'now draw curves
+        lYAxis.IsVisible = True
+        lYAxis.Scale.IsVisible = True
+
+        'Dim XVals(NObs - 1) As Double
+        'Dim YVals(NObs - 1) As Double
+        'Array.Copy(ObsYrs, XVals, NObs)
+        Dim XVals(0) As Double
+        Dim YVals(0) As Double
+
+        'Array.Copy(eQl, YVals, NObs)
+        'lCurve = lPane.AddCurve("EMA Peak Representation", XVals, YVals, Color.Black, SymbolType.Circle)
+        'lCurve.Line.IsVisible = False
+        'Array.Copy(eQu, YVals, NObs)
+        'lCurve = lPane.AddCurve("EMA Peak Representation", XVals, YVals, Color.Black, SymbolType.Circle)
+        'lCurve.Line.IsVisible = False
+        'lCurve.Label.IsVisible = False
+        Dim lCurveLabeled As Boolean = False
+        Dim lCensoredLabeled As Boolean = False
+        'get min/max of flows; check for intervals
+        Dim XIntVals(1) As Double
+        Dim YIntVals(1) As Double
+        Dim lSymbol As SymbolType
+        For i = 0 To NObs - 1
+            If uQu(i) < 1.0E+20 AndAlso uQu(i) > lDataMax Then lDataMax = uQu(i)
+            If uQl(i) > 0 AndAlso uQl(i) < lDataMin Then lDataMin = uQl(i)
+            If Math.Abs(eQl(i) - eQu(i)) > 0.0001 Then 'represent interval betwee lower/upper value
+                XIntVals(0) = ObsYrs(i)
+                XIntVals(1) = ObsYrs(i)
+                YIntVals(0) = eQl(i)
+                YIntVals(1) = eQu(i)
+                lCurve = lPane.AddCurve("EMA censored peak discharge", XIntVals, YIntVals, Color.Black, SymbolType.HDash)
+                If lCensoredLabeled Then
+                    lCurve.Label.IsVisible = False
+                Else
+                    lCensoredLabeled = True
+                End If
+            Else
+                XVals(0) = ObsYrs(i)
+                YVals(0) = eQl(i)
+                lSymbol = SymbolType.Circle
+                For Each lPk As pfqStation.PeakDataType In lStn.PeakData
+                    If lPk.Year = ObsYrs(i) AndAlso lPk.Code.Contains("K") Then
+                        lSymbol = SymbolType.Square
+                        Exit For
+                    End If
+                Next
+                lCurve = lPane.AddCurve("EMA Peak Representation", XVals, YVals, Color.Black, lSymbol)
+                lCurve.Line.IsVisible = False
+                If lCurveLabeled Then
+                    lCurve.Label.IsVisible = False
+                Else 'only include label for 1st instance of peaks
+                    lCurveLabeled = True
+                End If
+            End If
+        Next
+
+        'set y-axis range
+        lYAxis.Scale.MaxAuto = False
+        lYAxis.Scale.Min = lDataMin
+        lYAxis.Scale.Max = lDataMax
+        Do While lDataMax >= lYAxis.Scale.Max 'set scale so there is a buffer between highest value and top of graph
+            Scalit(lDataMin, lDataMax, lLogFlag, lYAxis.Scale.Min, lYAxis.Scale.Max)
+            lDataMax += 1
+        Loop
+
+        If Not lLogFlag Then
+            lYAxis.Type = AxisType.Linear
+            lYAxis.Scale.Min = 0
+        Else
+            lYAxis.Type = AxisType.Log
+        End If
+        'set x-axis range
+        lPane.XAxis.Scale.Min = ObsYrs(0) - 1
+        lPane.XAxis.Scale.Max = ObsYrs(NObs - 1) + 1
+        lPane.XAxis.Title.Text = "Water year" & vbCrLf & lStn.Name
+
+        Dim XThrVals(1) As Double
+        Dim YThrVals(1) As Double
+
+        lCurveLabeled = False
+        Dim lPILFLabeled = False
+        Dim lColor As System.Drawing.Color
+        For i = 0 To NObs - 1
+            XThrVals(0) = ObsYrs(i)
+            XThrVals(1) = ObsYrs(i) + 1
+            YThrVals(0) = eTl(i)
+            YThrVals(1) = YThrVals(0)
+            If lGBCrit <= 0.0 OrElse Math.Abs(eTl(i) - lGBCrit) > 0.01 Then
+                lColor = Color.Green
+                lCurve = lPane.AddCurve("Final EMA Perceptible Ranges", XThrVals, YThrVals, lColor)
+                If lPILFLabeled Then
+                    lCurve.Label.IsVisible = False
+                Else 'only include label for 1st instance of peaks
+                    lPILFLabeled = True
+                End If
+            Else
+                lColor = Color.Blue
+                lCurve = lPane.AddCurve("PILF Threshold Perceptible Range", XThrVals, YThrVals, lColor)
+                If lCurveLabeled Then
+                    lCurve.Label.IsVisible = False
+                Else 'only include label for 1st instance of peaks
+                    lCurveLabeled = True
+                End If
+            End If
+            lCurve.Line.Width = 6
+            lCurve.Symbol.IsVisible = False
+            YThrVals(0) = 0.99 * Math.Min(lYAxis.Scale.Max, eTu(i))
+            YThrVals(1) = YThrVals(0)
+            lCurve = lPane.AddCurve("Final EMA Perceptible Range", XThrVals, YThrVals, lColor)
+            lCurve.Line.Width = 6
+            lCurve.Symbol.IsVisible = False
+            lCurve.Label.IsVisible = False
+        Next
+
+        Dim lNote As String
+        'Dim lYPos As Double
+        'If GBCrit > 0 Then
+        '    lNote = "MGBT PILF Threshold = " & DoubleToString(lGBCrit, , , , , 4)
+        '    lYPos = 1 - lGBCrit / lYAxis.Scale.Max - lPane.Margin.Bottom / lZGC.Height
+        '    Dim lPILFText As New TextObj(lNote, 0.75, lYPos)
+        '    lPILFText.Location.CoordinateFrame = CoordType.PaneFraction
+        '    lPILFText.FontSpec.StringAlignment = StringAlignment.Near
+        '    lPILFText.FontSpec.IsBold = True
+        '    lPILFText.FontSpec.Size = 12
+        '    lPILFText.FontSpec.Border.IsVisible = False
+        '    lPILFText.FontSpec.Fill.IsVisible = False
+        '    lPILFText.Location.AlignH = AlignH.Left
+        '    lPILFText.Location.AlignV = AlignV.Bottom
+        '    lPane.GraphObjList.Add(lPILFText)
+        'End If
+
+        Dim lSkewOptionText As String
+        If lStn.SkewOpt = 0 Then
+            lSkewOptionText = "Station"
+        ElseIf lStn.SkewOpt = 1 Then
+            lSkewOptionText = "Weighted"
+        ElseIf lStn.SkewOpt = 2 Then
+            lSkewOptionText = "Regional"
+        End If
+        Dim lLOTestStr As String
+        If lStn.LowOutlier > 0 Then
+            lLOTestStr = "Fixed PILF Threshold = " & DoubleToString(lStn.LowOutlier, , , , , 4)
+        ElseIf lStn.LOTestType.StartsWith("Single") Then
+            lLOTestStr = "SGBT PILF Threshold = " & DoubleToString(lGBCrit, , , , , 4)
+        Else
+            lLOTestStr = "MGBT PILF Threshold = " & DoubleToString(lGBCrit, , , , , 4)
+        End If
+
+        lNote = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.4 run " & System.DateTime.Now & vbCrLf &
+                                 PfqPrj.Stations(aStnIndex).AnalysisOption & " using " & lSkewOptionText &
+                                 " Skew option" & vbCrLf & lLOTestStr
+
+        '& vbCrLf & "Mean: " & "Std Dev: " &
+        '"Skew: " & DoubleToString(CDbl(lSkew), , , , , 3) & vbCrLf &
+        '"MGB PILFs: "
+        Dim lText As New TextObj(lNote, 0.65, 0.76) '.68)
+        lText.Location.CoordinateFrame = CoordType.PaneFraction
+        lText.FontSpec.StringAlignment = StringAlignment.Near
+        lText.FontSpec.IsBold = True
+        lText.FontSpec.Size = 12
+        lText.FontSpec.Border.IsVisible = False
+        lText.FontSpec.Fill.IsVisible = False
+        lText.Location.AlignH = AlignH.Left
+        lText.Location.AlignV = AlignV.Top
+        lPane.GraphObjList.Add(lText)
+
+        lZGC.AxisChange()
+        lZGC.Invalidate()
+        lZGC.Refresh()
+        'If aSaveToFile AndAlso lZGC.Visible AndAlso lStn.AnalysisOption.ToUpper <> "SKIP" Then
+        If lStn.AnalysisOption.ToUpper <> "SKIP" Then
+            lZGC.SaveIn(PfqPrj.OutputDir & "\" & PfqPrj.Stations(aStnIndex).PlotName & "_output." & PfqPrj.GraphFormat)
+        End If
+
+    End Sub
     Private Sub InitGraph(ByVal aZGC As ZedGraphControl, ByVal aType As String)
+        'aType can be "Input", "EMA", or "Results"
 
         With aZGC
             .Visible = True
@@ -1912,7 +2145,7 @@ FileCancel:
                     .DashOff = 0
                     .IsVisible = True
                 End With
-                If aType = "Input" Then
+                If aType = "Input" Or aType = "EMA" Then
                     If .Type <> AxisType.Linear Then
                         .Type = AxisType.Linear
                     End If
@@ -2203,6 +2436,8 @@ FileCancel:
                      lThrSYr, lThrEYr, lNInt, lIntLwr, lIntUpr, lAllPPos,
                      lIntYr, lGBCrit, lNLow, lNZero, lSkew, lRMSegs, lIHeader)
         '        lHeader, lHeader.Length)
+        'store Low Outlier (PILF) threshold for use elsewhere
+        GBCrit = lGBCrit
         NumChr(5, 200, lIQual, lXQual)
         Dim lHeadArray(79) As String
         NumChr(80, 1, lIHeader, lHeadArray)
@@ -2227,6 +2462,7 @@ FileCancel:
         Else 'calling from batch mode (RunTests), so no items in lstGraphs
             lStnInd = aStnInd
         End If
+        PfqPrj.Stations(lStnInd).Name = lHeader
         If PfqPrj.Stations(lStnInd).Thresholds.Count = 0 Then 'no threshold specified, use default from PeakFQ 
             lThrDef = True
         Else
@@ -2546,15 +2782,17 @@ SkipPoint:
         lPane.GraphObjList.Add(lText)
 
         If aToFile Then 'save plot to file
-            lZGC.MasterPane.PaneList(0).Rect = New System.Drawing.Rectangle(
+            If PfqPrj.GraphFormat.Length > 1 Then 'be sure a format has been selected
+                lZGC.MasterPane.PaneList(0).Rect = New System.Drawing.Rectangle(
                     0, 0,
                     lZGC.Width, lZGC.Height)
-            lZGC.AxisChange()
-            lZGC.Invalidate()
-            lZGC.Refresh()
-            lZGC.SaveIn(PfqPrj.OutputDir & "\" & PfqPrj.Stations(lStnInd).PlotName & "." & PfqPrj.GraphFormat)
+                lZGC.AxisChange()
+                lZGC.Invalidate()
+                lZGC.Refresh()
+                lZGC.SaveIn(PfqPrj.OutputDir & "\" & PfqPrj.Stations(lStnInd).PlotName & "_freq." & PfqPrj.GraphFormat)
+            End If
         Else 'display plot on form
-            lZGC.AxisChange()
+                lZGC.AxisChange()
             lZGC.Invalidate()
             lZGC.Refresh()
             newform.Show()
@@ -2895,11 +3133,17 @@ FileCancel:
                 'SaveFileString(lSpecFileName, lSpecFileContents)
                 SaveFileString(lSpecFileName, lSpecFileContents)
                 PfqPrj.SpecFileName = lSpecFileName
+                PfqPrj.ReadPeaks()
                 PfqPrj.RunBatchModel()
                 If PfqPrj.Graphic Then 'save graph to file
-                    For i As Integer = 0 To PfqPrj.Stations.Count - 1
-                        GenFrequencyGraph(i, True)
+                    Dim lStationInd As Integer = CurStationIndex
+                    For CurStationIndex = 0 To PfqPrj.Stations.Count - 1
+                        InitGraph(zgcThresh, "Input")
+                        UpdateInputGraph(True)
+                        GenFrequencyGraph(CurStationIndex, True)
+                        GenEMARepresentationGraph(CurStationIndex)
                     Next
+                    CurStationIndex = lStationInd
                 End If
                 Kill("error.fil")
             End If

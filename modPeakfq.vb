@@ -35,6 +35,14 @@ Module modPeakfq
         '                                                 ByVal aHeader As String, ByVal aHeaderLength As Short)
     End Sub
 
+    <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Ansi)>
+    Public Sub GETEMAREP(ByRef aStnInd As Integer, ByRef aNOBS As Integer, ByVal aObsYrs() As Integer,
+                                                   ByVal aUQL() As Single, ByVal aUQU() As Single,
+                                                   ByVal aEQL() As Single, ByVal aEQU() As Single,
+                                                   ByVal aUTL() As Single, ByVal aUTU() As Single,
+                                                   ByVal aETL() As Single, ByVal aETU() As Single)
+    End Sub
+
     <DllImport("peakfq.dll", CallingConvention:=CallingConvention.Cdecl, CharSet:=CharSet.Unicode)>
     Public Sub GETPEAKS(ByRef aStnInd As Integer, ByRef aNPkPlt As Integer,
                                                   ByVal aPks() As Single, ByVal aXQual(,) As Integer,

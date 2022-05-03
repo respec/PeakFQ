@@ -765,7 +765,7 @@ Friend Class pfqProject
         Logger.Status("Begin")
         Logger.Status("Show")
         'Logger.Status("Caption PKFQWin Status")
-        Logger.Status("Label Title PKFQWin 7.0 ")
+        Logger.Status("Label Title PKFQWin 7.4 ")
 
 
         'Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)
@@ -1097,8 +1097,8 @@ Friend Class pfqProject
             End If
 
             lStn.PeakData = lPeaks
-            If lStn.Thresholds.Count <= 1 Then
-                lStn.SetDefaultThresholds()
+            If lStn.Thresholds.Count < 1 Then
+                lStn.SetDefaultThresholds(lStn.BegYear, lStn.EndYear)
             End If
         Next
     End Sub
