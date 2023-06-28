@@ -10,10 +10,10 @@ Imports System.Runtime.InteropServices
 ' TODO: Review the values of the assembly attributes
 
 
-<Assembly: AssemblyTitle("PKFQWin_2019-10-24")>
-<Assembly: AssemblyDescription("")>
+<Assembly: AssemblyTitle("PeakFQ")>
+<Assembly: AssemblyDescription("PeakFQ 7.4.1")>
 <Assembly: AssemblyCompany("RESPEC")>
-<Assembly: AssemblyProduct("")>
+<Assembly: AssemblyProduct("PeakFQ")>
 <Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>
 <Assembly: AssemblyCulture("")>
@@ -28,6 +28,6 @@ Imports System.Runtime.InteropServices
 ' You can specify all the values or you can default the Build and Revision Numbers
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("7.4.*")>
+<Assembly: AssemblyVersion("7.4.1.1")>
 
 

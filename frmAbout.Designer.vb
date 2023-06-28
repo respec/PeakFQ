@@ -97,10 +97,10 @@ Partial Class frmAbout
         Me.lblFAQLink.AutoSize = True
         Me.lblFAQLink.Location = New System.Drawing.Point(111, 55)
         Me.lblFAQLink.Name = "lblFAQLink"
-        Me.lblFAQLink.Size = New System.Drawing.Size(314, 13)
+        Me.lblFAQLink.Size = New System.Drawing.Size(209, 13)
         Me.lblFAQLink.TabIndex = 7
         Me.lblFAQLink.TabStop = True
-        Me.lblFAQLink.Text = "http://acwi.gov/hydrology/Frequency/b17_swfaq/EMAFAQ.html"
+        Me.lblFAQLink.Text = "https://water.usgs.gov/software/PeakFQ/"
         '
         'frmAbout
         '

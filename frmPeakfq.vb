@@ -781,7 +781,7 @@ FileCancel:
         If cdlOpenOpen.ShowDialog = Windows.Forms.DialogResult.OK Then
             cdlOpenSave.FileName = cdlOpenOpen.FileName
             FName = cdlOpenOpen.FileName
-            If FName.Length < 114 Then 'acceptable file name length
+            If FName.Length < 240 Then 'acceptable file name length
                 PfqPrj.Stations.Clear()
                 PfqPrj = New pfqProject
                 PfqPrj.InputDir = PathNameOnly(FName)
@@ -2055,7 +2055,7 @@ FileCancel:
             lLOTestStr = "MGBT PILF Threshold = " & DoubleToString(lGBCrit, , , , , 4)
         End If
 
-        lNote = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.4 run " & System.DateTime.Now & vbCrLf &
+        lNote = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.4.1 run " & System.DateTime.Now & vbCrLf &
                                  PfqPrj.Stations(aStnIndex).AnalysisOption & " using " & lSkewOptionText &
                                  " Skew option" & vbCrLf & lLOTestStr
 
@@ -2760,7 +2760,7 @@ SkipPoint:
             lLOTestStr = "Multiple Grubbs-Beck"
         End If
 
-        Dim lWarning As String = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.3 run " & System.DateTime.Now & vbCrLf &
+        Dim lWarning As String = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.4.1 run " & System.DateTime.Now & vbCrLf &
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf &
                                  DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G);  " '& vbCrLf
         If PfqPrj.Stations(lStnInd).SkewOpt <> 1 Then
