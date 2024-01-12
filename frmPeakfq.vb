@@ -2055,7 +2055,7 @@ FileCancel:
             lLOTestStr = "MGBT PILF Threshold = " & DoubleToString(lGBCrit, , , , , 4)
         End If
 
-        lNote = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.4.1 run " & System.DateTime.Now & vbCrLf &
+        lNote = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.5 run " & System.DateTime.Now & vbCrLf &
                                  PfqPrj.Stations(aStnIndex).AnalysisOption & " using " & lSkewOptionText &
                                  " Skew option" & vbCrLf & lLOTestStr
 
@@ -2354,6 +2354,7 @@ FileCancel:
         Dim lIntLwr(499) As Single
         Dim lIntUpr(499) As Single
         Dim lAllPPos(9999) As Single
+        Dim lAllPPosYrs(9999) As Integer
         Dim lIntYr(499) As Integer
         Dim lNT As Integer
         Dim lThrDef As Boolean
@@ -2428,6 +2429,20 @@ FileCancel:
 
         'for GETDATA, lStnInd is sequence index of stations that were run (i.e. not skipped)
         Dim lStnInd As Integer = aStnInd + 1
+
+        'added call to GETEMAREP to retrieve years corresponding to AllPlotPosition array
+        Dim NObs As Integer
+        Dim ObsYrs(24999) As Integer
+        Dim uQl(24999) As Single
+        Dim uQu(24999) As Single
+        Dim uTl(24999) As Single
+        Dim uTu(24999) As Single
+        Dim eQl(24999) As Single
+        Dim eQu(24999) As Single
+        Dim eTl(24999) As Single
+        Dim eTu(24999) As Single
+        Call GETEMAREP(lStnInd, NObs, ObsYrs, uQl, uQu, eQl, eQu, uTl, uTu, eTl, eTu)
+
         '        Dim lHeader As String = "test header   ".PadLeft(80)
         Dim lIHeader(0, 79) As Integer
         Call GETDATA(lStnInd, lNPkPlt, lPkLog, lSysPP, lWrcPP, lIQual, lPkYear,
@@ -2675,9 +2690,17 @@ SkipPoint:
         lCurve.Line.Width = 2
         Dim lFirstCensored As Boolean = True
         For i = 0 To lNInt - 1
-            j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
-            lX2(0) = lAllPPos(j)
-            lX2(1) = lAllPPos(j)
+            'j = lIntYr(i) - PfqPrj.Stations(lStnInd).BegYear
+            j = 0
+            Dim lYrPos As Integer = -1
+            While lYrPos < 0
+                If lIntYr(i) = ObsYrs(j) Then
+                    lYrPos = j
+                End If
+                j += 1
+            End While
+            lX2(0) = lAllPPos(lYrPos)
+            lX2(1) = lAllPPos(lYrPos)
             'lY2(0) = lIntLwr(i)
             If lIntLwr(i) < lPMin Then ' lYAxis.Scale.Min Then
                 lY2(0) = lYAxis.Scale.Min 'lPMin ' lYAxis.Scale.Min
@@ -2760,7 +2783,7 @@ SkipPoint:
             lLOTestStr = "Multiple Grubbs-Beck"
         End If
 
-        Dim lWarning As String = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.4.1 run " & System.DateTime.Now & vbCrLf &
+        Dim lWarning As String = "ANALYSIS INFO:" & vbCrLf & "Peakfq v 7.5 run " & System.DateTime.Now & vbCrLf &
                                  PfqPrj.Stations(lStnInd).AnalysisOption & " using " & lSkewOptionText & " Skew option" & vbCrLf &
                                  DoubleToString(CDbl(lSkew), , , , , 3) & " = Skew (G);  " '& vbCrLf
         If PfqPrj.Stations(lStnInd).SkewOpt <> 1 Then

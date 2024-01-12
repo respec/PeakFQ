@@ -731,7 +731,11 @@ Friend Class pfqProject
         'It is given a temporary name (tmpSpecName) that will not be saved.
         Dim s As String
 
-        pSpecFileName = PathNameOnly(pDataFileName) & "\" & tmpSpecName
+        If PathNameOnly(pDataFileName).Length > 0 Then
+            pSpecFileName = PathNameOnly(pDataFileName) & "\" & tmpSpecName
+        Else
+            pSpecFileName = tmpSpecName
+        End If
         If UCase(Right(pDataFileName, 3)) = "WDM" Then 'WDM data file
             s = "I WDM " & FilenameNoPath(pDataFileName) & vbCrLf
         Else 'assume asci text data file
@@ -765,7 +769,7 @@ Friend Class pfqProject
         Logger.Status("Begin")
         Logger.Status("Show")
         'Logger.Status("Caption PKFQWin Status")
-        Logger.Status("Label Title PKFQWin 7.4.1 ")
+        Logger.Status("Label Title PKFQWin 7.5 ")
 
 
         'Dim lSpecFileName As String = FilenameNoPath(pSpecFileName)

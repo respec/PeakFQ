@@ -1458,7 +1458,7 @@
         Me.Location = New System.Drawing.Point(11, 49)
         Me.Name = "frmPeakfq"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Text = "PeakFQ Version 7.4.1"
+        Me.Text = "PeakFQ Version 7.5"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.fraButtons.ResumeLayout(False)
