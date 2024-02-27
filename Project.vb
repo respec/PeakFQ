@@ -488,6 +488,8 @@ Friend Class pfqProject
                         If pEMA Then 'global EMA option was set, use for all stations
                             CurStation.AnalysisOption = "EMA"
                         End If
+                        'always default Skew Weight option to HWN method, only update if found in spec file
+                        CurStation.WeightOpt = "HWN"
                         If CommentPending Then CurStation.Comment = lCom
                     Case "ANALYZE"
                         CurStation.AnalysisOption = Rec
@@ -522,6 +524,8 @@ Friend Class pfqProject
                             CurStation.SkewOpt = 2
                         End If
                         If CommentPending Then CurStation.CSkewOpt = lCom
+                    Case "WEIGHTOPT"
+                        CurStation.WeightOpt = Rec
                     Case "LOTYPE"
                         If Rec.ToUpper = "MGBT" Then
                             CurStation.LOTestType = "Multiple"
@@ -684,16 +688,8 @@ Friend Class pfqProject
         For Each vSta In pStations
             If vSta.AnalysisOption <> "Skip" Then 'write station specs to string
                 If vSta.AnalysisOption = "B17B" OrElse vSta.CheckThreshSpecs Then
-                    If DefPrj Is Nothing Then 'write out all station specs
-                        'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsVerbose. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                        s = s & vSta.WriteSpecsVerbose
-                    Else 'only write out non-default station specs
-                        defsta = DefPrj.Stations(i)
-                        'UPGRADE_WARNING: Couldn't resolve default property of object vSta.WriteSpecsNonDefault. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6A50421D-15FE-4896-8A1B-2EC21E9037B2"'
-                        s = s & vSta.WriteSpecsNonDefault(defsta)
-                        'UPGRADE_NOTE: Object defsta may not be destroyed until it is garbage collected. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="6E35BFF6-CD74-4B09-9689-3E1A43DF8969"'
-                        defsta = Nothing
-                    End If
+                    'always write out all station specs (decided w/USGS on 2/23/24)
+                    s = s & vSta.WriteSpecsVerbose
                 Else
                     MsgBox("For Station " & vSta.id & " use of a threshold range of 0 to infinity is unacceptable for periods of missing systematic record." & vbCrLf &
                            "Use a threshold range of infinity to infinity for periods of missing systematic record to indicate a lack of knowledge." & vbCrLf &

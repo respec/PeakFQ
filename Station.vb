@@ -67,6 +67,7 @@ Friend Class pfqStation
     Private pLastSystematic As Integer
     Private pFirstPeak As Integer
     Private pLastPeak As Integer
+    Private pWeightOpt As String
     'the following are for storing comments for various specification records
     Private pComment As String
     Private pCAnalysisOption As String
@@ -143,6 +144,15 @@ Friend Class pfqStation
         End Get
         Set(ByVal Value As Integer)
             pSkewOpt = Value
+        End Set
+    End Property
+
+    Public Property WeightOpt() As String
+        Get
+            WeightOpt = pWeightOpt
+        End Get
+        Set(ByVal Value As String)
+            pWeightOpt = Value
         End Set
     End Property
 
@@ -558,7 +568,11 @@ Friend Class pfqStation
                     Math.Abs(vData.UpperLimit - vData.LowerLimit) > 0.001 Then 'interval data
                         s = s & pad & "Interval " & vData.Year & " " & vData.LowerLimit & " " & vData.UpperLimit & " " & vData.Comment & vbCrLf
                     Else 'just revised peak data
-                        s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
+                        If vData.Value < 100 Then
+                            s = s & pad & "Peak " & vData.Year & " " & DoubleToString(vData.Value,,,,, 4) & " " & vData.Code
+                        Else
+                            s = s & pad & "Peak " & vData.Year & " " & vData.Value & " " & vData.Code
+                        End If
                         If vData.Comment.Length > 0 Then s = s & "  '" & vData.Comment & vbCrLf Else s = s & vbCrLf
                     End If
                 End If
@@ -567,13 +581,22 @@ Friend Class pfqStation
         If Len(pCSkewOpt) > 0 Then s = s & pad & pCSkewOpt & vbCrLf
         s = s & pad & "SkewOpt " & SOText(pSkewOpt) & vbCrLf
         If Len(pCUseSkewMap) > 0 Then s = s & pad & pCUseSkewMap & vbCrLf
-        If pUseSkewMap Then s = s & pad & "UseSkewMap YES" & vbCrLf
+        If pUseSkewMap Then
+            s = s & pad & "UseSkewMap YES" & vbCrLf
+        Else
+            s = s & pad & "UseSkewMap NO" & vbCrLf
+        End If
         If Len(pCGenSkew) > 0 Then s = s & pad & pCGenSkew & vbCrLf
         s = s & pad & "GenSkew " & pGenSkew & vbCrLf
         If Len(pCSESkew) > 0 Then s = s & pad & pCSESkew & vbCrLf
         s = s & pad & "SkewSE " & pSESkew & vbCrLf
+        s = s & pad & "WeightOpt " & pWeightOpt & vbCrLf
         If Len(pCUrban) > 0 Then s = s & pad & pCUrban & vbCrLf
-        If pUrbanRegPeaks Then s = s & pad & "Urb/Reg YES" & vbCrLf
+        If pUrbanRegPeaks Then
+            s = s & pad & "Urb/Reg YES" & vbCrLf
+        Else
+            s = s & pad & "Urb/Reg NO" & vbCrLf
+        End If
         If Len(pCLowOutlier) > 0 Then s = s & pad & pCLowOutlier & vbCrLf
         If pLowOutlier > 0 Then 'write record showing specified low outlier
             s = s & pad & "LoThresh " & CStr(pLowOutlier) & vbCrLf
@@ -937,5 +960,6 @@ Friend Class pfqStation
         pLastSystematic = 0
         pFirstPeak = 0
         pLastPeak = 0
+        pWeightOpt = "HWN"
     End Sub
 End Class
