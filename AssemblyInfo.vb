@@ -11,7 +11,7 @@ Imports System.Runtime.InteropServices
 
 
 <Assembly: AssemblyTitle("PeakFQ")>
-<Assembly: AssemblyDescription("PeakFQ 7.5")>
+<Assembly: AssemblyDescription("PeakFQ 7.5.1")>
 <Assembly: AssemblyCompany("RESPEC")>
 <Assembly: AssemblyProduct("PeakFQ")>
 <Assembly: AssemblyCopyright("")>
@@ -28,6 +28,6 @@ Imports System.Runtime.InteropServices
 ' You can specify all the values or you can default the Build and Revision Numbers
 ' by using the '*' as shown below:
 
-<Assembly: AssemblyVersion("7.5")>
+<Assembly: AssemblyVersion("7.5.1.1")>
 
 

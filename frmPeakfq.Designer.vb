@@ -214,58 +214,58 @@
         Me.MainMenu1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuHelp})
         Me.MainMenu1.Location = New System.Drawing.Point(0, 0)
         Me.MainMenu1.Name = "MainMenu1"
-        Me.MainMenu1.Size = New System.Drawing.Size(1250, 28)
+        Me.MainMenu1.Size = New System.Drawing.Size(1250, 24)
         Me.MainMenu1.TabIndex = 30
         '
         'mnuFile
         '
         Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuOpen, Me.mnuSaveSpecs, Me.mnuExit})
         Me.mnuFile.Name = "mnuFile"
-        Me.mnuFile.Size = New System.Drawing.Size(44, 24)
+        Me.mnuFile.Size = New System.Drawing.Size(37, 20)
         Me.mnuFile.Text = "&File"
         '
         'mnuOpen
         '
         Me.mnuOpen.Name = "mnuOpen"
-        Me.mnuOpen.Size = New System.Drawing.Size(157, 26)
+        Me.mnuOpen.Size = New System.Drawing.Size(131, 22)
         Me.mnuOpen.Text = "&Open"
         '
         'mnuSaveSpecs
         '
         Me.mnuSaveSpecs.Enabled = False
         Me.mnuSaveSpecs.Name = "mnuSaveSpecs"
-        Me.mnuSaveSpecs.Size = New System.Drawing.Size(157, 26)
+        Me.mnuSaveSpecs.Size = New System.Drawing.Size(131, 22)
         Me.mnuSaveSpecs.Text = "&Save Specs"
         '
         'mnuExit
         '
         Me.mnuExit.Name = "mnuExit"
-        Me.mnuExit.Size = New System.Drawing.Size(157, 26)
+        Me.mnuExit.Size = New System.Drawing.Size(131, 22)
         Me.mnuExit.Text = "E&xit"
         '
         'mnuHelp
         '
         Me.mnuHelp.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAbout, Me.mnuFeedback, Me.mnuHelpMain})
         Me.mnuHelp.Name = "mnuHelp"
-        Me.mnuHelp.Size = New System.Drawing.Size(53, 24)
+        Me.mnuHelp.Size = New System.Drawing.Size(44, 20)
         Me.mnuHelp.Text = "&Help"
         '
         'mnuAbout
         '
         Me.mnuAbout.Name = "mnuAbout"
-        Me.mnuAbout.Size = New System.Drawing.Size(184, 26)
+        Me.mnuAbout.Size = New System.Drawing.Size(153, 22)
         Me.mnuAbout.Text = "&About"
         '
         'mnuFeedback
         '
         Me.mnuFeedback.Name = "mnuFeedback"
-        Me.mnuFeedback.Size = New System.Drawing.Size(184, 26)
+        Me.mnuFeedback.Size = New System.Drawing.Size(153, 22)
         Me.mnuFeedback.Text = "Send &Feedback"
         '
         'mnuHelpMain
         '
         Me.mnuHelpMain.Name = "mnuHelpMain"
-        Me.mnuHelpMain.Size = New System.Drawing.Size(184, 26)
+        Me.mnuHelpMain.Size = New System.Drawing.Size(153, 22)
         Me.mnuHelpMain.Text = "PeakFQ Help"
         '
         'fraButtons
@@ -379,7 +379,7 @@
         Me.lblLOTest.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblLOTest.Location = New System.Drawing.Point(495, 23)
         Me.lblLOTest.Name = "lblLOTest"
-        Me.lblLOTest.Size = New System.Drawing.Size(196, 17)
+        Me.lblLOTest.Size = New System.Drawing.Size(146, 13)
         Me.lblLOTest.TabIndex = 8
         Me.lblLOTest.Text = "Global PILF (LO) Test Option:"
         '
@@ -391,7 +391,7 @@
         Me.cboLOTest.Items.AddRange(New Object() {"Single Grubbs-Beck", "Multiple Grubbs-Beck"})
         Me.cboLOTest.Location = New System.Drawing.Point(655, 20)
         Me.cboLOTest.Name = "cboLOTest"
-        Me.cboLOTest.Size = New System.Drawing.Size(145, 25)
+        Me.cboLOTest.Size = New System.Drawing.Size(145, 21)
         Me.cboLOTest.TabIndex = 7
         '
         'cboAnalysisOption
@@ -402,7 +402,7 @@
         Me.cboAnalysisOption.Items.AddRange(New Object() {"Skip", "B17B", "EMA"})
         Me.cboAnalysisOption.Location = New System.Drawing.Point(61, 20)
         Me.cboAnalysisOption.Name = "cboAnalysisOption"
-        Me.cboAnalysisOption.Size = New System.Drawing.Size(69, 25)
+        Me.cboAnalysisOption.Size = New System.Drawing.Size(69, 21)
         Me.cboAnalysisOption.TabIndex = 5
         '
         'lblGlobalAnalysis
@@ -411,7 +411,7 @@
         Me.lblGlobalAnalysis.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblGlobalAnalysis.Location = New System.Drawing.Point(3, 0)
         Me.lblGlobalAnalysis.Name = "lblGlobalAnalysis"
-        Me.lblGlobalAnalysis.Size = New System.Drawing.Size(64, 51)
+        Me.lblGlobalAnalysis.Size = New System.Drawing.Size(48, 39)
         Me.lblGlobalAnalysis.TabIndex = 3
         Me.lblGlobalAnalysis.Text = "Global " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Analysis " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Option:"
         '
@@ -498,7 +498,7 @@
         Me.lblThresholds.AutoSize = True
         Me.lblThresholds.Location = New System.Drawing.Point(178, 0)
         Me.lblThresholds.Name = "lblThresholds"
-        Me.lblThresholds.Size = New System.Drawing.Size(132, 16)
+        Me.lblThresholds.Size = New System.Drawing.Size(100, 14)
         Me.lblThresholds.TabIndex = 12
         Me.lblThresholds.Text = "Perceptible Ranges"
         '
@@ -524,7 +524,7 @@
         Me.lblIntervals.AutoSize = True
         Me.lblIntervals.Location = New System.Drawing.Point(219, 0)
         Me.lblIntervals.Name = "lblIntervals"
-        Me.lblIntervals.Size = New System.Drawing.Size(128, 16)
+        Me.lblIntervals.Size = New System.Drawing.Size(100, 14)
         Me.lblIntervals.TabIndex = 13
         Me.lblIntervals.Text = "Data/Flow Intervals"
         '
@@ -560,7 +560,7 @@
         Me.lblB17BWarning.AutoSize = True
         Me.lblB17BWarning.Location = New System.Drawing.Point(-3, 0)
         Me.lblB17BWarning.Name = "lblB17BWarning"
-        Me.lblB17BWarning.Size = New System.Drawing.Size(463, 16)
+        Me.lblB17BWarning.Size = New System.Drawing.Size(349, 14)
         Me.lblB17BWarning.TabIndex = 48
         Me.lblB17BWarning.Text = "NOTE: Threshold and Interval Data are not used in Bulletin 17B analysis"
         '
@@ -570,7 +570,7 @@
         Me.lblLegendMove.AutoSize = True
         Me.lblLegendMove.Location = New System.Drawing.Point(-3, 321)
         Me.lblLegendMove.Name = "lblLegendMove"
-        Me.lblLegendMove.Size = New System.Drawing.Size(263, 16)
+        Me.lblLegendMove.Size = New System.Drawing.Size(197, 14)
         Me.lblLegendMove.TabIndex = 47
         Me.lblLegendMove.Text = "NOTE: Click on graph to relocate legend"
         '
@@ -580,7 +580,7 @@
         Me.zgcThresh.IsEnableVPan = False
         Me.zgcThresh.IsEnableVZoom = False
         Me.zgcThresh.Location = New System.Drawing.Point(0, 0)
-        Me.zgcThresh.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.zgcThresh.Margin = New System.Windows.Forms.Padding(4)
         Me.zgcThresh.Name = "zgcThresh"
         Me.zgcThresh.ScrollGrace = 0R
         Me.zgcThresh.ScrollMaxX = 0R
@@ -599,7 +599,7 @@
         Me.cboDataGraphFormat.Items.AddRange(New Object() {"None", "EMF - Enhanced Windows Metafile", "PNG - Portable Network Graphics", "GIF - Graphic Interchange Format", "JPEG", "TIFF", "BMP - Bitmap"})
         Me.cboDataGraphFormat.Location = New System.Drawing.Point(405, 9)
         Me.cboDataGraphFormat.Name = "cboDataGraphFormat"
-        Me.cboDataGraphFormat.Size = New System.Drawing.Size(75, 24)
+        Me.cboDataGraphFormat.Size = New System.Drawing.Size(75, 22)
         Me.cboDataGraphFormat.TabIndex = 43
         '
         'lblDataGraphFormat
@@ -607,7 +607,7 @@
         Me.lblDataGraphFormat.AutoSize = True
         Me.lblDataGraphFormat.Location = New System.Drawing.Point(267, 9)
         Me.lblDataGraphFormat.Name = "lblDataGraphFormat"
-        Me.lblDataGraphFormat.Size = New System.Drawing.Size(185, 16)
+        Me.lblDataGraphFormat.Size = New System.Drawing.Size(141, 14)
         Me.lblDataGraphFormat.TabIndex = 13
         Me.lblDataGraphFormat.Text = "Save Input Peaks Graph as:"
         '
@@ -638,18 +638,18 @@
         Me.lblStation.AutoSize = True
         Me.lblStation.Location = New System.Drawing.Point(29, 9)
         Me.lblStation.Name = "lblStation"
-        Me.lblStation.Size = New System.Drawing.Size(56, 16)
+        Me.lblStation.Size = New System.Drawing.Size(43, 14)
         Me.lblStation.TabIndex = 6
         Me.lblStation.Text = "Station:"
         '
         'cboStation
         '
         Me.cboStation.FormattingEnabled = True
-        Me.cboStation.ItemHeight = 16
+        Me.cboStation.ItemHeight = 14
         Me.cboStation.Location = New System.Drawing.Point(74, 6)
         Me.cboStation.MaxDropDownItems = 20
         Me.cboStation.Name = "cboStation"
-        Me.cboStation.Size = New System.Drawing.Size(155, 24)
+        Me.cboStation.Size = New System.Drawing.Size(155, 22)
         Me.cboStation.TabIndex = 5
         '
         'tabOutput
@@ -964,7 +964,7 @@
         Me.Label1.Location = New System.Drawing.Point(162, 180)
         Me.Label1.Name = "Label1"
         Me.Label1.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Label1.Size = New System.Drawing.Size(169, 16)
+        Me.Label1.Size = New System.Drawing.Size(131, 14)
         Me.Label1.TabIndex = 54
         Me.Label1.Text = "-percent confidence limits"
         '
@@ -978,7 +978,7 @@
         Me.lblCLL.Location = New System.Drawing.Point(55, 180)
         Me.lblCLL.Name = "lblCLL"
         Me.lblCLL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCLL.Size = New System.Drawing.Size(89, 16)
+        Me.lblCLL.Size = New System.Drawing.Size(69, 14)
         Me.lblCLL.TabIndex = 53
         Me.lblCLL.Text = "-percent and"
         '
@@ -1051,7 +1051,7 @@
         Me.cboGraphFormat.Items.AddRange(New Object() {"None", "EMF - Enhanced Windows Metafile", "PNG - Portable Network Graphics", "GIF - Graphic Interchange Format", "JPEG", "TIFF", "BMP - Bitmap"})
         Me.cboGraphFormat.Location = New System.Drawing.Point(3, 37)
         Me.cboGraphFormat.Name = "cboGraphFormat"
-        Me.cboGraphFormat.Size = New System.Drawing.Size(187, 24)
+        Me.cboGraphFormat.Size = New System.Drawing.Size(187, 22)
         Me.cboGraphFormat.TabIndex = 42
         '
         'txtCI
@@ -1110,7 +1110,7 @@
         Me.chkPlotPos.Location = New System.Drawing.Point(7, 103)
         Me.chkPlotPos.Name = "chkPlotPos"
         Me.chkPlotPos.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.chkPlotPos.Size = New System.Drawing.Size(171, 20)
+        Me.chkPlotPos.Size = New System.Drawing.Size(130, 18)
         Me.chkPlotPos.TabIndex = 24
         Me.chkPlotPos.Text = "Print Plotting Positions"
         Me.chkPlotPos.UseVisualStyleBackColor = False
@@ -1138,7 +1138,7 @@
         Me.lblPlotPos.Location = New System.Drawing.Point(3, 83)
         Me.lblPlotPos.Name = "lblPlotPos"
         Me.lblPlotPos.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblPlotPos.Size = New System.Drawing.Size(113, 16)
+        Me.lblPlotPos.Size = New System.Drawing.Size(84, 14)
         Me.lblPlotPos.TabIndex = 28
         Me.lblPlotPos.Text = "Plotting Position:"
         '
@@ -1152,7 +1152,7 @@
         Me.lblCL.Location = New System.Drawing.Point(3, 149)
         Me.lblCL.Name = "lblCL"
         Me.lblCL.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblCL.Size = New System.Drawing.Size(203, 16)
+        Me.lblCL.Size = New System.Drawing.Size(156, 14)
         Me.lblCL.TabIndex = 27
         Me.lblCL.Text = "Symmetric Confidence Interval:"
         '
@@ -1328,7 +1328,7 @@
         Me.lstGraphs.Font = New System.Drawing.Font("Arial", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lstGraphs.ForeColor = System.Drawing.SystemColors.WindowText
         Me.lstGraphs.IntegralHeight = False
-        Me.lstGraphs.ItemHeight = 16
+        Me.lstGraphs.ItemHeight = 14
         Me.lstGraphs.Location = New System.Drawing.Point(8, 16)
         Me.lstGraphs.Name = "lstGraphs"
         Me.lstGraphs.RightToLeft = System.Windows.Forms.RightToLeft.No
@@ -1411,7 +1411,7 @@
         Me.lblSpec.Location = New System.Drawing.Point(336, 56)
         Me.lblSpec.Name = "lblSpec"
         Me.lblSpec.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblSpec.Size = New System.Drawing.Size(127, 16)
+        Me.lblSpec.Size = New System.Drawing.Size(94, 14)
         Me.lblSpec.TabIndex = 19
         Me.lblSpec.Text = "PeakFQ Spec File:"
         '
@@ -1427,7 +1427,7 @@
         Me.lblData.Location = New System.Drawing.Point(336, 32)
         Me.lblData.Name = "lblData"
         Me.lblData.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.lblData.Size = New System.Drawing.Size(129, 16)
+        Me.lblData.Size = New System.Drawing.Size(95, 14)
         Me.lblData.TabIndex = 18
         Me.lblData.Text = "PEAKFQ Data File:"
         '
@@ -1442,7 +1442,7 @@
         '
         'frmPeakfq
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 14.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
         Me.ClientSize = New System.Drawing.Size(1250, 536)
@@ -1458,7 +1458,7 @@
         Me.Location = New System.Drawing.Point(11, 49)
         Me.Name = "frmPeakfq"
         Me.RightToLeft = System.Windows.Forms.RightToLeft.No
-        Me.Text = "PeakFQ Version 7.5"
+        Me.Text = "PeakFQ Version 7.5.1"
         Me.MainMenu1.ResumeLayout(False)
         Me.MainMenu1.PerformLayout()
         Me.fraButtons.ResumeLayout(False)
